@@ -13,10 +13,10 @@
     </div>
     <div>
       <div class="container">
-        <button class="google-signup">Sign up with Google</button>
+        <button  class="google-signup"> <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg">Sign up with Google</button>
       </div>
       <div class="container">
-        <button class="apple-signup">Sign up with Apple</button>
+        <button class="apple-signup"> <span><font-awesome-icon :icon="['fab', 'apple']" size="2xl" /></span>Sign up with Apple</button>
       </div>
       <div class="line">
         <div class="left"></div>
