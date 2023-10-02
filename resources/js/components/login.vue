@@ -11,14 +11,10 @@
     <template v-if="counter > 0">
         <input  :value="input" type="text" @input="onInput">
     </template>
-    <template v-else>
-        a
-    </template>
-
   </template>
   <script>
   export default {
-    name: 'Login',
+    name: 'login',
     data() {
       return {
         input: null,
@@ -38,4 +34,4 @@
   <style lang="scss" scoped>
 
   </style>
-  
+
