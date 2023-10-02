@@ -1,3 +1,7 @@
+body {
+    background-color: black;
+}
+
 #shadowBox {
     background-color: rgb(0, 0, 0);
     /* Fallback color */
@@ -31,3 +35,116 @@
         background-position: 100% 0;
     }
 }
+
+.welcome {
+    text-align: center;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.join_today {
+    text-align: center;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    
+}
+
+.google-signup {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: white;
+    border: none;
+    border-radius: 50px;
+    color: #333;
+    font-weight: lighter;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    cursor: pointer;
+}
+
+.apple-signup {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: white;
+    border: none;
+    border-radius: 50px;
+    color: #333;
+    font-weight: bold;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    cursor: pointer;
+}  
+
+.container {
+    text-align: center;
+}
+
+.line {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 400px;
+    margin: 10px auto;
+}
+
+.left, .right {
+    flex: 1;
+    height: 1px;
+    background-color: lightgray;
+}
+
+.text {
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 0 10px;
+    color: white;
+}
+
+.create-account {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: blue;
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    cursor: pointer;
+} 
+
+.sign-in {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: black;
+    border: 1px solid blue;
+    border-radius: 50px;
+    color: blue;
+    font-weight: bold;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    cursor: pointer;
+} 
