@@ -3,7 +3,6 @@
   <div id="shadowBox">
     <h3 class="rainbow rainbow_text_animated">HELLO THERE!</h3>
     <h3 class="rainbow rainbow_text_animated">TWITTER</h3>
-    <!-- <h3>{{ counter }}</h3> -->
   </div>
 
     <div>
