@@ -2,8 +2,8 @@
 <head>
     <title>Twitter</title>
  
-    @vite(['resources/scss/index.scss', 'resources/js/login.js'])
+    @vite(['resources/scss/index.scss', 'resources/js/app.js'])
 </head>
 <body>
-    <div id="login"></div>
+    <div id="app"></div>
 </body>

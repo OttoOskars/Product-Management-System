@@ -156,3 +156,170 @@ body {
     width: 400px;
     cursor: pointer;
 }
+
+.account-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 700px;
+    background-color: #333;
+    border-radius: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+}
+
+.heading_create {
+    position: absolute;
+    top: 20px;
+    left: 40px;
+}
+
+.name {
+    position: relative;
+    top: 100px;
+    left: 40px;
+    width: 420px;
+}
+
+.email {
+    position: relative;
+    top: 120px;
+    left: 40px;
+    width: 420px;
+}
+
+.password {
+    position: relative;
+    top: 140px;
+    left: 40px;
+    width: 420px;
+}
+
+.confirm_password {
+    position: relative;
+    top: 160px;
+    left: 40px;
+    width: 420px;
+}
+
+.birth_date {
+    position: absolute;
+    top: 360px;
+    left: 40px;
+}
+
+.p {
+    font-size: 12px;
+    color: gray;
+    width: 420px;
+}
+  
+input[type="text"], input[type="password"], input[type="email"] {
+    box-sizing: border-box;
+    height: 50px;
+    width: 420px;
+    border-radius: 10px;
+    background-color: #333;
+    color: white;
+}
+
+.account-input {
+    border: 2px solid gray;
+    outline: none;
+}
+  
+.account-input:focus {
+    border: 2px solid blue;
+}
+
+.account-input::-webkit-input-placeholder {
+    color: gray;
+}
+
+.account-input:focus::-webkit-input-placeholder {
+    color: blue;
+}
+
+select {
+    border: 2px solid gray;
+    background-color: #333;
+    color: gray;
+    height: 50px;
+    border-radius: 10px;
+    outline: none;
+}
+
+.select-1 {
+    width: 200px;
+}
+
+.select-1:focus, .select-2:focus, .select-3:focus {
+    border-color: blue;
+}
+
+.select-2 {
+    width: 70px;
+}
+
+.select-3 {
+    width: 130px;
+}
+
+.months {
+    position: relative;
+    top: 280px;
+    left: 40px;
+}
+
+.days {
+    position: relative;
+    top: 230px;
+    left: 250px;
+}
+
+.years {
+    position: relative;
+    top: 180px;
+    left: 330px;
+}
+
+select option:disabled { color: gray; display: none; }
+select option { color: white; }
+
+.next {
+    background-color: gray;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    position: absolute;
+    width: 420px;
+    height: 50px;
+    left: 40px;
+    top: 600px;
+    cursor: pointer;
+}
+
+.X {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #333;
+    border: none;
+    cursor: pointer;
+}
+
+.X:hover {
+    background-color: gray;
+}
+
+.X-2 {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
