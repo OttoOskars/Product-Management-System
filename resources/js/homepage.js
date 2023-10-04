@@ -14,3 +14,4 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 library.add(fas, fab)
 home.component('font-awesome-icon', FontAwesomeIcon)
 home.mount('#home');
+a
