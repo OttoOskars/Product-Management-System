@@ -69,6 +69,7 @@ body {
     margin-left: auto;
     margin-right: auto;
     width: 400px;
+    height: 50px;
     cursor: pointer;
     img{margin-right: 10px;}
 
@@ -91,6 +92,7 @@ body {
     margin-left: auto;
     margin-right: auto;
     width: 400px;
+    height: 50px;
     cursor: pointer;
     span{margin-right: 10px;}
 }
@@ -138,6 +140,10 @@ body {
     cursor: pointer;
 }
 
+.create-account:hover {
+    background-color: darkblue;
+}
+
 .sign-in {
     font-family: Arial, Helvetica, sans-serif;
     background-color: black;
@@ -155,6 +161,10 @@ body {
     margin-right: auto;
     width: 400px;
     cursor: pointer;
+}
+
+.sign-in:hover {
+    background-color: lightblue;
 }
 
 .account-container {
@@ -303,6 +313,10 @@ select option { color: white; }
     left: 40px;
     top: 600px;
     cursor: pointer;
+}
+
+.next:hover {
+    background-color: lightgray;
 }
 
 .X {
