@@ -1,5 +1,5 @@
 <template>
-    <div>
+<!--     <div>
         <router-link to="/">
             <div>
                 Go login
@@ -11,7 +11,7 @@
             </div>
         </router-link>
         <button @click="goToExample">Go Example</button>
-    </div>
+    </div> -->
     <router-view />
 </template>
 

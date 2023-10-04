@@ -324,6 +324,9 @@ select option { color: white; }
     height: 30px;
     border-radius: 50%;
     background-color: #333;
+    display:flex;
+    justify-content: center;
+    align-items: center;
     border: none;
     cursor: pointer;
 }

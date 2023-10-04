@@ -2,7 +2,7 @@
 
     <div class="account-container">
         <div class="X-2">
-            <button class="X" @click="$emit('close-page')"><font-awesome-icon :icon="['fas', 'xmark']" /></button>
+            <button class="X" @click="$emit('close-page')"><ion-icon name="close" class="close"></ion-icon></button>
         </div>
         <div class="heading_create">
             <h1>Create your account</h1>
@@ -116,5 +116,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-
+    .close{
+        font-size: 20px;
+        color:white;
+    }
 </style>
