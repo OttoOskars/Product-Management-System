@@ -13,12 +13,14 @@
             </div>
             <div class="email">
                 <input type="email" maxlength="50" placeholder="Email" class="account-input" style="padding-left: 10px;" v-model="email" />
+                <p v-if="invalidEmail" class="warning-1">Please enter a valid email address.</p>
             </div>
             <div class="password">
                 <input type="password" maxlength="50" placeholder="Password" class="account-input" style="padding-left: 10px;" v-model="password" />
             </div>
             <div class="confirm_password">
                 <input type="password" maxlength="50" placeholder="Confirm password" class="account-input" style="padding-left: 10px;" v-model="confirmPassword" />
+                <p v-if="passwordsDoNotMatch" class="warning-2">Passwords do not match.</p>
             </div>
             <div class="birth_date">
                 <h3>Date of birth</h3>
@@ -86,7 +88,7 @@
                 </div>
             </div>
             <div>
-                <button class="next" v-bind:disabled="!allFieldsFilled">Next</button>
+                <button class="next" @click="validateForm" v-bind:disabled="!allFieldsFilled">Next</button>
             </div>
         </div>
     </div>
@@ -105,12 +107,35 @@ export default {
       month: '',
       day: '',
       year: '',
-      years: Array.from({length: 121}, (_, i) => (1903 + i))
+      years: Array.from({length: 121}, (_, i) => (1903 + i)),
+      invalidEmail: false,
+      passwordsDoNotMatch: false,
     };
   },
   computed: {
     allFieldsFilled() {
       return this.name && this.email && this.password && this.confirmPassword && this.month && this.day && this.year;
+    },
+  },
+  methods: {
+    validateForm() {
+      this.invalidEmail = false;
+      this.passwordsDoNotMatch = false;
+
+      if (!this.email.includes('@')) {
+        this.invalidEmail = true;
+        setTimeout(() => { this.invalidEmail = false; }, 3000);
+        return;
+      }
+
+      if (this.password !== this.confirmPassword) {
+        this.passwordsDoNotMatch = true;
+        setTimeout(() => { this.passwordsDoNotMatch = false; }, 3000);
+        return;
+      }
+
+      // If validation passes, proceed to the next step
+    //   this.$emit('next-step');
     },
   },
 };
@@ -119,5 +144,21 @@ export default {
     .close{
         font-size: 20px;
         color:white;
+    }
+
+    .warning-1 {
+        position: absolute;
+        top: 80%;
+        left: 0;
+        color: red;
+        font-size: 12px;
+    }
+
+    .warning-2 {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        color: red;
+        font-size: 12px;
     }
 </style>
