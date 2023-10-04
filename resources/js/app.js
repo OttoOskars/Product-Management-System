@@ -27,7 +27,6 @@ const router = createRouter({
   routes: routes,
 });
 
-/* add icons to the library */
 app.use(router);
 
 app.mount('#app');

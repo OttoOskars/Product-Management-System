@@ -3,9 +3,9 @@
         <div class="side-bar">
             <ul class="nav-bar">
                 <li class="nav-bar-brand">
-                    <a href="#">
+                    <div>
                         <ion-icon name="logo-twitter"></ion-icon>
-                    </a>
+                    </div>
                 </li>
 
                 <li class="nav-item">
@@ -61,20 +61,19 @@
                     <div class="text">Tweet</div>
                 </a>
             </ul>
-        </div>
-        <div class="profile">
             <a href="#" class="profile-btn">
                 <div class="profile-info">
                     <img src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" alt="" class="profile-img" width="35" height="35">
-                    <div>
-                        <p class="name">Gustavs</p>
-                        <p class="username">@Gust123</p>
+                    <div class="user-info">
+                        <p class="username">Gustavs</p>
+                        <p class="usertag">@Gust123</p>
+                    </div>
+                    <div class="options-icon">
+                        <ion-icon name="ellipsis-horizontal"></ion-icon>
                     </div>
                 </div>
-                <div class="options-icon">
-                    <ion-icon name="settings-sharp"></ion-icon>
-                </div>
             </a>
+
         </div>
     </div>
 </template>
@@ -132,9 +131,12 @@ body {
 }
 
 .side-bar {
+    position:fixed;
     height: 100%;
     width: 260px;
     border-right: 1px solid #fff2;
+    top:0;
+    bottom:0;
     padding: 10px 0;
     display: flex;
     flex-direction: column;
@@ -143,7 +145,6 @@ body {
 }
 
 .nav-bar {
-    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -152,17 +153,11 @@ body {
 }
 
 .nav-bar-brand {
-    display: inline-block;
-    padding: 8px 8px 4px 10px;
-    border-radius: 50%;
-    margin-top: 5px;
+    padding: 4px 8px;
 }
 
-.nav-bar-brand:hover {
-    background-color:#1d9bf020;
-}
-
-.nav-bar-brand a ion-icon {
+.nav-bar-brand div ion-icon {
+    color: white;
     font-size: 30px;
 }
 
@@ -190,7 +185,6 @@ body {
     font-size: 40px;
     
 }
-
 
 .nav-item .item-icon ion-icon {
     font-size: 24px;
@@ -231,34 +225,43 @@ a.profile-btn {
 
 }
 
+
 a.profile-btn:hover {
     background-color: #1d9bf020;
 }
 
 .profile-info {
+    width:100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-
+.user-info{
+    width:100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
 img.profile-img {
     border-radius: 50%;
     margin-right: 10px;
 }
 
-.profile-info .name {
+.profile-info .username {
     font-weight: bold;
     line-height: 1.5;
 
 }
 
-.profile-info .username {
+.profile-info .usertag {
     color:#6e767d
 }
 
+.options-icon {
+    display: flex;
+}
 .options-icon ion-icon {
     font-size: 19px;
-    margin-top: 3px;
 }
 </style>
