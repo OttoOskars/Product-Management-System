@@ -22,9 +22,6 @@ export default {
     showCreateAccount: false,
   }),
   methods: {
-    toggleShowAccount(){
-      this.showCreateAccount = !this.showCreateAccount
-    },
     goToExample(){
         this.$router.push('/example');
     }

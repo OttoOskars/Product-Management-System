@@ -24,7 +24,7 @@
         <div class="right"></div>
       </div>
       <div class="container">
-        <button class="create-account" @click="$emit('create-account')">Create account</button>
+        <button class="create-account" @click="toggleShowAccount">Create account</button>
       </div>
       <div class="container">
         <p class="text">Already have an account?</p>
@@ -34,10 +34,23 @@
       </div>
     </div>
   </div>
+  <create-account v-if="showCreateAccount" @close-page="toggleShowAccount" />
 </template>
 <script>
+import CreateAccount from './create_account.vue'
 export default {
   name: 'login',
+  components: {
+    CreateAccount,
+  },
+  data: () => ({
+    showCreateAccount: false,
+  }),
+  methods: {
+    toggleShowAccount(){
+        this.showCreateAccount = !this.showCreateAccount
+    },
+  }
 };
 </script>
 <style lang="scss" scoped>

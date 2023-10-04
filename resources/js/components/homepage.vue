@@ -8,12 +8,12 @@
 export default {
     name: 'Home',
     data: () => ({
-    showCreateAccount: false,
+        showCreateAccount: false,
     }),
     methods: {
-    toggleShowAccount(){
-        this.showCreateAccount = !this.showCreateAccount
-    },
+        toggleShowAccount(){
+            this.showCreateAccount = !this.showCreateAccount
+        },
     },
 };
 
