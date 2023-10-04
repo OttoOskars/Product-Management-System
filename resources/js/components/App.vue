@@ -1,18 +1,23 @@
 <template>
-<login @create-account="toggleShowAccount"></login>
-<account v-if="showCreateAccount" @close-page="toggleShowAccount"></account>
-
+    <div>
+        <router-link to="/">
+            <div>
+                Go login
+            </div>
+        </router-link>
+        <router-link to="/home">
+            <div>
+                Go Homepage
+            </div>
+        </router-link>
+        <button @click="goToExample">Go Example</button>
+    </div>
+    <router-view />
 </template>
 
 <script>
-import Login from './login.vue';
-import Account from './create_account.vue';
 export default {
   name: 'App',
-  components: {
-      Login,
-      Account
-  },
   data: () => ({
     showCreateAccount: false,
   }),
@@ -20,6 +25,9 @@ export default {
     toggleShowAccount(){
       this.showCreateAccount = !this.showCreateAccount
     },
+    goToExample(){
+        this.$router.push('/example');
+    }
   },
 };
 

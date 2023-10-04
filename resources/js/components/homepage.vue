@@ -1,18 +1,12 @@
 <template>
-    <login @create-account="toggleShowAccount"></login>
-    <account v-if="showCreateAccount" @close-page="toggleShowAccount"></account>
-    
-    </template>
-    
+    <div class="asdf">
+        Homepage
+    </div>
+</template>
+
 <script>
-import Login from './login.vue';
-import Account from './create_account.vue';
 export default {
     name: 'Home',
-    components: {
-        Login,
-        Account
-    },
     data: () => ({
     showCreateAccount: false,
     }),
@@ -24,4 +18,8 @@ export default {
 };
 
 </script>
-a
+<style lang="scss" scoped>
+.asdf{
+    color: pink !important;
+}
+</style>
