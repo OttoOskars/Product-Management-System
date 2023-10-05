@@ -255,7 +255,6 @@ input[type="text"], input[type="password"], input[type="email"] {
 select {
     border: 2px solid gray;
     background-color: #333;
-    color: gray;
     height: 50px;
     border-radius: 10px;
     outline: none;
@@ -295,9 +294,6 @@ select {
     left: 330px;
 }
 
-select option:disabled { color: gray; display: none; }
-select option { color: white; }
-
 .next {
     background-color: gray;
     border: none;
@@ -315,7 +311,7 @@ select option { color: white; }
     cursor: pointer;
 }
 
-.next:hover {
+.next:not(:disabled):hover {
     background-color: lightgray;
 }
 

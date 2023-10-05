@@ -65,7 +65,7 @@
 <script>
 import { ref } from 'vue';
 import CreateAccount from './create_account.vue'
-import Popup from './Popup.vue';
+import Popup from './Popup1.vue';
 import DOB from './dob.vue';
 export default {
   name: 'login',
