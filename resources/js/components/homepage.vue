@@ -63,8 +63,7 @@
                     <ion-icon name="pencil"></ion-icon>
                     <div class="text">Tweet</div>
                 </a>
-            </ul>
-            <a href="#" class="profile-btn">
+                <a href="#" class="profile-btn">
                 <div class="profile-info">
                     <img src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" alt="" class="profile-img" width="35" height="35">
                     <div class="user-info">
@@ -76,6 +75,7 @@
                     </div>
                 </div>
             </a>
+            </ul>
         </div>
 
         <!--Vidus-->
@@ -85,21 +85,158 @@
                 <div class="tweets__main">
                     <div class="tweets__header">
                         <div class="tweets__name">
-                            Gustavs
+                            Konstantīns
                         </div>
                         <div class="tweets__twname">
-                            @Gust123
+                            @Ērglis_Konstantīns34
+                        </div>
+                        <div class="tweets__publish-time">
+                            80m
+                        </div>
+                    </div>
+                    <div class="tweets__content">
+                        Meklēju otro pusīti! Par mani - 75 gadus vecs, vairs nestrādāju - meklēju draudzeni 18-19 gados.
+                        VECĀKAS NĒ!!
+                    </div>
+                </div>
+            </div>
+            <div class ="tweets">
+                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
+                <div class="tweets__main">
+                    <div class="tweets__header">
+                        <div class="tweets__name">
+                            Juris
+                        </div>
+                        <div class="tweets__twname">
+                            @Juritarded
+                        </div>
+                        <div class="tweets__publish-time">
+                            10m
+                        </div>
+                    </div>
+                    <div class="tweets__content">
+                        Labdien!
+                    </div>
+                </div>
+            </div>
+            <div class ="tweets">
+                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
+                <div class="tweets__main">
+                    <div class="tweets__header">
+                        <div class="tweets__name">
+                            Arnis
+                        </div>
+                        <div class="tweets__twname">
+                            @Arno
+                        </div>
+                        <div class="tweets__publish-time">
+                            5m
+                        </div>
+                    </div>
+                    <div class="tweets__content">
+                        Šiš ira moja suns - PAratodu pa 5 Lati uj 2 liljiem Aldariem 4 litra Protjams!
+                        <img class="tweets__bilde" src="https://www.cesarsway.com/wp-content/uploads/2015/06/AdobeStock_222480718-1024x740.jpeg">
+                    </div>
+                </div>
+            </div>
+            <div class ="tweets">
+                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
+                <div class="tweets__main">
+                    <div class="tweets__header">
+                        <div class="tweets__name">
+                            Matīs
+                        </div>
+                        <div class="tweets__twname">
+                            @Mats
+                        </div>
+                        <div class="tweets__publish-time">
+                            35m
+                        </div>
+                    </div>
+                    <div class="tweets__content">
+                        Tavu suni neviens negrib @Arno!
+                    </div>
+                </div>
+            </div>
+            <div class ="tweets">
+                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
+                <div class="tweets__main">
+                    <div class="tweets__header">
+                        <div class="tweets__name">
+                            Pētris
+                        </div>
+                        <div class="tweets__twname">
+                            @Pečka445
+                        </div>
+                        <div class="tweets__publish-time">
+                            1d
+                        </div>
+                    </div>
+                    <div class="tweets__content">
+                        NGL Gustavs ir a real one!
+                    </div>
+                </div>
+            </div>
+            <div class ="tweets">
+                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
+                <div class="tweets__main">
+                    <div class="tweets__header">
+                        <div class="tweets__name">
+                            Kārlis
+                        </div>
+                        <div class="tweets__twname">
+                            @Vista
+                        </div>
+                        <div class="tweets__publish-time">
+                            7h
+                        </div>
+                    </div>
+                    <div class="tweets__content">
+                        Jā es piekrītu Pētera teiktajam
+                    </div>
+                </div>
+            </div>
+            <div class ="tweets">
+                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
+                <div class="tweets__main">
+                    <div class="tweets__header">
+                        <div class="tweets__name">
+                            Anonīms
+                        </div>
+                        <div class="tweets__twname">
+                            @Anonīms
+                        </div>
+                        <div class="tweets__publish-time">
+                            3h
+                        </div>
+                    </div>
+                    <div class="tweets__content">
+                        Sprcis ir lohs
+                    </div>
+                </div>
+            </div>
+            <div class ="tweets">
+                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
+                <div class="tweets__main">
+                    <div class="tweets__header">
+                        <div class="tweets__name">
+                            Evija
+                        </div>
+                        <div class="tweets__twname">
+                            @EvijaMāte
                         </div>
                         <div class="tweets__publish-time">
                             45m
                         </div>
                     </div>
-                    <div class="tweet__contnent">
-                        sandasndlndklssdasdskdmsakdmsad
+                    <div class="tweets__content">
+                        Ģimene ir number One! #MOMBOSS PS: Spricis = pajols
+                        <img class="tweets__bilde" src="https://www.mintarrow.com/wp-content/uploads/2021/12/RESIZED-Family-04344.jpg">
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -162,6 +299,9 @@ body {
     flex-direction: column;
     justify-content: space-between;
 
+
+
+
 }
 
 .nav-bar {
@@ -170,6 +310,8 @@ body {
     justify-content: flex-start;
     align-items: flex-start;
     z-index: 100;
+    position: fixed;
+
 }
 
 .nav-bar-brand {
@@ -242,7 +384,7 @@ a.profile-btn {
     padding: 10px;
     border-radius: 50px;
     font-size: 16px;
-    margin-top: 200px;
+    margin-top: 175px;
 
 }
 
@@ -289,6 +431,10 @@ img.profile-img {
 .tweets {
     color: white;
     display: flex;
+    border-bottom: 1px solid #333637;
+    margin-bottom: 2px;
+    padding: 10px 15px;
+
 }
 
 .tweets__img {
@@ -309,6 +455,11 @@ img.profile-img {
     margin-right: 5px;
 }
 
+.tweets__content {
+    display: flex;
+    flex-direction: column;
+}
+
 .tweets__twname {
     font-size: 15px;
     color:gray;
@@ -323,6 +474,13 @@ img.profile-img {
 
 .container__right {
     color: white;
+}
+
+.tweets__bilde {
+    width: 100%;
+    border-radius: 15px;
+    margin-top: 10px;
+    height: 500px;
 }
 
 
