@@ -383,7 +383,7 @@ a.profile-btn {
     padding: 10px;
     border-radius: 50px;
     font-size: 16px;
-    margin-top: 175px;
+    margin-top: 200px;
 
 }
 
@@ -431,8 +431,8 @@ img.profile-img {
     color: white;
     display: flex;
     border-bottom: 1px solid #333637;
-    margin-bottom: 2px;
-    padding: 10px 15px;
+    margin-bottom: 4px;
+    padding: 15px 20px;
 
 }
 
@@ -458,6 +458,7 @@ img.profile-img {
     display: flex;
     flex-direction: column;
     text-align: left;
+    margin-top: 5px;
 }
 
 .tweets__twname {
@@ -479,7 +480,7 @@ img.profile-img {
 .tweets__bilde {
     width: 100%;
     border-radius: 15px;
-    margin-top: 10px;
+    margin-top: 20px;
     height: 500px;
 }
 
