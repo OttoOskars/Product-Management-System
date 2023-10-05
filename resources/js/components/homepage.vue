@@ -1,6 +1,9 @@
+
+
 <template>
-<div class="container">
-        <div class="side-bar">
+    <div class="container">
+        <!--Kreisa Puse-->
+        <div class="container__side-bar">
             <ul class="nav-bar">
                 <li class="nav-bar-brand">
                     <div>
@@ -9,7 +12,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="#" class="item-icon home">
+                    <a class="item-icon home">
                         <ion-icon name="home-outline"></ion-icon>
                     </a>
                     <a href="#" class="item-link">Home</a>
@@ -73,7 +76,29 @@
                     </div>
                 </div>
             </a>
+        </div>
 
+        <!--Vidus-->
+        <div class="container__main-scroll">
+            <div class ="tweets">
+                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
+                <div class="tweets__main">
+                    <div class="tweets__header">
+                        <div class="tweets__name">
+                            Gustavs
+                        </div>
+                        <div class="tweets__twname">
+                            @Gust123
+                        </div>
+                        <div class="tweets__publish-time">
+                            45m
+                        </div>
+                    </div>
+                    <div class="tweet__contnent">
+                        sandasndlndklssdasdskdmsakdmsad
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -90,17 +115,15 @@ export default {
         },
     },
 };
-
 </script>
+
 <style lang="scss" scoped>
 
 * {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    transition: 0.2s ease;
-}	
+}
 
 
 html {
@@ -111,8 +134,8 @@ a {
     text-decoration: none;
     color: white;
     font-size: 10px;
-    
-    
+
+
 }
 
 li {
@@ -125,23 +148,20 @@ body {
 }
 
 .container {
-    max-width: 1440px;
-    margin: auto;
-    height: 100vh;
+    display: grid;
+    grid-template-columns: 275px auto 350px;
+    margin: 0 auto;
 }
 
-.side-bar {
-    position:fixed;
+.container__side-bar {
     height: 100%;
-    width: 260px;
-    border-right: 1px solid #fff2;
     top:0;
     bottom:0;
     padding: 10px 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    
+
 }
 
 .nav-bar {
@@ -168,7 +188,7 @@ body {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    cursor: pointer; 
+    cursor: pointer;
 }
 
 .nav-item:hover {
@@ -183,7 +203,7 @@ body {
 .nav-item .item-icon {
     margin-right: 10px;
     font-size: 40px;
-    
+
 }
 
 .nav-item .item-icon ion-icon {
@@ -222,6 +242,7 @@ a.profile-btn {
     padding: 10px;
     border-radius: 50px;
     font-size: 16px;
+    margin-top: 200px;
 
 }
 
@@ -264,4 +285,45 @@ img.profile-img {
 .options-icon ion-icon {
     font-size: 19px;
 }
+
+.tweets {
+    color: white;
+    display: flex;
+}
+
+.tweets__img {
+    widows: 49px;
+    height: 49px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.tweets__header {
+    display: flex;
+}
+
+
+.tweets__name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-right: 5px;
+}
+
+.tweets__twname {
+    font-size: 15px;
+    color:gray;
+
+}
+
+.tweets__publish-time
+{
+    margin-left: 8px;
+}
+
+
+.container__right {
+    color: white;
+}
+
+
 </style>
