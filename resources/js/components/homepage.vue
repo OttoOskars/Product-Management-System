@@ -1,5 +1,4 @@
 
-
 <template>
     <div class="container">
         <!--Kreisa Puse-->
@@ -458,6 +457,7 @@ img.profile-img {
 .tweets__content {
     display: flex;
     flex-direction: column;
+    text-align: left;
 }
 
 .tweets__twname {
