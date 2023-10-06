@@ -1,5 +1,5 @@
 <template>
-
+<div class="account-background">
   <div class="account-container">
     <div class="X-2">
         <button class="X" @click="$emit('close-page')"><ion-icon name="close" class="close"></ion-icon></button>
@@ -115,7 +115,7 @@
       </div>
     </div>
   </div>
-
+</div>
 </template>
 
 <script>
@@ -297,8 +297,17 @@ export default {
   color: gray;
 }
 
-
+.account-background{
+  background:rgba(29, 161, 242, 0.1);
+  z-index: 99;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right:0;
+  bottom:0;
+}
 .account-container {
+  z-index: 100;
   position: absolute;
   top: 50%;
   left: 50%;
