@@ -6,17 +6,17 @@
 
   <div>
     <div>
-      <h1 class="welcome">Welcome</h1>
+      <h1 class="login-text">Welcome</h1>
     </div>
     <div>
-      <h2 class="join_today">Join today</h2>
+      <h2 class="login-text">Join today</h2>
     </div>
     <div>
       <div class="container">
-        <button  class="google-signup" @click="toggleShowAccount"> <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg">Sign up with Google</button>
+        <button  class="sign-up-btn" @click="toggleShowAccount"> <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg">Sign up with Google</button>
       </div>
       <div class="container">
-        <button class="apple-signup" @click="toggleShowAccount"> <span><ion-icon class="apple-logo" name="logo-apple"></ion-icon></span>Sign up with Apple</button>
+        <button class="sign-up-btn" @click="toggleShowAccount"> <span><ion-icon class="apple-logo" name="logo-apple"></ion-icon></span>Sign up with Apple</button>
       </div>
       <div class="line">
         <div class="left"></div>
@@ -179,6 +179,9 @@ export default {
   width: 400px;
   cursor: pointer;
 }
+.create-account:hover {
+    background-color: darkblue;
+}
 .sign-in {
   font-family: Arial, Helvetica, sans-serif;
   background-color: black;
@@ -196,6 +199,9 @@ export default {
   margin-right: auto;
   width: 400px;
   cursor: pointer;
+}
+.sign-in:hover {
+    background-color: lightblue;
 }
 .FormButton{
   font-family: Arial, Helvetica, sans-serif;

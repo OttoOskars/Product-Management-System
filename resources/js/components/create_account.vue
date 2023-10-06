@@ -238,63 +238,236 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-    .close{
-        font-size: 20px;
-        color:white;
-    }
+.close{
+  font-size: 20px;
+  color:white;
+}
 
-    .warning-1 {
-        position: absolute;
-        top: 80%;
-        left: 0;
-        color: red;
-        font-size: 12px;
-    }
+.warning-1 {
+  position: absolute;
+  top: 80%;
+  left: 0;
+  color: red;
+  font-size: 12px;
+}
 
-    .warning-2 {
-        position: absolute;
-        top: 80%;
-        left: 0;
-        color: red;
-        font-size: 12px;
-    }
+.warning-2 {
+  position: absolute;
+  top: 80%;
+  left: 0;
+  color: red;
+  font-size: 12px;
+}
 
-    .warning-3 {
-        position: absolute;
-        top: 80%;
-        left: 0;
-        color: red;
-        font-size: 12px;
-    }
+.warning-3 {
+  position: absolute;
+  top: 80%;
+  left: 0;
+  color: red;
+  font-size: 12px;
+}
 
-    .input-container {
-        position: relative;
-        display: inline-block;
-    }
+.input-container {
+  position: relative;
+  display: inline-block;
+}
 
-    .account-input {
-        padding-top: 20px;
-    }
+.account-input {
+  padding-top: 20px;
+}
 
-    .input-label {
-        position: absolute;
-        left: 10px;
-        transition: 0.3s ease all;
-        font-size: 15px;
-        color: gray;
-        pointer-events: none;
-        top: 50%;
-        transform: translateY(-50%);
-    }
+.input-label {
+  position: absolute;
+  left: 10px;
+  transition: 0.3s ease all;
+  font-size: 15px;
+  color: gray;
+  pointer-events: none;
+  top: 50%;
+  transform: translateY(-50%);
+}
 
-    .input-label.active {
-        transform: translateY(-100%);
-        font-size: 10px;
-        color: blue;
-    }
+.input-label.active {
+  transform: translateY(-100%);
+  font-size: 10px;
+  color: blue;
+}
 
-    .input-label.committed {
-        color: gray;
-    }
+.input-label.committed {
+  color: gray;
+}
 
+
+.account-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 700px;
+  background-color: black;
+  border-radius: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+}
+
+.heading_create {
+  position: absolute;
+  top: 20px;
+  left: 40px;
+}
+
+.name {
+  position: relative;
+  top: 100px;
+  left: 40px;
+  width: 420px;
+}
+
+.email {
+  position: relative;
+  top: 120px;
+  left: 40px;
+  width: 420px;
+}
+
+.password {
+  position: relative;
+  top: 140px;
+  left: 40px;
+  width: 420px;
+}
+
+.confirm_password {
+  position: relative;
+  top: 160px;
+  left: 40px;
+  width: 420px;
+}
+
+.birth_date {
+  position: absolute;
+  top: 380px;
+  left: 40px;
+}
+
+.p {
+  font-size: 12px;
+  color: gray;
+  width: 420px;
+}
+  
+input[type="text"], input[type="password"], input[type="email"] {
+  box-sizing: border-box;
+  height: 50px;
+  width: 420px;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+}
+
+.account-input {
+  border: 2px solid gray;
+  outline: none;
+}
+  
+.account-input:focus {
+  border: 2px solid blue;
+}
+
+.account-input::-webkit-input-placeholder {
+  color: gray;
+}
+
+.account-input:focus::-webkit-input-placeholder {
+  color: blue;
+}
+
+select {
+  border: 2px solid gray;
+  background-color: black;
+  height: 50px;
+  border-radius: 10px;
+  outline: none;
+}
+
+.select-1 {
+  width: 200px;
+}
+
+.select-1:focus, .select-2:focus, .select-3:focus {
+  border-color: blue;
+}
+
+.select-2 {
+  width: 70px;
+}
+
+.select-3 {
+  width: 130px;
+}
+
+.months {
+  position: relative;
+  top: 280px;
+  left: 40px;
+}
+
+.days {
+  position: relative;
+  top: 230px;
+  left: 250px;
+}
+
+.years {
+  position: relative;
+  top: 180px;
+  left: 330px;
+}
+
+select option:disabled { display: none; }
+select option { color: white; }
+
+.next {
+  background-color: deepskyblue;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  position: absolute;
+  width: 420px;
+  height: 50px;
+  left: 40px;
+  top: 600px;
+  cursor: pointer;
+}
+
+.next:not(:disabled):hover {
+  background-color: dodgerblue;
+}
+
+.X {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: black;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+}
+
+.X:hover {
+  background-color: gray;
+}
+
+.X-2 {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
 </style>
