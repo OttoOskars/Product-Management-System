@@ -138,7 +138,7 @@ body {
     transform: translate(-50%, -50%);
     width: 500px;
     height: 700px;
-    background-color: #333;
+    background-color: black;
     border-radius: 20px;
     font-family: Arial, Helvetica, sans-serif;
     color: white;
@@ -195,7 +195,7 @@ input[type="text"], input[type="password"], input[type="email"] {
     height: 50px;
     width: 420px;
     border-radius: 10px;
-    background-color: #333;
+    background-color: black;
     color: white;
 }
 
@@ -218,7 +218,7 @@ input[type="text"], input[type="password"], input[type="email"] {
 
 select {
     border: 2px solid gray;
-    background-color: #333;
+    background-color: black;
     height: 50px;
     border-radius: 10px;
     outline: none;
@@ -262,7 +262,7 @@ select option:disabled { display: none; }
 select option { color: white; }
 
 .next {
-    background-color: gray;
+    background-color: deepskyblue;
     border: none;
     border-radius: 50px;
     font-weight: bold;
@@ -279,14 +279,14 @@ select option { color: white; }
 }
 
 .next:not(:disabled):hover {
-    background-color: lightgray;
+    background-color: dodgerblue;
 }
 
 .X {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background-color: #333;
+    background-color: black;
     display:flex;
     justify-content: center;
     align-items: center;
