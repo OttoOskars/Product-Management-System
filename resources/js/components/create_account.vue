@@ -298,7 +298,7 @@ export default {
       .catch(error => {
         if (error.response.status === 422) {
           if (error.response.data.message.includes('email')) {
-            this.emailError = 'This email is already taken.';
+            this.emailError = 'This email is already taken. ';
             console.log('Email Error:', this.emailError);
           }
         }
