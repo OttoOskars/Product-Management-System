@@ -538,7 +538,9 @@ img.profile-img {
 
 }
 
-
+.tweets:last-child {
+    border-bottom: none;
+}
 
 .tweets__img {
     widows: 49px;
