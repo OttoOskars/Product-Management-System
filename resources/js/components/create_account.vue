@@ -161,9 +161,6 @@ export default {
         return Array.from({ length: 31 }, (_, i) => i + 1);
       }
     },
-    // nameHasSpaces() {
-    //   return this.name.includes(' ');
-    // },
   },
   mounted() {
     document.addEventListener('click', this.handleClickOutside);
@@ -194,9 +191,9 @@ export default {
       this.invalidEmail = false;
       this.passwordsDoNotMatch = false;
 
-      if (this.name.includes(' ')) { // Check for spaces in the name
+      if (this.name.includes(' ')) {
         this.nameHasSpaces = true;
-        setTimeout(() => { this.nameHasSpaces = false; }, 3000); // Show for 3 seconds
+        setTimeout(() => { this.nameHasSpaces = false; }, 3000);
         return;
       }
 

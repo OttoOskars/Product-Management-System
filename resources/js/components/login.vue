@@ -66,13 +66,11 @@
 import { ref } from 'vue';
 import CreateAccount from './create_account.vue'
 import Popup from './Popup.vue';
-import DOB from './dob.vue';
 export default {
   name: 'login',
   components: {
     CreateAccount,
     Popup,
-    DOB
   },
   setup () {
 		const popupTriggers = ref({
