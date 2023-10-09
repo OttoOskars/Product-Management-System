@@ -21,10 +21,23 @@ class Users_Controller extends Controller
         ]);
 
         $dob = Carbon::parse($validatedData['DOB'])->format('Y-m-d');
+
+        $existingEmail = users::where('Email', $validatedData['Email'])->first();
+        if ($existingEmail) {
+            return response()->json(['message' => 'This email is already taken.'], 400);
+        }
+    
+        // Check if the username is already taken
+        $existingUsername = users::where('UserTag', $validatedData['UserTag'])->first();
+        if ($existingUsername) {
+            return response()->json(['message' => 'This username is already taken.'], 400);
+        }
+
+
         // Create a new user with the validated data
         $user = users::create([
             'Name' => $validatedData['Name'],
-            'UserTag' => '@'.$validatedData['UserTag'],
+            'UserTag' => $validatedData['UserTag'],
             'Email' => $validatedData['Email'],
             'Password' => bcrypt($validatedData['Password']), // Hash the password for security
             'DOB' => $dob,

@@ -41,6 +41,7 @@
           <label class="input-label" :class="{ active: isLabelActive['username'], committed: isInputCommitted['username'] }">Username</label>
         </div>
         <p v-if="usernameHasSpaces" class="warning">Username should not contain spaces.</p>
+        <p v-if="usernameError" class="warning">{{ usernameError }}</p>
       </div>
 
       <div class="email">
@@ -58,6 +59,7 @@
           <label class="input-label" :class="{ active: isLabelActive['email'], committed: isInputCommitted['email'] }">Email</label>
         </div>
         <p v-if="invalidEmail" class="warning">Please enter a valid email address.</p>
+        <p v-if="emailError" class="warning">{{ emailError }}</p>
       </div>
 
       <div class="password">
@@ -174,6 +176,8 @@ export default {
         password: false,
         confirmPassword: false,
       },
+      emailError: '',
+      usernameError: '',
     };
   },
   computed: {
@@ -275,21 +279,37 @@ export default {
         }
     },
     createUser() {
-            // Send a POST request to create a user
-            axios.post('/api/create', {
-                Name: this.name,
-                UserTag: this.username,
-                Email: this.email,
-                Password: this.password,
-                DOB: `${this.year}-${this.month}-${this.day}`,
-            })
-            .then(response => {
-                console.log(response.data.message);
-            })
-            .catch(error => {
-                console.error(error.response.data);
-            });
-        },
+      // Reset error messages
+      this.emailError = '';
+      this.usernameError = '';
+
+      // Send a POST request to create a user
+      axios.post('/api/create', {
+        Name: this.name,
+        UserTag: this.username,
+        Email: this.email,
+        Password: this.password,
+        DOB: `${this.year}-${this.month}-${this.day}`,
+      })
+      .then(response => {
+        console.log(response.data.message);
+        // Handle successful user creation
+      })
+      .catch(error => {
+        if (error.response.status === 422) {
+          // Handle validation errors
+          if (error.response.data.message.includes('email')) {
+            this.emailError = 'This email is already taken.';
+            console.log('Email Error:', this.emailError);
+          }
+          if (error.response.data.message.includes('username')) {
+            this.usernameError = 'This username is already taken.';
+            console.log('Username Error:', this.usernameError);}
+        } else {
+          console.error(error.response.data);
+        }
+      });
+    },
   },
 };
 </script>
