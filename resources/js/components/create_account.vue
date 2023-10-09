@@ -136,6 +136,7 @@
 </template>
 
 <script>
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default {
   name: 'account',
   data() {
@@ -225,7 +226,7 @@ export default {
         return;
       }
 
-      if (!this.email.includes('@')) {
+      if (!emailRegex.test(this.email)) {
         this.invalidEmail = true;
         setTimeout(() => { this.invalidEmail = false; }, 3000);
         return;
