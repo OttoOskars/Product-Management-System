@@ -26,6 +26,25 @@
         <p v-if="nameHasSpaces" class="warning">Name should not contain spaces.</p>
       </div>
 
+      <div class="email">
+        <div class="input-container">
+          <input
+              type="email"
+              maxlength="50"
+              class="account-input"
+              style="padding-left: 10px;"
+              v-model="email"
+              @input="updateLabel('email')"
+              @focus="moveLabelUp('email')"
+              @blur="resetLabelPosition('email')"
+              autocomplete="off"
+          />
+          <label class="input-label" :class="{ active: isLabelActive['email'], committed: isInputCommitted['email'] }">Email</label>
+        </div>
+        <p v-if="invalidEmail" class="warning">Please enter a valid email address.</p>
+        <p v-if="emailError" class="warning">{{ emailError }}</p>
+      </div>
+
       <div class="username">
         <div class="input-container">
           <input
@@ -42,24 +61,6 @@
         </div>
         <p v-if="usernameHasSpaces" class="warning">Username should not contain spaces.</p>
         <p v-if="usernameError" class="warning">{{ usernameError }}</p>
-      </div>
-
-      <div class="email">
-        <div class="input-container">
-          <input
-              type="email"
-              maxlength="50"
-              class="account-input"
-              style="padding-left: 10px;"
-              v-model="email"
-              @input="updateLabel('email')"
-              @focus="moveLabelUp('email')"
-              @blur="resetLabelPosition('email')"
-          />
-          <label class="input-label" :class="{ active: isLabelActive['email'], committed: isInputCommitted['email'] }">Email</label>
-        </div>
-        <p v-if="invalidEmail" class="warning">Please enter a valid email address.</p>
-        <p v-if="emailError" class="warning">{{ emailError }}</p>
       </div>
 
       <div class="password">
@@ -296,19 +297,19 @@ export default {
         // Handle successful user creation
       })
       .catch(error => {
-        if (error.response.status === 422) {
-          if (error.response.data.message.includes('email')) {
-            this.emailError = 'This email is already taken. ';
-            console.log('Email Error:', this.emailError);
-            setTimeout(() => { this.emailError = false; }, 3000);
-            return;
-          }
-        }
         if (error.response.status === 400) {
           if (error.response.data.message.includes('username')) {
             this.usernameError = 'This username is already taken.';
             console.log('Username Error:', this.usernameError);
             setTimeout(() => { this.usernameError = false; }, 3000);
+            return;
+          }
+        }
+        if (error.response.status === 422) {
+          if (error.response.data.message.includes('email')) {
+            this.emailError = 'This email is already taken. ';
+            console.log('Email Error:', this.emailError);
+            setTimeout(() => { this.emailError = false; }, 3000);
             return;
           }
         } else {
@@ -399,14 +400,14 @@ export default {
   width: 420px;
 }
 
-.username {
+.email {
   position: relative;
   top: 120px;
   left: 40px;
   width: 420px;
 }
 
-.email {
+.username {
   position: relative;
   top: 140px;
   left: 40px;
