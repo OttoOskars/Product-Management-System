@@ -23,9 +23,7 @@ class Users_Controller extends Controller
 
         $dob = Carbon::parse($validatedData['DOB'])->format('Y-m-d');
 
-        if (!str_starts_with($validatedData['UserTag'], '@')) {
-            $validatedData['UserTag'] = '@' . $validatedData['UserTag'];
-        }
+        $validatedData['UserTag'] = '@' . ltrim($validatedData['UserTag'], '@');
 
         $existingUsername = users::where('UserTag', $validatedData['UserTag'])->first();
         if ($existingUsername) {
