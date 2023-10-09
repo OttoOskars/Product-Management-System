@@ -74,6 +74,7 @@
             />
             <label class="input-label" :class="{ active: isLabelActive['password'], committed: isInputCommitted['password'] }">Password</label>
         </div>
+        <p v-if="passwordWarningVisible" class="warning">Password must be at least 8 characters long.</p>
       </div>
 
       <div class="confirm_password">
@@ -157,6 +158,7 @@ export default {
       nameHasSpaces: false,
       usernameHasSpaces: false,
       invalidEmail: false,
+      passwordWarningVisible: false,
       passwordsDoNotMatch: false,
       isLabelActive: {
         name: false,
@@ -233,6 +235,14 @@ export default {
       if (!emailRegex.test(this.email)) {
         this.invalidEmail = true;
         setTimeout(() => { this.invalidEmail = false; }, 3000);
+        return;
+      }
+
+      if (this.password.length < 8) {
+        this.passwordWarningVisible = true;
+        setTimeout(() => {
+          this.passwordWarningVisible = false;
+        }, 3000);
         return;
       }
 
