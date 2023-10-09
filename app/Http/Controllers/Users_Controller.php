@@ -8,6 +8,7 @@ use Carbon\Carbon;
 
 class Users_Controller extends Controller
 {
+
     public function create(Request $request)
     {
         // Validate the incoming request data
@@ -22,17 +23,19 @@ class Users_Controller extends Controller
 
         $dob = Carbon::parse($validatedData['DOB'])->format('Y-m-d');
 
-        $existingEmail = users::where('Email', $validatedData['Email'])->first();
-        if ($existingEmail) {
-            return response()->json(['message' => 'This email is already taken.'], 400);
+        if (!str_starts_with($validatedData['UserTag'], '@')) {
+            $validatedData['UserTag'] = '@' . $validatedData['UserTag'];
         }
-    
-        // Check if the username is already taken
+
         $existingUsername = users::where('UserTag', $validatedData['UserTag'])->first();
         if ($existingUsername) {
             return response()->json(['message' => 'This username is already taken.'], 400);
         }
 
+        $existingEmail = users::where('Email', $validatedData['Email'])->first();
+        if ($existingEmail) {
+            return response()->json(['message' => 'This email is already taken.'], 400);
+        }
 
         // Create a new user with the validated data
         $user = users::create([

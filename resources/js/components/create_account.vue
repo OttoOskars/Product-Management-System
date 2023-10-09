@@ -297,14 +297,16 @@ export default {
       })
       .catch(error => {
         if (error.response.status === 422) {
-          // Handle validation errors
           if (error.response.data.message.includes('email')) {
             this.emailError = 'This email is already taken.';
             console.log('Email Error:', this.emailError);
           }
+        }
+        if (error.response.status === 400) {
           if (error.response.data.message.includes('username')) {
             this.usernameError = 'This username is already taken.';
-            console.log('Username Error:', this.usernameError);}
+            console.log('Username Error:', this.usernameError);
+          }
         } else {
           console.error(error.response.data);
         }
