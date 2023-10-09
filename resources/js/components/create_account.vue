@@ -8,6 +8,7 @@
         <h1>Create your account</h1>
     </div>
     <div>
+      <form @submit.prevent="createUser">
       <div class="name">
         <div class="input-container">
           <input
@@ -130,12 +131,14 @@
       <div>
         <button class="next" @click="validateForm" v-bind:disabled="!allFieldsFilled">Create account</button>
       </div>
+    </form>
     </div>
   </div>
 </div>
 </template>
 
 <script>
+import axios from 'axios';
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default {
   name: 'account',
@@ -149,6 +152,7 @@ export default {
       month: '',
       day: '',
       year: '',
+      dob: '',
       years: Array.from({length: 121}, (_, i) => (1903 + i)),
       nameHasSpaces: false,
       usernameHasSpaces: false,
@@ -260,6 +264,22 @@ export default {
         this.resetLabelPosition();
         }
     },
+    createUser() {
+            // Send a POST request to create a user
+            axios.post('/api/create', {
+                Name: this.name,
+                UserTag: this.username,
+                Email: this.email,
+                Password: this.password,
+                DOB: `${this.year}-${this.month}-${this.day}`,
+            })
+            .then(response => {
+                console.log(response.data.message);
+            })
+            .catch(error => {
+                console.error(error.response.data);
+            });
+        },
   },
 };
 </script>
