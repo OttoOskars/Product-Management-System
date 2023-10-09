@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('Name');
             $table->string('UserTag')->unique();
             $table->string('Email')->unique();
+            $table->date('DOB');
             $table->string('Password');
-            $table->binary('ProfilePicture');
+            $table->binary('ProfilePicture')->nullable();
             $table->timestamps();
         });
     }

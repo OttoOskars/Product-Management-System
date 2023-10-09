@@ -8,6 +8,7 @@
         <h1>Create your account</h1>
     </div>
     <div>
+      <form @submit.prevent="createUser">
       <div class="name">
         <div class="input-container">
           <input
@@ -22,7 +23,24 @@
           />
           <label class="input-label" :class="{ active: isLabelActive['name'], committed: isInputCommitted['name'] }">Name</label>
         </div>
-        <p v-if="nameHasSpaces" class="warning-3">Name should not contain spaces.</p>
+        <p v-if="nameHasSpaces" class="warning">Name should not contain spaces.</p>
+      </div>
+
+      <div class="username">
+        <div class="input-container">
+          <input
+            type="text"
+            maxlength="50"
+            class="account-input"
+            style="padding-left: 10px;"
+            v-model="username"
+            @input="updateLabel('username')"
+            @focus="moveLabelUp('username')"
+            @blur="resetLabelPosition('username')"
+          />
+          <label class="input-label" :class="{ active: isLabelActive['username'], committed: isInputCommitted['username'] }">Username</label>
+        </div>
+        <p v-if="usernameHasSpaces" class="warning">Username should not contain spaces.</p>
       </div>
 
       <div class="email">
@@ -39,7 +57,7 @@
           />
           <label class="input-label" :class="{ active: isLabelActive['email'], committed: isInputCommitted['email'] }">Email</label>
         </div>
-        <p v-if="invalidEmail" class="warning-1">Please enter a valid email address.</p>
+        <p v-if="invalidEmail" class="warning">Please enter a valid email address.</p>
       </div>
 
       <div class="password">
@@ -56,6 +74,7 @@
             />
             <label class="input-label" :class="{ active: isLabelActive['password'], committed: isInputCommitted['password'] }">Password</label>
         </div>
+        <p v-if="passwordWarningVisible" class="warning">Password must be at least 8 characters long.</p>
       </div>
 
       <div class="confirm_password">
@@ -72,7 +91,7 @@
             />
             <label class="input-label" :class="{ active: isLabelActive['confirmPassword'], committed: isInputCommitted['confirmPassword'] }">Confirm Password</label>
         </div>
-        <p v-if="passwordsDoNotMatch" class="warning-2">Passwords do not match.</p>
+        <p v-if="passwordsDoNotMatch" class="warning">Passwords do not match.</p>
       </div>
 
       <div class="birth_date">
@@ -113,35 +132,44 @@
       <div>
         <button class="next" @click="validateForm" v-bind:disabled="!allFieldsFilled">Create account</button>
       </div>
+    </form>
     </div>
   </div>
 </div>
 </template>
 
 <script>
+import axios from 'axios';
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default {
   name: 'account',
   data() {
     return {
       name: '',
+      username: '',
       email: '',
       password: '',
       confirmPassword: '',
       month: '',
       day: '',
       year: '',
+      dob: '',
       years: Array.from({length: 121}, (_, i) => (1903 + i)),
       nameHasSpaces: false,
+      usernameHasSpaces: false,
       invalidEmail: false,
+      passwordWarningVisible: false,
       passwordsDoNotMatch: false,
       isLabelActive: {
         name: false,
+        username: false,
         email: false,
         password: false,
         confirmPassword: false,
       },
         isInputCommitted: {
         name: false,
+        username: false,
         email: false,
         password: false,
         confirmPassword: false,
@@ -150,7 +178,7 @@ export default {
   },
   computed: {
     allFieldsFilled() {
-      return this.name && this.email && this.password && this.confirmPassword && this.month && this.day && this.year;
+      return this.name &&this.username && this.email && this.password && this.confirmPassword && this.month && this.day && this.year;
     },
     daysInMonth() {
       if (["April", "June", "September", "November"].includes(this.month)) {
@@ -188,6 +216,7 @@ export default {
   methods: {
     validateForm() {
       this.nameHasSpaces = false;
+      this.usernameHasSpaces = false;
       this.invalidEmail = false;
       this.passwordsDoNotMatch = false;
 
@@ -197,9 +226,23 @@ export default {
         return;
       }
 
-      if (!this.email.includes('@')) {
+      if (this.username.includes(' ')) {
+        this.usernameHasSpaces = true;
+        setTimeout(() => { this.usernameHasSpaces = false; }, 3000);
+        return;
+      }
+
+      if (!emailRegex.test(this.email)) {
         this.invalidEmail = true;
         setTimeout(() => { this.invalidEmail = false; }, 3000);
+        return;
+      }
+
+      if (this.password.length < 8) {
+        this.passwordWarningVisible = true;
+        setTimeout(() => {
+          this.passwordWarningVisible = false;
+        }, 3000);
         return;
       }
 
@@ -231,6 +274,22 @@ export default {
         this.resetLabelPosition();
         }
     },
+    createUser() {
+            // Send a POST request to create a user
+            axios.post('/api/create', {
+                Name: this.name,
+                UserTag: this.username,
+                Email: this.email,
+                Password: this.password,
+                DOB: `${this.year}-${this.month}-${this.day}`,
+            })
+            .then(response => {
+                console.log(response.data.message);
+            })
+            .catch(error => {
+                console.error(error.response.data);
+            });
+        },
   },
 };
 </script>
@@ -240,23 +299,7 @@ export default {
   color:white;
 }
 
-.warning-1 {
-  position: absolute;
-  top: 80%;
-  left: 0;
-  color: red;
-  font-size: 12px;
-}
-
-.warning-2 {
-  position: absolute;
-  top: 80%;
-  left: 0;
-  color: red;
-  font-size: 12px;
-}
-
-.warning-3 {
+.warning {
   position: absolute;
   top: 80%;
   left: 0;
@@ -330,30 +373,37 @@ export default {
   width: 420px;
 }
 
-.email {
+.username {
   position: relative;
   top: 120px;
   left: 40px;
   width: 420px;
 }
 
-.password {
+.email {
   position: relative;
   top: 140px;
   left: 40px;
   width: 420px;
 }
 
-.confirm_password {
+.password {
   position: relative;
   top: 160px;
   left: 40px;
   width: 420px;
 }
 
+.confirm_password {
+  position: relative;
+  top: 180px;
+  left: 40px;
+  width: 420px;
+}
+
 .birth_date {
   position: absolute;
-  top: 380px;
+  top: 430px;
   left: 40px;
 }
 
