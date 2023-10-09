@@ -19,7 +19,7 @@
         <button  class="sign-up-btn" @click="toggleShowAccount"> <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg">Sign up with Google</button>
       </div>
       <div class="container">
-        <button class="sign-up-btn" @click="toggleShowAccount"> <span><ion-icon class="apple-logo" name="logo-apple"></ion-icon></span>Sign up with Apple</button>
+        <button class="sign-up-btn-apple" @click="toggleShowAccount"> <span><ion-icon class="apple-logo" name="logo-apple"></ion-icon></span>Sign up with Apple</button>
       </div>
 
       <!-- Create account -->
@@ -158,6 +158,32 @@ export default {
     font-family: Arial, Helvetica, sans-serif;
     padding: 0 10px;
     color: white;
+}
+
+.sign-up-btn-apple{
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: white;
+  border: none;
+  border-radius: 50px;
+  color: #333;
+  padding: 6px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  margin: 4px 2px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
+  cursor: pointer;
+  span{margin-right: 10px;}
+  img{margin-right: 10px;}
+  transition:all ease 0.2s;
+}
+.sign-up-btn-apple:hover {
+  background-color: rgb(223, 223, 223);
 }
 .sign-up-btn {
   font-family: Arial, Helvetica, sans-serif;
