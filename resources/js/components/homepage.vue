@@ -236,7 +236,109 @@
             </div>
         </div>
 
+        <!--Labais-->
+        <div class="container__foryou">
+             <div class="trends-for-you__block">
+                <div class ="trends-for-you__header">
+                    Trends for you
+                </div>
+             </div>
+             <div class="trends-for-you__block">
+                <div class ="trends-for-you__information">
+                    Trending in Latvia
+                </div>
+                <div class ="trends-for-you__trend-name">
+                    #MOMBOSS
+                </div>
+                <div class="trends-for-you__information">
+                    5k Tweets
+                </div>
+            </div>
+
+            <div class="trends-for-you__block">
+                <div class ="trends-for-you__information">
+                    Trending in Germany
+                </div>
+                <div class ="trends-for-you__trend-name">
+                    #StopCrime
+                </div>
+                <div class="trends-for-you__information">
+                    154k Tweets
+                </div>
+            </div>
+            <div class="trends-for-you__block">
+                <div class ="trends-for-you__information">
+                    Trending in USA
+                </div>
+                <div class ="trends-for-you__trend-name">
+                    #Election2024
+                </div>
+                <div class="trends-for-you__information">
+                    3,4m Tweets
+                </div>
+            </div>
+
+            <!--Who to follow-->
+            <div class="who-to-follow">
+                <div class="who-to-follow__block">
+                    <div class="who-to-follow__block">
+                        <div class="who-to-follow__header">
+                            Who to follow
+                        </div>
+                    </div>
+                    <div class="who-to-follow__block">
+                        <div class="who-to-follow__content">
+                            <img src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" alt="" class="who-img">
+                            <div>
+                                <div class="who-to-follow__author-name">
+                                    Juris
+                                </div>
+                                <div class="who-to-follow__author-username">
+                                    @Juritarded
+                                </div>
+                            </div>
+                            <div class="who-to-follow__button">
+                                Follow
+                            </div>
+                        </div>
+                    </div>
+                    <div class="who-to-follow__block">
+                        <div class="who-to-follow__content">
+                            <img src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" alt="" class="who-img">
+                            <div>
+                                <div class="who-to-follow__author-name">
+                                    Joe Biden
+                                </div>
+                                <div class="who-to-follow__author-username">
+                                    @JoeBiden
+                                </div>
+                            </div>
+                            <div class="who-to-follow__button">
+                                Follow
+                            </div>
+                        </div>
+                    </div>
+                    <div class="who-to-follow__block">
+                        <div class="who-to-follow__content">
+                            <img src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" alt="" class="who-img">
+                            <div>
+                                <div class="who-to-follow__author-name">
+                                    Gustavs
+                                </div>
+                                <div class="who-to-follow__author-username">
+                                    @Gusis
+                                </div>
+                            </div>
+                            <div class="who-to-follow__button">
+                                Follow
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
 </template>
 
 <script>
@@ -288,7 +390,7 @@ body {
     grid-template-columns: 275px auto 350px;
     margin: 0 auto;
 }
-
+//Kreisais//
 .container__side-bar {
     height: 100%;
     top:0;
@@ -298,10 +400,9 @@ body {
     flex-direction: column;
     justify-content: space-between;
 
-
-
-
 }
+
+
 
 .nav-bar {
     display: flex;
@@ -333,7 +434,7 @@ body {
 }
 
 .nav-item:hover {
-    background-color: #1d9bf020;
+    background-color: rgb(22, 22, 22);
 }
 
 .item-link {
@@ -427,6 +528,7 @@ img.profile-img {
     font-size: 19px;
 }
 
+//MainPage//
 .tweets {
     color: white;
     display: flex;
@@ -435,6 +537,8 @@ img.profile-img {
     padding: 15px 20px;
 
 }
+
+
 
 .tweets__img {
     widows: 49px;
@@ -484,5 +588,115 @@ img.profile-img {
     height: 500px;
 }
 
+//trends for you //
+.container__foryou {
+    border-radius: 15px;
+    background-color: #0d0d0d;
+    position: fixed;
+    right: 0;
+}
+
+.trends-for-you__block {
+    color:white;
+    border-bottom:1px solid #454748;
+    padding: 10px 15px;
+    text-align: left;
+
+}
+
+.trends-for-you__header {
+
+    font-size: 19px;
+    font-weight: bold;
+    color : white;
+
+
+}
+
+.trends-for-you__information {
+    font-size: 13px;
+    font-weight: 300;
+    color: rgb(87, 87, 87);
+
+}
+
+.trends-for-you__trend-name {
+
+    font-size: 15px;
+    color: rgb(216, 216, 216);
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 2px;
+}
+
+.trends-for-you__block:last-child {
+    border-bottom: none;
+}
+
+//Who to follow //
+
+.who-to-follow {
+    background-color: #0d0d0d;
+    border-radius: 15px;
+}
+
+.who-to-follow__block {
+    padding: 10px 15px;
+    color:white;
+    align-items: center;
+    border-bottom: 1px solid #454748;
+}
+
+.who-to-follow__block:last-child {
+    border-bottom: none;
+}
+
+.who-to-follow__header {
+font-size: 19px;
+font-weight: bold;
+color: white;
+}
+
+.who-to-follow__author-username{
+    font-size: 15px;
+    color: rgb(87, 87, 87);
+}
+
+.who-to-follow__author-name{
+    font: 15px;
+    font-weight: 700;
+}
+
+.who-to-follow__button {
+    padding: 10px;
+    margin-left: 20px;
+    border: 1px solid #3c3c3c;
+    color: #1a7fc3;
+    font: 15px;
+    font-weight:700;
+    border-radius: 15px;
+
+}
+
+.who-to-follow__button:hover {
+    background-color: #97c0dc;
+    cursor: default;
+}
+
+
+.who-to-follow__content {
+    display: flex;
+    padding: 10px;
+    margin-left: 5px;
+
+
+}
+
+.who-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 41px;
+    margin-right: 10px;
+}
 
 </style>
