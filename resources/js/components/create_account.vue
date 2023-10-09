@@ -300,12 +300,16 @@ export default {
           if (error.response.data.message.includes('email')) {
             this.emailError = 'This email is already taken.';
             console.log('Email Error:', this.emailError);
+            setTimeout(() => { this.emailError = false; }, 3000);
+            return;
           }
         }
         if (error.response.status === 400) {
           if (error.response.data.message.includes('username')) {
             this.usernameError = 'This username is already taken.';
             console.log('Username Error:', this.usernameError);
+            setTimeout(() => { this.usernameError = false; }, 3000);
+            return;
           }
         } else {
           console.error(error.response.data);
