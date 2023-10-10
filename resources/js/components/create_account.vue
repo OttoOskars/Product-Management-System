@@ -8,7 +8,7 @@
         <h1>Create your account</h1>
     </div>
     <div>
-      <form @submit.prevent="createUser">
+      <form>
       <div class="name">
         <div class="input-container">
           <input
@@ -24,25 +24,6 @@
           <label class="input-label" :class="{ active: isLabelActive['name'], committed: isInputCommitted['name'] }">Name</label>
         </div>
         <p v-if="nameHasSpaces" class="warning">Name should not contain spaces.</p>
-      </div>
-
-      <div class="email">
-        <div class="input-container">
-          <input
-              type="email"
-              maxlength="50"
-              class="account-input"
-              style="padding-left: 10px;"
-              v-model="email"
-              @input="updateLabel('email')"
-              @focus="moveLabelUp('email')"
-              @blur="resetLabelPosition('email')"
-              autocomplete="off"
-          />
-          <label class="input-label" :class="{ active: isLabelActive['email'], committed: isInputCommitted['email'] }">Email</label>
-        </div>
-        <p v-if="invalidEmail" class="warning">Please enter a valid email address.</p>
-        <p v-if="emailError" class="warning">{{ emailError }}</p>
       </div>
 
       <div class="username">
@@ -61,6 +42,24 @@
         </div>
         <p v-if="usernameHasSpaces" class="warning">Username should not contain spaces.</p>
         <p v-if="usernameError" class="warning">{{ usernameError }}</p>
+      </div>
+
+      <div class="email">
+        <div class="input-container">
+          <input
+              type="email"
+              maxlength="50"
+              class="account-input"
+              style="padding-left: 10px;"
+              v-model="email"
+              @input="updateLabel('email')"
+              @focus="moveLabelUp('email')"
+              @blur="resetLabelPosition('email')"
+          />
+          <label class="input-label" :class="{ active: isLabelActive['email'], committed: isInputCommitted['email'] }">Email</label>
+        </div>
+        <p v-if="invalidEmail" class="warning">Please enter a valid email address.</p>
+        <p v-if="emailError" class="warning">{{ emailError }}</p>
       </div>
 
       <div class="password">
@@ -133,7 +132,7 @@
         </div>
       </div>
       <div>
-        <button class="next" @click="validateForm" v-bind:disabled="!allFieldsFilled">Create account</button>
+        <button type="submit" class="next" @click="validateForm" v-bind:disabled="!allFieldsFilled">Create account</button>
       </div>
     </form>
     </div>
@@ -142,7 +141,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default {
   name: 'account',
@@ -179,6 +177,7 @@ export default {
       },
       emailError: '',
       usernameError: '',
+      error:null,
     };
   },
   computed: {
@@ -279,46 +278,42 @@ export default {
         this.resetLabelPosition();
         }
     },
-    createUser() {
-      // Reset error messages
+    RegisterUser(e) {
       this.emailError = '';
       this.usernameError = '';
 
-      // Send a POST request to create a user
-      axios.post('/api/create', {
-        Name: this.name,
-        UserTag: this.username,
-        Email: this.email,
-        Password: this.password,
-        DOB: `${this.year}-${this.month}-${this.day}`,
-      })
-      .then(response => {
-        console.log(response.data.message);
-        // Handle successful user creation
-      })
-      .catch(error => {
-        if (error.response.status === 400) {
-          if (error.response.data.message.includes('username')) {
-            this.usernameError = 'This username is already taken.';
-            console.log('Username Error:', this.usernameError);
-            setTimeout(() => { this.usernameError = false; }, 3000);
-            return;
-          }
-        }
-        if (error.response.status === 422) {
-          if (error.response.data.message.includes('email')) {
-            this.emailError = 'This email is already taken. ';
-            console.log('Email Error:', this.emailError);
-            setTimeout(() => { this.emailError = false; }, 3000);
-            return;
-          }
-        } else {
-          console.error(error.response.data);
-        }
-      });
-    },
+      e.preventDefault()
+      if(this.password.length>0){
+        this.$axios.get('/sanctum/csrf-cookie').then(response => {
+          this.$axios.post('/api/register', {
+            Name: this.name,
+            UserTag: this.username,
+            Email: this.email,
+            Password: this.password,
+            DOB: `${this.year}-${this.month}-${this.day}`,
+          })
+          .then(response => {
+            if (response.data.success){
+              this.$router.push('/home')
+            } else {
+              if (response.data.message.includes('Email')) {
+                this.emailError = response.data.message;
+                setTimeout(() => { this.emailError = false; }, 3000);
+              }
+              if (response.data.message.includes('Username')) {
+                this.usernameError = response.data.message;
+                setTimeout(() => { this.usernameError = false; }, 3000);
+              }
+            }
+          })
+          .catch(function (error){
+            console.error(error);
+          })
+        })
+      }
+    }
   },
-};
+}
 </script>
 <style lang="scss" scoped>
 .close{
@@ -400,14 +395,14 @@ export default {
   width: 420px;
 }
 
-.email {
+.username {
   position: relative;
   top: 120px;
   left: 40px;
   width: 420px;
 }
 
-.username {
+.email {
   position: relative;
   top: 140px;
   left: 40px;

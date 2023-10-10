@@ -11,5 +11,19 @@
     @vite(['resources/scss/index.scss', 'resources/js/app.js'])
 </head>
 <body>
+    @if (Auth::check())
+    <script>
+        window.Laravel = {!! json_encode([
+            'isLoggedIn'=> true,
+            'user'=> Auth::user()
+        ]) !!};
+    </script>
+    @else
+    <script>
+        window.Laravel = {!! json_encode([
+            'isLoggedIn'=> false
+        ]) !!};
+    </script>
+    @endif
     <div id="app"></div>
 </body>
