@@ -265,13 +265,13 @@ export default {
         this.isInputCommitted[fieldName] = false;
     },
     resetLabelPosition(fieldName) {
-        if (this[fieldName].length === 0) {
+    if (this[fieldName] && this[fieldName].length === 0) {
         this.isLabelActive[fieldName] = false;
-        }
-        if (this[fieldName].length > 0) {
+    }
+    if (this[fieldName] && this[fieldName].length > 0) {
         this.isInputCommitted[fieldName] = true;
-        }
-    },
+    }
+},
     handleClickOutside(event) {
         const inputContainer = this.$el.querySelector('.input-container');
         if (inputContainer && !inputContainer.contains(event.target)) {
