@@ -8,7 +8,7 @@
         <h1>Create your account</h1>
     </div>
     <div>
-      <form @submit.prevent="createUser">
+      <form>
       <div class="name">
         <div class="input-container">
           <input
@@ -26,57 +26,75 @@
         <p v-if="nameHasSpaces" class="warning">Name should not contain spaces.</p>
       </div>
 
-        <div class="username">
-          <div class="input-container">
-            <input
-              type="text"
+      <div class="username">
+        <div class="input-container">
+          <input
+            type="text"
+            maxlength="50"
+            class="account-input"
+            style="padding-left: 10px;"
+            v-model="username"
+            @input="updateLabel('username')"
+            @focus="moveLabelUp('username')"
+            @blur="resetLabelPosition('username')"
+          />
+          <label class="input-label" :class="{ active: isLabelActive['username'], committed: isInputCommitted['username'] }">Username</label>
+        </div>
+        <p v-if="usernameHasSpaces" class="warning">Username should not contain spaces.</p>
+        <p v-if="usernameError" class="warning">{{ usernameError }}</p>
+      </div>
+
+      <div class="email">
+        <div class="input-container">
+          <input
+              type="email"
               maxlength="50"
               class="account-input"
               style="padding-left: 10px;"
-              v-model="username"
-              @input="updateLabel('username')"
-              @focus="moveLabelUp('username')"
-              @blur="resetLabelPosition('username')"
+              v-model="email"
+              @input="updateLabel('email')"
+              @focus="moveLabelUp('email')"
+              @blur="resetLabelPosition('email')"
+          />
+          <label class="input-label" :class="{ active: isLabelActive['email'], committed: isInputCommitted['email'] }">Email</label>
+        </div>
+        <p v-if="invalidEmail" class="warning">Please enter a valid email address.</p>
+        <p v-if="emailError" class="warning">{{ emailError }}</p>
+      </div>
+
+      <div class="password">
+        <div class="input-container">
+            <input
+                type="password"
+                maxlength="50"
+                class="account-input"
+                style="padding-left: 10px;"
+                v-model="password"
+                @input="updateLabel('password')"
+                @focus="moveLabelUp('password')"
+                @blur="resetLabelPosition('password')"
             />
-            <label class="input-label" :class="{ active: isLabelActive['username'], committed: isInputCommitted['username'] }">Username</label>
-          </div>
-          <p v-if="usernameHasSpaces" class="warning">Username should not contain spaces.</p>
-          <p v-if="usernameError" class="warning">{{ usernameError }}</p>
+            <label class="input-label" :class="{ active: isLabelActive['password'], committed: isInputCommitted['password'] }">Password</label>
         </div>
+        <p v-if="passwordWarningVisible" class="warning">Password must be at least 8 characters long.</p>
+      </div>
 
-        <div class="password">
-          <div class="input-container">
-              <input
-                  type="password"
-                  maxlength="50"
-                  class="account-input"
-                  style="padding-left: 10px;"
-                  v-model="password"
-                  @input="updateLabel('password')"
-                  @focus="moveLabelUp('password')"
-                  @blur="resetLabelPosition('password')"
-              />
-              <label class="input-label" :class="{ active: isLabelActive['password'], committed: isInputCommitted['password'] }">Password</label>
-          </div>
-          <p v-if="passwordWarningVisible" class="warning">Password must be at least 8 characters long.</p>
+      <div class="confirm_password">
+        <div class="input-container">
+            <input
+                type="password"
+                maxlength="50"
+                class="account-input"
+                style="padding-left: 10px;"
+                v-model="confirmPassword"
+                @input="updateLabel('confirmPassword')"
+                @focus="moveLabelUp('confirmPassword')"
+                @blur="resetLabelPosition('confirmPassword')"
+            />
+            <label class="input-label" :class="{ active: isLabelActive['confirmPassword'], committed: isInputCommitted['confirmPassword'] }">Confirm Password</label>
         </div>
-
-        <div class="confirm_password">
-          <div class="input-container">
-              <input
-                  type="password"
-                  maxlength="50"
-                  class="account-input"
-                  style="padding-left: 10px;"
-                  v-model="confirmPassword"
-                  @input="updateLabel('confirmPassword')"
-                  @focus="moveLabelUp('confirmPassword')"
-                  @blur="resetLabelPosition('confirmPassword')"
-              />
-              <label class="input-label" :class="{ active: isLabelActive['confirmPassword'], committed: isInputCommitted['confirmPassword'] }">Confirm Password</label>
-          </div>
-          <p v-if="passwordsDoNotMatch" class="warning">Passwords do not match.</p>
-        </div>
+        <p v-if="passwordsDoNotMatch" class="warning">Passwords do not match.</p>
+      </div>
 
       <div class="birth_date">
         <h3>Date of birth</h3>
@@ -114,7 +132,7 @@
         </div>
       </div>
       <div>
-        <button class="next" @click="validateForm" v-bind:disabled="!allFieldsFilled">Create account</button>
+        <button type="submit" class="next" @click="RegisterUser" v-bind:disabled="!allFieldsFilled">Create account</button>
       </div>
     </form>
     </div>
@@ -264,39 +282,34 @@ export default {
       this.emailError = '';
       this.usernameError = '';
 
-      // Send a POST request to create a user
-      axios.post('/api/create', {
-        Name: this.name,
-        UserTag: this.username,
-        Email: this.email,
-        Password: this.password,
-        DOB: `${this.year}-${this.month}-${this.day}`,
-      })
-      .then(response => {
-        console.log(response.data.message);
-        // Handle successful user creation
-      })
-      .catch(error => {
-        if (error.response.status === 422) {
-          if (error.response.data.message.includes('email')) {
-            this.emailError = 'This email is already taken. ';
-            console.log('Email Error:', this.emailError);
-            setTimeout(() => { this.emailError = false; }, 3000);
-            return;
-          }
-        }
-        if (error.response.status === 400) {
-          if (error.response.data.message.includes('username')) {
-            this.usernameError = 'This username is already taken.';
-            console.log('Username Error:', this.usernameError);
-            setTimeout(() => { this.usernameError = false; }, 3000);
-            return;
-          }
-        } else {
-          console.error(error.response.data);
-        }
-      });
-    },
+      e.preventDefault()
+      if(this.password.length>0){
+        this.$axios.get('/sanctum/csrf-cookie').then(response => {
+          this.$axios.post('/api/register', {
+            Name: this.name,
+            UserTag: this.username,
+            Email: this.email,
+            Password: this.password,
+            DOB: `${this.year}-${this.month}-${this.day}`,
+          })
+          .then(response => {
+            if (response.data.success){
+              this.$router.push('/home')
+            } else {
+              if (response.data.message.includes('Email')) {
+                this.emailError = response.data.message;
+              }
+              if (response.data.message.includes('Username')) {
+                this.usernameError = response.data.message;
+              }
+            }
+          })
+          .catch(function (error){
+            console.error(error);
+          })
+        })
+      }
+    }
   },
 }
 </script>
@@ -380,14 +393,14 @@ export default {
   width: 420px;
 }
 
-.email {
+.username {
   position: relative;
   top: 120px;
   left: 40px;
   width: 420px;
 }
 
-.username {
+.email {
   position: relative;
   top: 140px;
   left: 40px;
