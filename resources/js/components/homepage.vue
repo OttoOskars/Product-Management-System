@@ -238,57 +238,50 @@
 
         <!--Labais-->
         <div class="container__foryou">
-             <div class="trends-for-you__block">
-                <div class ="trends-for-you__header">
+            <div class="trends-for-you__container">
+                <div class="trends-for-you__header">
                     Trends for you
                 </div>
-             </div>
-             <div class="trends-for-you__block">
                 <div class ="trends-for-you__information">
                     Trending in Latvia
                 </div>
                 <div class ="trends-for-you__trend-name">
                     #MOMBOSS
                 </div>
-                <div class="trends-for-you__information">
+                <div class="trends-for-you__tweets">
                     5k Tweets
                 </div>
-                <div class="logout-button">
-                    <button>Logout</button>
-                </div>
 
-            </div>
-
-            <div class="trends-for-you__block">
+                <div class="line"></div>
+            
                 <div class ="trends-for-you__information">
                     Trending in Germany
                 </div>
                 <div class ="trends-for-you__trend-name">
                     #StopCrime
                 </div>
-                <div class="trends-for-you__information">
+                <div class="trends-for-you__tweets">
                     154k Tweets
                 </div>
-            </div>
-            <div class="trends-for-you__block">
+           
+                <div class="line"></div>
+            
                 <div class ="trends-for-you__information">
                     Trending in USA
                 </div>
                 <div class ="trends-for-you__trend-name">
                     #Election2024
                 </div>
-                <div class="trends-for-you__information">
-                    3,4m Tweets
+                <div class="trends-for-you__tweets">
+                    3.4m Tweets
                 </div>
             </div>
-            <!--Who to follow-->
-            <div class="who-to-follow">
-                <div class="who-to-follow__block">
-                    <div class="who-to-follow__block">
-                        <div class="who-to-follow__header">
-                            Who to follow
-                        </div>
-                    </div>
+
+            <div class="follow">
+                <div class="who-to-follow__header">
+                    Who to follow
+                </div>
+                    
                     <div v-for="(people,index) in people" :key="index" class="who-to-follow__block">
                         <div class="who-to-follow__content">
                             <img :src ="people.img" alt="" class="who-img">
@@ -303,12 +296,12 @@
                             <button class="who-to-follow__button" @click="handleFollow(index)" :class="{ 'followed-button': people.followed }">
                                 {{ people.followed ? 'Followed' : 'Follow' }}
                             </button>
+                            <div class="line"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
 </template>
 
@@ -343,17 +336,10 @@ export default {
     padding: 0;
 }
 
-
-html {
-    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
 a {
     text-decoration: none;
     color: white;
     font-size: 10px;
-
-
 }
 
 li {
@@ -559,11 +545,6 @@ img.profile-img {
     margin-left: 8px;
 }
 
-
-.container__right {
-    color: white;
-}
-
 .tweets__bilde {
     width: 100%;
     border-radius: 15px;
@@ -573,120 +554,101 @@ img.profile-img {
 
 //trends for you //
 .container__foryou {
-    border-radius: 15px;
-    background-color: #0d0d0d;
-    position: fixed;
-    right: 0;
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    color: white;
 }
 
-.trends-for-you__block {
-    color:white;
-    border-bottom:1px solid #454748;
-    padding: 10px 15px;
-    text-align: left;
-
+.trends-for-you__container {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #262626;
+    position: relative;
+    margin-left: 50px;
+    border-radius: 10px;
 }
 
-.trends-for-you__header {
+.follow {
+    width: 80%;
+    padding: 10px;
+    background-color: #262626;
+    position: relative;
+    margin-left: 50px;
+    border-radius: 10px;
+}
 
-    font-size: 19px;
+.trends-for-you__header,
+.who-to-follow__header {
     font-weight: bold;
-    color : white;
-
-
+    font-size: 1.2em;
 }
 
 .trends-for-you__information {
-    font-size: 13px;
-    font-weight: 300;
-    color: rgb(87, 87, 87);
-
+    margin: 5px 0;
+    margin-top: 20px;
 }
-
 .trends-for-you__trend-name {
-
-    font-size: 15px;
-    color: rgb(216, 216, 216);
-    font-weight: bold;
-    margin-bottom: 5px;
-    margin-top: 2px;
+    color: gray;
+    margin: 5px 0;
 }
-
-.trends-for-you__block:last-child {
-    border-bottom: none;
-}
-
-//Who to follow //
-
-.who-to-follow {
-    background-color: #0d0d0d;
-    border-radius: 15px;
-}
-
-.who-to-follow__block {
-    padding: 10px 15px;
-    color:white;
-    align-items: center;
-    border-bottom: 1px solid #454748;
-    margin-top: 10px;
-}
-
-.who-to-follow__block:last-child {
-    border-bottom: none;
-}
-
-.who-to-follow__header {
-font-size: 19px;
-font-weight: bold;
-color: white;
-}
-
-.who-to-follow__author-username{
-    font-size: 15px;
-    color: rgb(87, 87, 87);
-}
-
-.who-to-follow__author-name{
-    font: 15px;
-    font-weight: 700;
-}
-
-.who-to-follow__button {
-    padding: 10px;
-    margin-left: 20px;
-    border: 1px solid #3c3c3c;
-    font: 15px;
-    font-weight:700;
-    border-radius: 15px;
-    background-color: #1a7fc3;
-    color : white;
-}
-
-.who-to-follow__button:hover {
-    background-color: #97c0dc;
-    cursor: default;
-}
-
-
 .who-to-follow__content {
-    display: flex;
-    padding: 10px;
-    margin-left: 5px;
+    margin: 5px 0;
+}
 
-
+.trends-for-you__tweets {
+    margin: 5px 0;
 }
 
 .who-img {
-    width: 40px;
-    height: 40px;
-    border-radius: 41px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    position: relative;
     margin-right: 10px;
+    top: 30px;
+}
+
+.who-to-follow__button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .followed-button {
-    background-color:white;
-    color:#1a7fc3;;
+    background-color: white;
+    color: #007BFF;
+}
+
+.line {
+    background-color: white;
+    height: 1px;
+}
+
+.who-to-follow__author-name {
+    position: relative;
+    left: 60px;
+    bottom: 20px;
+}
+
+.who-to-follow__author-username {
+    position: relative;
+    left: 60px;
+    bottom: 15px;
+    color: gray;
+}
+
+.who-to-follow__button {
+    position: relative;
+    left: 200px;
+    bottom: 50px;
+    height: 40px;
+    width: 75px;
+    border-radius: 20px;
 }
 
 </style>
