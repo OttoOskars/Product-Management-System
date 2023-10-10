@@ -275,6 +275,18 @@
                 <div class="trends-for-you__tweets">
                     3.4m Tweets
                 </div>
+
+                <div class="line"></div>
+            
+                <div class ="trends-for-you__information">
+                    Trending in USA
+                </div>
+                <div class ="trends-for-you__trend-name">
+                    #Election2024
+                </div>
+                <div class="trends-for-you__tweets">
+                    3.4m Tweets
+                </div>
             </div>
 
             <div class="follow">
@@ -558,25 +570,49 @@ img.profile-img {
     flex-direction: column;
     align-items: flex-start;
     color: white;
+    height: 100%;
 }
 
 .trends-for-you__container {
-    width: 80%;
+    width: 280px;
+    height: 40%;
     padding: 10px;
     margin-bottom: 10px;
     background-color: #262626;
-    position: relative;
+    position: fixed;
     margin-left: 50px;
     border-radius: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.trends-for-you__container::-webkit-scrollbar {
+    width: 12px;
+}
+
+.trends-for-you__container::-webkit-scrollbar-thumb {
+    background: transparent;
 }
 
 .follow {
-    width: 80%;
+    width: 280px;
+    height: 51%;
     padding: 10px;
     background-color: #262626;
-    position: relative;
+    position: fixed;
+    margin-top: 330px;
     margin-left: 50px;
     border-radius: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.follow::-webkit-scrollbar {
+    width: 12px;
+}
+
+.follow::-webkit-scrollbar-thumb {
+    background: transparent;
 }
 
 .trends-for-you__header,
