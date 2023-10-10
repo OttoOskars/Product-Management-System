@@ -132,7 +132,7 @@
         </div>
       </div>
       <div>
-        <button type="submit" class="next" @click="RegisterUser" v-bind:disabled="!allFieldsFilled">Create account</button>
+        <button type="submit" class="next" @click="validateForm" v-bind:disabled="!allFieldsFilled">Create account</button>
       </div>
     </form>
     </div>
@@ -298,9 +298,11 @@ export default {
             } else {
               if (response.data.message.includes('Email')) {
                 this.emailError = response.data.message;
+                setTimeout(() => { this.emailError = false; }, 3000);
               }
               if (response.data.message.includes('Username')) {
                 this.usernameError = response.data.message;
+                setTimeout(() => { this.usernameError = false; }, 3000);
               }
             }
           })
