@@ -281,7 +281,6 @@
                     3,4m Tweets
                 </div>
             </div>
-
             <!--Who to follow-->
             <div class="who-to-follow">
                 <div class="who-to-follow__block">
@@ -292,7 +291,7 @@
                     </div>
                     <div v-for="(people,index) in people" :key="index" class="who-to-follow__block">
                         <div class="who-to-follow__content">
-                            <img src ="{{ people.img }}" alt="" class="who-img">
+                            <img :src ="people.img" alt="" class="who-img">
                             <div>
                                 <div class="who-to-follow__author-name">
                                     {{ people.name }}
@@ -516,6 +515,7 @@ img.profile-img {
     border-bottom: 1px solid #333637;
     margin-bottom: 4px;
     padding: 15px 20px;
+    width: 100%;
 
 }
 
@@ -577,6 +577,7 @@ img.profile-img {
     background-color: #0d0d0d;
     position: fixed;
     right: 0;
+    height: 100%;
 }
 
 .trends-for-you__block {
@@ -628,6 +629,7 @@ img.profile-img {
     color:white;
     align-items: center;
     border-bottom: 1px solid #454748;
+    margin-top: 10px;
 }
 
 .who-to-follow__block:last-child {
