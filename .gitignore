@@ -24,4 +24,4 @@ Homestead.json
 
 ./public/adminer.php
 
-.env
+./.env
