@@ -56,7 +56,7 @@
     </div>
   </Popup>
 
-  <!-- Sign In 2 popup -->
+    <!-- Sign In 2 popup -->
   <Popup v-if="popupTriggers.SignIn2Trigger" :TogglePopup="() => TogglePopup('SignIn2Trigger')">
     <div class="Sign-Pop-Up">
       <h1 class="Bold-text">Password</h1>
@@ -65,17 +65,25 @@
         <label for="sign-in-email-disabled">Email</label>
       </div>
       <div class="input-wrap">
-        <input autocomplete="off" type="password" id="sign-in-pass" class="SignInput" required>
+        <input
+          autocomplete="off"
+          type="password"
+          id="sign-in-pass"
+          v-model="password"
+          class="SignInput"
+          required
+        />
         <label for="sign-in-pass">Password</label>
       </div>
-      <button class="FormButton">Log in</button>
+      <p v-if ="error" class="warning-1">{{ error }}</p>
+      <button type="submit" class="FormButton" @click="loginUser">Log in</button>
       <p style="color:#434343; font-size:small">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
   </Popup>
-
   <create-account v-if="showCreateAccount" @close-page="toggleShowAccount" />
 </template>
 <script>
+import axios from 'axios';
 import { ref } from 'vue';
 import CreateAccount from './create_account.vue';
 import Popup from './Popup.vue';
@@ -85,7 +93,15 @@ export default {
     CreateAccount,
     Popup,
   },
+  data() {
+    return {
+      emails: '',
+      passwords: '',
+      error:null
+    }
+  },
   setup () {
+    const password = ref('');
     const email = ref('');
     const isEmailValid = ref(true);
 
@@ -119,6 +135,7 @@ export default {
 			TogglePopup,
       nextSignIn,
       email,
+      password,
       isEmailValid,
       validateEmail,
 		}
@@ -133,7 +150,36 @@ export default {
         this.popupTriggers.SignIn2Trigger = false
         this.email=''
     },
+
+    loginUser(e) {
+      e.preventDefault()
+      if(this.password.length>0){
+        this.$axios.get('/sanctum/csrf-cookie').then(response => {
+          this.$axios.post('/api/login', {
+            Email: this.email,
+            Password: this.password,
+          })
+          .then(response => {
+            if (response.data.success){
+              this.$router.push('/home')
+            } else {
+              this.error = response.data.message
+            }
+          })
+          .catch(function (error){
+            console.error(error);
+          })
+        })
+      }
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    if (window.Laravel.isLoggedin) {
+      return next('home');
+    }
+    next();
   }
+
 };
 </script>
 <style lang="scss" scoped>

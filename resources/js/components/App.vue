@@ -20,11 +20,34 @@ export default {
   name: 'App',
   data: () => ({
     showCreateAccount: false,
+    isLoggedIn: false
   }),
   methods: {
     goToExample(){
         this.$router.push('/example');
-    }
+    },
+    created() {
+        if (window.Laravel.isLoggedIn){
+            this.isLoggedIn=true
+        }
+    },
+    
+    logout(e){
+            e.preventDefault()
+            this.$axios.get('/sanctum/csrf-cookie').then(response => {
+                this.$axios.post('/api/logout')
+                .then(response => {
+                    if (response.data.success){
+                        window.location.href = '/'
+                    } else {
+                        console.log(response);
+                    }
+                })
+                .catch(function (error){
+                    console.log(error);
+                })
+            })
+        }
   },
 };
 

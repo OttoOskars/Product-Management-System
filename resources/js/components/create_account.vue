@@ -8,7 +8,7 @@
         <h1>Create your account</h1>
     </div>
     <div>
-      <form @submit.prevent="createUser">
+      <form>
       <div class="name">
         <div class="input-container">
           <input
@@ -132,7 +132,7 @@
         </div>
       </div>
       <div>
-        <button class="next" @click="validateForm" v-bind:disabled="!allFieldsFilled">Create account</button>
+        <button type="submit" class="next" @click="RegisterUser" v-bind:disabled="!allFieldsFilled">Create account</button>
       </div>
     </form>
     </div>
@@ -141,7 +141,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default {
   name: 'account',
@@ -178,6 +177,7 @@ export default {
       },
       emailError: '',
       usernameError: '',
+      error:null,
     };
   },
   computed: {
@@ -278,46 +278,40 @@ export default {
         this.resetLabelPosition();
         }
     },
-    createUser() {
-      // Reset error messages
+    RegisterUser(e) {
       this.emailError = '';
       this.usernameError = '';
 
-      // Send a POST request to create a user
-      axios.post('/api/create', {
-        Name: this.name,
-        UserTag: this.username,
-        Email: this.email,
-        Password: this.password,
-        DOB: `${this.year}-${this.month}-${this.day}`,
-      })
-      .then(response => {
-        console.log(response.data.message);
-        // Handle successful user creation
-      })
-      .catch(error => {
-        if (error.response.status === 422) {
-          if (error.response.data.message.includes('email')) {
-            this.emailError = 'This email is already taken. ';
-            console.log('Email Error:', this.emailError);
-            setTimeout(() => { this.emailError = false; }, 3000);
-            return;
-          }
-        }
-        if (error.response.status === 400) {
-          if (error.response.data.message.includes('username')) {
-            this.usernameError = 'This username is already taken.';
-            console.log('Username Error:', this.usernameError);
-            setTimeout(() => { this.usernameError = false; }, 3000);
-            return;
-          }
-        } else {
-          console.error(error.response.data);
-        }
-      });
-    },
+      e.preventDefault()
+      if(this.password.length>0){
+        this.$axios.get('/sanctum/csrf-cookie').then(response => {
+          this.$axios.post('/api/register', {
+            Name: this.name,
+            UserTag: this.username,
+            Email: this.email,
+            Password: this.password,
+            DOB: `${this.year}-${this.month}-${this.day}`,
+          })
+          .then(response => {
+            if (response.data.success){
+              this.$router.push('/home')
+            } else {
+              if (response.data.message.includes('Email')) {
+                this.emailError = response.data.message;
+              }
+              if (response.data.message.includes('Username')) {
+                this.usernameError = response.data.message;
+              }
+            }
+          })
+          .catch(function (error){
+            console.error(error);
+          })
+        })
+      }
+    }
   },
-};
+}
 </script>
 <style lang="scss" scoped>
 .close{

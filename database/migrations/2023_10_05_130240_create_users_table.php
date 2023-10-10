@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('Email')->unique();
             $table->date('DOB');
             $table->string('Password');
-            $table->binary('ProfilePicture')->nullable();
             $table->timestamps();
         });
     }
