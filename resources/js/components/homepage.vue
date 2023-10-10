@@ -253,6 +253,10 @@
                 <div class="trends-for-you__information">
                     5k Tweets
                 </div>
+                <div class="logout-button">
+                    <button>Logout</button>
+                </div>
+
             </div>
 
             <div class="trends-for-you__block">
@@ -286,52 +290,20 @@
                             Who to follow
                         </div>
                     </div>
-                    <div class="who-to-follow__block">
+                    <div v-for="(people,index) in people" :key="index" class="who-to-follow__block">
                         <div class="who-to-follow__content">
-                            <img src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" alt="" class="who-img">
+                            <img src ="{{ people.img }}" alt="" class="who-img">
                             <div>
                                 <div class="who-to-follow__author-name">
-                                    Juris
+                                    {{ people.name }}
                                 </div>
                                 <div class="who-to-follow__author-username">
-                                    @Juritarded
+                                    {{ people.username }}
                                 </div>
                             </div>
-                            <div class="who-to-follow__button">
-                                Follow
-                            </div>
-                        </div>
-                    </div>
-                    <div class="who-to-follow__block">
-                        <div class="who-to-follow__content">
-                            <img src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" alt="" class="who-img">
-                            <div>
-                                <div class="who-to-follow__author-name">
-                                    Joe Biden
-                                </div>
-                                <div class="who-to-follow__author-username">
-                                    @JoeBiden
-                                </div>
-                            </div>
-                            <div class="who-to-follow__button">
-                                Follow
-                            </div>
-                        </div>
-                    </div>
-                    <div class="who-to-follow__block">
-                        <div class="who-to-follow__content">
-                            <img src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" alt="" class="who-img">
-                            <div>
-                                <div class="who-to-follow__author-name">
-                                    Gustavs
-                                </div>
-                                <div class="who-to-follow__author-username">
-                                    @Gusis
-                                </div>
-                            </div>
-                            <div class="who-to-follow__button">
-                                Follow
-                            </div>
+                            <button class="who-to-follow__button" @click="handleFollow(index)" :class="{ 'followed-button': people.followed }">
+                                {{ people.followed ? 'Followed' : 'Follow' }}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -346,10 +318,19 @@ export default {
     name: 'Home',
     data: () => ({
         showCreateAccount: false,
+        followed: false,
+        people: [
+            { name: 'Joe Biden', username: '@JoeBiden', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
+            { name: 'Gustavs', username: '@Gusis', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
+            { name: 'Juris', username: '@Juritarded', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
+        ]
     }),
     methods: {
         toggleShowAccount(){
             this.showCreateAccount = !this.showCreateAccount
+        },
+        handleFollow(index) {
+            this.people[index].followed = !this.people[index].followed;
         },
     },
 };
@@ -673,11 +654,11 @@ color: white;
     padding: 10px;
     margin-left: 20px;
     border: 1px solid #3c3c3c;
-    color: #1a7fc3;
     font: 15px;
     font-weight:700;
     border-radius: 15px;
-
+    background-color: #1a7fc3;
+    color : white;
 }
 
 .who-to-follow__button:hover {
@@ -699,6 +680,11 @@ color: white;
     height: 40px;
     border-radius: 41px;
     margin-right: 10px;
+}
+
+.followed-button {
+    background-color:white;
+    color:#1a7fc3;;
 }
 
 </style>
