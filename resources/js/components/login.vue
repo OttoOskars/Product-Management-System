@@ -83,7 +83,6 @@
   <create-account v-if="showCreateAccount" @close-page="toggleShowAccount" />
 </template>
 <script>
-import axios from 'axios';
 import { ref } from 'vue';
 import CreateAccount from './create_account.vue';
 import Popup from './Popup.vue';

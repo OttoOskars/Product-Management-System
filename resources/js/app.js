@@ -3,6 +3,7 @@ import { createApp } from 'vue';
 import axios from 'axios';
 import { createRouter, createWebHashHistory } from 'vue-router';
 
+
 import App from './components/App.vue';
 import Login from './components/Login.vue'
 import Home from './components/homepage.vue'
@@ -35,5 +36,14 @@ const router = createRouter({
 
 app.config.globalProperties.$axios = axios;
 app.use(router);
+
+// Define a custom Vue warning handler
+app.config.warnHandler = (warning, vm, trace) => {
+    // Check if the warning message includes "ion-icons"
+    if (warning.includes('ion-icons')) {
+      // Ignore the warning related to ion-icons
+      return;
+    }
+  };
 
 app.mount('#app');
