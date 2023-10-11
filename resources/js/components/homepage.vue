@@ -58,10 +58,14 @@
                     </a>
                     <a href="#" class="item-link">More</a>
                 </li>
-                <a href="#" class="tweet-btn">
-                    <ion-icon name="pencil"></ion-icon>
-                    <div class="text">Tweet</div>
-                </a>
+                    <button class="tweet-btn" @click="openTweetWindow">Tweet</button>
+
+                    <div v-if="showTweetWindow" class="tweet-window">
+                        <textarea class="tweet-window" v-model="tweetText"></textarea>
+                        <button class="tweet-window-close" @click="closeTweetWindow">Close</button>
+                        <button class="tweet-window-submit" @click="submitTweet">Submit</button>
+                    </div>
+
                 <a href="#" class="profile-btn">
                 <div class="profile-info">
                     <img src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" alt="" class="profile-img" width="35" height="35">
@@ -326,6 +330,7 @@ export default {
     },
     data: () => ({
         showCreateAccount: false,
+        showTweetWindow: false,
         followed: false,
         people: [
             { name: 'Joe Biden', username: '@JoeBiden', img: "https://akns-images.eonline.com/eol_images/Entire_Site/2014910/rs_600x600-141010052310-600.Joe-Biden-JR-101014.jpg?fit=around%7C1200:1200&output-quality=90&crop=1200:1200;center,top", followed: false },
@@ -342,6 +347,16 @@ export default {
         handleFollow(index) {
             this.people[index].followed = !this.people[index].followed;
         },
+        openTweetWindow() {
+            this.showTweetWindow = true;
+        },
+        closeTweetWindow() {
+            this.showTweetWindow = false;
+        },
+        submitTweet() {
+            this.closeTweetWindow();
+        },
+
     },
 };
 </script>
@@ -448,7 +463,50 @@ body {
     border-radius: 50px;
     font-size: 14px;
     font-weight: bold;
+    border: none;
 }
+
+/*TweetWindow*/
+.tweet-window {
+background-color:#262626 ;
+width: 270px;
+height: 140px;
+margin-left:0px;
+margin-top: 10px;
+border: none;
+color:white;
+
+
+
+}
+.tweet-window-close{
+    width: 70px;
+    height: 30px;
+    align-items: center;
+    background:rgb(184, 73, 73);
+    color: white;
+    text-align: center;
+    margin-top: 5px;
+    border-radius: 15px;
+    font-weight: bold;
+    border: none;
+}
+
+.tweet-window-submit{
+    width: 70px;
+    height: 30px;
+    align-items: center;
+    background:rgb(93, 104, 231);
+    color: rgb(255, 255, 255);
+    text-align: center;
+    margin-top: 5px;
+    border-radius: 15px;
+    font-weight: bold;
+    border: none;
+    margin-left: 12px;
+}
+
+/*TweetWindowEND*/
 
 a.tweet-btn ion-icon {
     font-size: 20px;
@@ -671,6 +729,7 @@ img.profile-img {
     bottom: 50px;
     height: 40px;
     width: 80px;
+    font-weight: bold;
 }
 
 .followed-button {
