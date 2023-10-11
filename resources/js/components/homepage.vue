@@ -322,6 +322,9 @@
 </template>
 
 <script>
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
 import { mapState } from 'vuex';
 export default {
     name: 'Home',
@@ -340,10 +343,27 @@ export default {
             { name: 'Angus', username: '@Angasa', img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXUv6ZrOiS4QQaWCBlsw2zbj64_mcv8Bk-ZCLwDSWLznS_Iu2bxfnet_eaChBoikcPoCc&usqp=CAU", followed: false },
         ]
     }),
+    setup () {
+        const router = useRouter();
+        const store = useStore();
+
+        if (store.state.isLoggedIn) {
+        router.push('/home');
+        }
+
+        const logoutUser = async () => {
+        try {
+            await store.dispatch('logout'); // Call the logout action from your store
+            router.push('/'); // Redirect to the login page or wherever you want after logging out
+        } catch (error) {
+            console.error(error);
+        }
+        };
+        return {
+        logoutUser,
+            }
+	},
     methods: {
-        toggleShowAccount(){
-            this.showCreateAccount = !this.showCreateAccount
-        },
         handleFollow(index) {
             this.people[index].followed = !this.people[index].followed;
         },
@@ -358,6 +378,7 @@ export default {
         },
 
     },
+
 };
 </script>
 
