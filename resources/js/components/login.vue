@@ -49,9 +49,9 @@
           <input autocomplete="off" type="text" id="sign-in-email" class="SignInput" v-model="email" required :class="{ 'invalid-email': !isEmailValid.value }">
           <label for="sign-in-email">Email</label>
         </div>
-        <div v-if="!isEmailValid" class="warning-1">Please enter a valid email.</div>
+        <div v-if ="emailError" class="warning-1">{{ emailError }}</div>
       </div>
-      <button class="FormButton" @click="() => nextSignIn()">Next</button>
+      <button class="FormButton" @click="() => validateEmail()">Next</button>
       <p style="color:#434343; font-size:small">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
   </Popup>
@@ -75,7 +75,7 @@
         />
         <label for="sign-in-pass">Password</label>
       </div>
-      <p v-if ="error" class="warning-1">{{ error }}</p>
+      <div v-if ="errorLogin" class="warning-1">{{ errorLogin }}</div>
       <button type="button" class="FormButton" @click="loginUser($event)">Log in</button>
       <p style="color:#434343; font-size:small">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
@@ -88,6 +88,7 @@ import CreateAccount from './create_account.vue';
 import Popup from './Popup.vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 export default {
   name: 'Login',
   components: {
@@ -98,41 +99,62 @@ export default {
     return {
       emails: '',
       passwords: '',
-      error:null
+      errorLogin:null,
+      emailError: null,
+
     }
   },
   setup () {
     const router = useRouter();
     const store = useStore();
-    const error = ref(null);
+    const errorLogin = ref(null);
+    const emailError = ref(null);
     const password = ref('');
     const email = ref('');
     const isEmailValid = ref(true);
+    const popupTriggers = ref({
+      SignInTrigger: false,
+      SignIn2Trigger: false,
+    });
     
     if (store.state.user) {
       router.push('/home');
     }
-    const validateEmail = () => {
-      // Regular expression for basic email validation
+    const validateEmail = async () => {
+      email.value = email.value.toLowerCase();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       isEmailValid.value = emailRegex.test(email.value);
-    };
-		const popupTriggers = ref({
-			buttonTrigger: false,
-      SignInTrigger:false,
-		});
-    const nextSignIn = () => {
-      email.value = email.value.toLowerCase();
-      validateEmail();
+
       if (isEmailValid.value) {
-        popupTriggers.value.SignInTrigger = false;
-        popupTriggers.value.SignIn2Trigger = true;
+        try {
+          const response = await axios.post('/api/check-email', {
+            Email: email.value,
+          });
+
+          const data = response.data;
+
+          if (data.success) {
+            popupTriggers.value.SignInTrigger = false;
+            popupTriggers.value.SignIn2Trigger = true;
+            emailError.value = null;
+            
+          } else {
+            emailError.value = 'Email is not registered.';
+            setTimeout(() => { emailError.value = null; }, 3000);
+          }
+        } catch (error) {
+          emailError.value = null;
+          //setTimeout(() => { emailError.value = null; }, 10000);
+        }
+      } else{
+        emailError.value = 'Please enter a valid email.';
       }
-    }
+    };
 		const TogglePopup = (trigger) => {
 			popupTriggers.value[trigger] = !popupTriggers.value[trigger]
       if (!popupTriggers.value[trigger]) {
         email.value='';
+        password.value='';
         isEmailValid.value=true;
       }
 		}
@@ -141,24 +163,21 @@ export default {
       console.log('Login button clicked');
       if (password.value.length > 0) {
         try {
-          // Use the Vuex login action to authenticate the user
           const loginSuccess = await store.dispatch('login', {
             Email: email.value,
             Password: password.value,
           });
 
-          console.log('Login success:', loginSuccess); // Add this line
+          console.log('Login success:', loginSuccess);
 
           if (loginSuccess) {
-            // Redirect to '/home' if login is successful
             router.push('/home');
           } else {
-            // Handle login error (e.g., show error message)
-            error.value = 'Login failed. Invalid credentials.';
+            errorLogin.value = 'Invalid password.';
+            setTimeout(() => { errorLogin.value = null; }, 3000);
           }
         } catch (error) {
-          // Handle other login errors here
-          error.value = error.message;
+          console.error(error);
         }
       }
     };
@@ -166,13 +185,13 @@ export default {
       Popup,
 			popupTriggers,
 			TogglePopup,
-      nextSignIn,
       email,
       password,
       isEmailValid,
       validateEmail,
       loginUser,
-      error
+      errorLogin,
+      emailError,
 		}
 	},
   data: () => ({
@@ -184,29 +203,8 @@ export default {
         this.popupTriggers.SignInTrigger = false
         this.popupTriggers.SignIn2Trigger = false
         this.email=''
+        this.password=''
     },
-
-/*     loginUser(e) {
-      e.preventDefault()
-      if(this.password.length>0){
-        this.$axios.get('/sanctum/csrf-cookie').then(response => {
-          this.$axios.post('/api/login', {
-            Email: this.email,
-            Password: this.password,
-          })
-          .then(response => {
-            if (response.data.success){
-              this.$router.push('/home')
-            } else {
-              this.error = response.data.message
-            }
-          })
-          .catch(function (error){
-            console.error(error);
-          })
-        })
-      }
-    } */
   },
 
 };
