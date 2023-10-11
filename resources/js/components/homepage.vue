@@ -651,8 +651,12 @@ img.profile-img {
     color: #fff;
     border: none;
     padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: 20px;
     cursor: pointer;
+    position: relative;
+    left: 200px;
+    bottom: 50px;
+    height: 40px;
 }
 
 .followed-button {
@@ -676,15 +680,6 @@ img.profile-img {
     left: 60px;
     bottom: 15px;
     color: gray;
-}
-
-.who-to-follow__button {
-    position: relative;
-    left: 200px;
-    bottom: 50px;
-    height: 40px;
-    width: 75px;
-    border-radius: 20px;
 }
 
 </style>
