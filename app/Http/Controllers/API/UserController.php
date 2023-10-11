@@ -14,6 +14,23 @@ use Carbon\Carbon;
 
 class UserController extends Controller
 {
+
+    public function checkEmail(Request $request)
+    {
+        $user = User::where('Email', $request->Email)->first();
+        if ($user) {
+            $success = true;
+            $message = 'Email is registered.';
+        } else {
+            $success = false;
+            $message = 'Email not found.';
+        }
+        $response = [
+            'success' => $success,
+            'message' => $message,
+        ];
+        return response()->json($response);
+    }
     public function login(Request $request)
     {
         $credentials = [
@@ -23,15 +40,20 @@ class UserController extends Controller
 
         $user = User::where('Email', $request->Email)->first();
 
-        if ($user && Hash::check($request->Password, $user->Password)) {
-            Auth::login($user);
-            $success = true;
-            $message = 'User logged in successfully';
+        if ($user) {
+            // Check the password
+            if (Hash::check($request->Password, $user->Password)) {
+                Auth::login($user);
+                $success = true;
+                $message = 'User logged in successfully';
+            } else {
+                $success = false;
+                $message = 'Login failed. Invalid password.';
+            }
         } else {
             $success = false;
-            $message = 'Login failed. Invalid credentials.';
+            $message = "Email isn't registered.";
         }
-
         $response = [
             'success' => $success,
             'message' => $message,
@@ -49,7 +71,7 @@ class UserController extends Controller
                 $success = false;
                 $message = 'Username is already taken.';
             } else {
-                $existingEmail = User::where('Email', $request->Email)->first();
+                $existingEmail = User::where('Email', strtolower($request->Email))->first();
                 if ($existingEmail) {
                     $success = false;
                     $message = 'Email is already taken.';
@@ -59,7 +81,7 @@ class UserController extends Controller
 
                     $correctTag = '@' . ltrim($request->UserTag, '@');
                     $user->UserTag = $correctTag;
-                    $user->Email = $request->Email;
+                    $user->Email =strtolower($request->Email);
                     $user->Password = Hash::make($request->Password);
     
                     $dob = Carbon::parse($request->DOB)->format('Y-m-d');

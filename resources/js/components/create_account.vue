@@ -270,10 +270,10 @@ export default {
         this.isInputCommitted[fieldName] = false;
     },
     resetLabelPosition(fieldName) {
-      if (this[fieldName] && this[fieldName].length === 0) {
+      if (this[fieldName].length === 0) {
         this.isLabelActive[fieldName] = false;
       }
-      if (this[fieldName] && this[fieldName].length > 0) {
+      if (this[fieldName].length > 0) {
         this.isInputCommitted[fieldName] = true;
       }
     },

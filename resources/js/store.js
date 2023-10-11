@@ -28,7 +28,7 @@ const store = createStore({
           commit('setUser', response.data.user);
           return response.data; // Return the response data
         } else {
-          throw new Error('Login failed. Invalid credentials.');
+          throw new Error('Invalid password.');
         }
       } catch (error) {
         // Handle login error (e.g., show error message)
