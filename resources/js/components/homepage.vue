@@ -253,7 +253,7 @@
                 </div>
 
                 <div class="line"></div>
-            
+
                 <div class ="trends-for-you__information">
                     Trending in Germany
                 </div>
@@ -263,9 +263,9 @@
                 <div class="trends-for-you__tweets">
                     154k Tweets
                 </div>
-           
+
                 <div class="line"></div>
-            
+
                 <div class ="trends-for-you__information">
                     Trending in USA
                 </div>
@@ -277,7 +277,7 @@
                 </div>
 
                 <div class="line"></div>
-            
+
                 <div class ="trends-for-you__information">
                     Trending in USA
                 </div>
@@ -293,7 +293,7 @@
                 <div class="who-to-follow__header">
                     Who to follow
                 </div>
-                    
+
                     <div v-for="(people,index) in people" :key="index" class="who-to-follow__block">
                         <div class="who-to-follow__content">
                             <img :src ="people.img" alt="" class="who-img">
@@ -331,6 +331,8 @@ export default {
             { name: 'Joe Biden', username: '@JoeBiden', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
             { name: 'Gustavs', username: '@Gusis', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
             { name: 'Juris', username: '@Juritarded', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
+            { name: 'Lebron', username: '@KingJames', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
+            { name: 'Angus', username: '@Angasa', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
         ]
     }),
     methods: {
@@ -569,6 +571,13 @@ img.profile-img {
 }
 
 //trends for you //
+
+.trends-for-you__header {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+
 .container__foryou {
     display: flex;
     flex-direction: column;
@@ -600,7 +609,7 @@ img.profile-img {
 
 .follow {
     width: 280px;
-    height: 51%;
+    height: 330px;
     padding: 10px;
     background-color: #262626;
     position: fixed;
@@ -619,7 +628,7 @@ img.profile-img {
     background: transparent;
 }
 
-.trends-for-you__header,
+
 .who-to-follow__header {
     font-weight: bold;
     font-size: 1.2em;
@@ -651,21 +660,22 @@ img.profile-img {
 }
 
 .who-to-follow__button {
-    background-color: #007BFF;
+    background-color: #1e87f9;
     color: #fff;
     border: none;
     padding: 5px 10px;
     border-radius: 20px;
     cursor: pointer;
     position: relative;
-    left: 200px;
+    left: 190px;
     bottom: 50px;
     height: 40px;
+    width: 80px;
 }
 
 .followed-button {
     background-color: white;
-    color: #007BFF;
+    color:#1d9bf0
 }
 
 .line {
