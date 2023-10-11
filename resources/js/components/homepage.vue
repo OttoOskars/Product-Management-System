@@ -65,7 +65,7 @@
                         <button class="tweet-window-close" @click="closeTweetWindow">Close</button>
                         <button class="tweet-window-submit" @click="submitTweet">Submit</button>
                     </div>
-
+                    <button @click="logoutUser">Logout</button>
                 <a href="#" class="profile-btn">
                 <div class="profile-info">
                     <img src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png" alt="" class="profile-img" width="35" height="35">
@@ -332,7 +332,6 @@ export default {
         ...mapState(['user']),
     },
     data: () => ({
-        showCreateAccount: false,
         showTweetWindow: false,
         followed: false,
         people: [

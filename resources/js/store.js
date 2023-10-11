@@ -70,7 +70,7 @@ const store = createStore({
           localStorage.setItem(TOKEN_KEY, response.data.user.token);
           return response.data;
         } else {
-          throw new Error('Invalid password.');
+          throw new Error('Invalid password...');
         }
       } catch (error) {
         console.error(error);

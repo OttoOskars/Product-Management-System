@@ -57,7 +57,6 @@ class UserController extends Controller
             'success' => $success,
             'message' => $message,
             'user' => $user,
-            'token' => $token
         ];
         return response()->json($response);
     }
@@ -102,7 +101,6 @@ class UserController extends Controller
             'success' => $success,
             'message' => $message,
             'user' => $user,
-            'token' => $token
         ];
         return response()->json($response);
     }
