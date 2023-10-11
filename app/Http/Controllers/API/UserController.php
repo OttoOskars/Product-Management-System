@@ -68,11 +68,13 @@ class UserController extends Controller
             if ($existingUserTag) {
                 $success = false;
                 $message = 'Username is already taken.';
+                $user= null;
             } else {
                 $existingEmail = User::where('Email', strtolower($request->Email))->first();
                 if ($existingEmail) {
                     $success = false;
                     $message = 'Email is already taken.';
+                    $user= null;
                 } else {
                     $user = new User();
                     $user->Name = $request->Name;
@@ -100,6 +102,7 @@ class UserController extends Controller
         $response = [
             'success' => $success,
             'message' => $message,
+            'user' => $user
         ];
         return response()->json($response);
     }
