@@ -331,8 +331,6 @@ export default {
             { name: 'Joe Biden', username: '@JoeBiden', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
             { name: 'Gustavs', username: '@Gusis', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
             { name: 'Juris', username: '@Juritarded', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
-            { name: 'Lebron', username: '@KingJames', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
-            { name: 'Angus', username: '@Angasa', img: "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png", followed: false },
         ]
     }),
     methods: {
@@ -652,10 +650,22 @@ img.profile-img {
     top: 30px;
 }
 
+.who-to-follow__button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    position: relative;
+    left: 200px;
+    bottom: 50px;
+    height: 40px;
+}
 
 .followed-button {
     background-color: white;
-    color:#1d9bf0
+    color: #007BFF;
 }
 
 .line {
@@ -674,24 +684,6 @@ img.profile-img {
     left: 60px;
     bottom: 15px;
     color: gray;
-}
-
-.who-to-follow__button {
-    position: relative;
-    left: 200px;
-    bottom: 50px;
-    height: 40px;
-    width: 75px;
-    border-radius: 15px;
-    background-color: #007BFF;
-    color:white;
-    border: none;
-}
-
-.follow {
-    height: 340px;
-    padding-top:5px;
-    margin-top:320px;
 }
 
 </style>
