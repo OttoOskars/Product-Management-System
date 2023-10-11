@@ -571,6 +571,13 @@ img.profile-img {
 }
 
 //trends for you //
+
+.trends-for-you__header {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+
 .container__foryou {
     display: flex;
     flex-direction: column;
