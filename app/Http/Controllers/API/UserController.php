@@ -24,6 +24,7 @@ class UserController extends Controller
         $user = User::where('Email', $request->Email)->first();
 
         if ($user && Hash::check($request->Password, $user->Password)) {
+            Auth::login($user);
             $success = true;
             $message = 'User logged in successfully';
         } else {
@@ -33,34 +34,33 @@ class UserController extends Controller
 
         $response = [
             'success' => $success,
-            'message' => $message
+            'message' => $message,
+            'user' => $user
         ];
         return response()->json($response);
     }
 
+
     public function register(Request $request)
     {
         try {
-            // Check if UserTag is already taken
             $existingUserTag = User::where('UserTag', '@' . $request->UserTag)->first();
             if ($existingUserTag) {
                 $success = false;
                 $message = 'Username is already taken.';
             } else {
-                // Check if Email is already taken
                 $existingEmail = User::where('Email', $request->Email)->first();
                 if ($existingEmail) {
                     $success = false;
                     $message = 'Email is already taken.';
                 } else {
-                    // Create a new user
                     $user = new User();
                     $user->Name = $request->Name;
 
                     $correctTag = '@' . ltrim($request->UserTag, '@');
                     $user->UserTag = $correctTag;
                     $user->Email = $request->Email;
-                    $user->Password = $request->Password;
+                    $user->Password = Hash::make($request->Password);
     
                     $dob = Carbon::parse($request->DOB)->format('Y-m-d');
                     $user->DOB = $dob;
@@ -84,12 +84,12 @@ class UserController extends Controller
     public function logout(Request $request)
     {
         try {
-            Session::flush();
+            Auth::logout();
             $success = true;
             $message = 'User logged out successfully';
-        } catch (\Illuminate\Database\QueryException $ex) {
+        } catch (\Exception $ex) {
             $success = false;
-            $message = $ex->getMessage();
+            $message = 'An error occurred while logging out.';
         }
         $response = [
             'success' => $success,

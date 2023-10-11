@@ -76,7 +76,7 @@
         <label for="sign-in-pass">Password</label>
       </div>
       <p v-if ="error" class="warning-1">{{ error }}</p>
-      <button type="submit" class="FormButton" @click="loginUser">Log in</button>
+      <button type="button" class="FormButton" @click="loginUser($event)">Log in</button>
       <p style="color:#434343; font-size:small">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
   </Popup>
@@ -86,6 +86,8 @@
 import { ref } from 'vue';
 import CreateAccount from './create_account.vue';
 import Popup from './Popup.vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 export default {
   name: 'Login',
   components: {
@@ -100,10 +102,16 @@ export default {
     }
   },
   setup () {
+    const router = useRouter();
+    const store = useStore();
+    const error = ref(null);
     const password = ref('');
     const email = ref('');
     const isEmailValid = ref(true);
-
+    
+    if (store.state.user) {
+      router.push('/home');
+    }
     const validateEmail = () => {
       // Regular expression for basic email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -128,6 +136,32 @@ export default {
         isEmailValid.value=true;
       }
 		}
+    const loginUser = async (event) => {
+      event.preventDefault();
+      console.log('Login button clicked');
+      if (password.value.length > 0) {
+        try {
+          // Use the Vuex login action to authenticate the user
+          const loginSuccess = await store.dispatch('login', {
+            Email: email.value,
+            Password: password.value,
+          });
+
+          console.log('Login success:', loginSuccess); // Add this line
+
+          if (loginSuccess) {
+            // Redirect to '/home' if login is successful
+            router.push('/home');
+          } else {
+            // Handle login error (e.g., show error message)
+            error.value = 'Login failed. Invalid credentials.';
+          }
+        } catch (error) {
+          // Handle other login errors here
+          error.value = error.message;
+        }
+      }
+    };
 		return {
       Popup,
 			popupTriggers,
@@ -137,6 +171,8 @@ export default {
       password,
       isEmailValid,
       validateEmail,
+      loginUser,
+      error
 		}
 	},
   data: () => ({
@@ -150,7 +186,7 @@ export default {
         this.email=''
     },
 
-    loginUser(e) {
+/*     loginUser(e) {
       e.preventDefault()
       if(this.password.length>0){
         this.$axios.get('/sanctum/csrf-cookie').then(response => {
@@ -170,14 +206,8 @@ export default {
           })
         })
       }
-    }
+    } */
   },
-  beforeRouteEnter(to, from, next) {
-    if (window.Laravel.isLoggedin) {
-      return next('home');
-    }
-    next();
-  }
 
 };
 </script>

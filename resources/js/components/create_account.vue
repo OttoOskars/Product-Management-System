@@ -218,7 +218,8 @@ export default {
     },
   },
   methods: {
-    validateForm() {
+    validateForm(e) {
+      e.preventDefault()
       this.nameHasSpaces = false;
       this.usernameHasSpaces = false;
       this.invalidEmail = false;
@@ -255,6 +256,10 @@ export default {
         setTimeout(() => { this.passwordsDoNotMatch = false; }, 3000);
         return;
       }
+      if (!this.nameHasSpaces && !this.usernameHasSpaces && !this.invalidEmail && !this.passwordsDoNotMatch) {
+        // If there are no validation errors, submit the form
+        this.RegisterUser();
+      }
     },
     updateLabel(fieldName) {
         this.isLabelActive[fieldName] = this[fieldName].length > 0;
@@ -278,11 +283,10 @@ export default {
           this.resetLabelPosition();
         }
     },
-    RegisterUser(e) {
+    RegisterUser() {
       this.emailError = '';
       this.usernameError = '';
 
-      e.preventDefault()
       if(this.password.length>0){
         this.$axios.get('/sanctum/csrf-cookie').then(response => {
           this.$axios.post('/api/register', {
@@ -294,7 +298,7 @@ export default {
           })
           .then(response => {
             if (response.data.success){
-              this.$router.push('/home')
+              this.$router.push('/')
             } else {
               if (response.data.message.includes('Email')) {
                 this.emailError = response.data.message;

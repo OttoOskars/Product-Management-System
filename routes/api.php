@@ -13,10 +13,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-use App\Http\Controllers\Users_Controller;
 use App\Http\Controllers\API\UserController;
-
-Route::post('/create', [Users_Controller::class, 'create']);
 
 //Route::middleware('auth:sanctum')->get('/users', function (Request $request) {
 //    return $request->user();
