@@ -90,6 +90,7 @@ class UserController extends Controller
     
                     $success = true;
                     $message = 'User created successfully';
+                    Auth::loginUsingId($user->id);
                 }
             }
         } catch (\Illuminate\Database\QueryException $ex) {
@@ -99,7 +100,8 @@ class UserController extends Controller
     
         $response = [
             'success' => $success,
-            'message' => $message
+            'message' => $message,
+            'user' => $user
         ];
         return response()->json($response);
     }

@@ -177,8 +177,7 @@ export default {
             setTimeout(() => { errorLogin.value = null; }, 3000);
           }
         } catch (error) {
-          errorLogin.value = null;
-          //setTimeout(() => { errorLogin.value = null; }, 3000);
+          console.error(error);
         }
       }
     };

@@ -1,4 +1,4 @@
-// store/index.js
+//store.js
 import { createStore } from 'vuex';
 import axios from 'axios';
 
@@ -6,6 +6,7 @@ import axios from 'axios';
 const store = createStore({
   state: {
     user: null, // This will store user information
+    isLoggedIn: false,
   },
   mutations: {
     setUser(state, user) {
@@ -14,6 +15,29 @@ const store = createStore({
     },
   },
   actions: {
+    async register({ commit }, { Name, UserTag, Email, Password, DOB }) {
+      console.log('Register action called');
+      try {
+        // Make an API request to your Laravel backend to register the user
+        const response = await axios.post('/api/register', {
+          Name,
+          UserTag,
+          Email,
+          Password,
+          DOB,
+        });
+        if (response.data.success) {
+          // Commit the user mutation to set the user in the store
+          commit('setUser', response.data.user);
+          return response.data; // Return the response data
+        } else {
+          throw new Error('Something went wrong...');
+        }
+      } catch {
+        // Handle registration error (e.g., show error message)
+        throw error;
+      }
+    },
     async login({ commit }, { Email, Password }) {
       console.log('Login action called');
       try {
