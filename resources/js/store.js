@@ -50,9 +50,9 @@ const store = createStore({
           localStorage.setItem(TOKEN_KEY, response.data.user.token);
           return response.data;
         } else {
-          throw new Error('Something went wrong...');
+          return response.data;
         }
-      } catch {
+      } catch(error) {
         console.error(error);
         throw error;
       }

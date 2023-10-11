@@ -100,7 +100,6 @@ class UserController extends Controller
         $response = [
             'success' => $success,
             'message' => $message,
-            'user' => $user,
         ];
         return response()->json($response);
     }
