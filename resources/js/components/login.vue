@@ -64,18 +64,20 @@
         <input type="text" class="SignInput" id="sign-in-email-disabled" :value="email" required disabled>
         <label for="sign-in-email-disabled">Email</label>
       </div>
-      <div class="input-wrap">
-        <input
-          autocomplete="off"
-          type="password"
-          id="sign-in-pass"
-          v-model="password"
-          class="SignInput"
-          required
-        />
-        <label for="sign-in-pass">Password</label>
+      <div>
+        <div class="input-wrap">
+          <input
+            autocomplete="off"
+            type="password"
+            id="sign-in-pass"
+            v-model="password"
+            class="SignInput"
+            required
+          />
+          <label for="sign-in-pass">Password</label>
+        </div>
+        <div v-if ="errorLogin" class="warning-1">{{ errorLogin }}</div>
       </div>
-      <div v-if ="errorLogin" class="warning-1">{{ errorLogin }}</div>
       <button type="button" class="FormButton" @click="loginUser($event)">Log in</button>
       <p style="color:#434343; font-size:small">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
@@ -117,9 +119,10 @@ export default {
       SignIn2Trigger: false,
     });
     
-    if (store.state.user) {
+    if (store.state.isLoggedIn) {
       router.push('/home');
     }
+
     const validateEmail = async () => {
       email.value = email.value.toLowerCase();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -148,6 +151,7 @@ export default {
         }
       } else{
         emailError.value = 'Please enter a valid email.';
+        setTimeout(() => { emailError.value = null; }, 3000);
       }
     };
 		const TogglePopup = (trigger) => {
@@ -172,11 +176,10 @@ export default {
 
           if (loginSuccess) {
             router.push('/home');
-          } else {
-            errorLogin.value = 'Invalid password.';
-            setTimeout(() => { errorLogin.value = null; }, 3000);
           }
         } catch (error) {
+          errorLogin.value = 'Invalid password.';
+          setTimeout(() => { errorLogin.value = null; }, 3000);
           console.error(error);
         }
       }

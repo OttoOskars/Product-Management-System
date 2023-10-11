@@ -1,33 +1,29 @@
 <template>
-    <!-- <div>
-        <router-link to="/">
-            <div>
-                Go login
-            </div>
-        </router-link>
-        <router-link to="/home">
-            <div>
-                Go Homepage
-            </div>
-        </router-link>
-        <button @click="goToExample">Go Example</button>
-    </div> -->
     <router-view />
 </template>
 
 <script>
+import router from '../router';
+import store from '../store';
+
 export default {
   name: 'App',
   data: () => ({
     showCreateAccount: false,
     isLoggedIn: false
   }),
+  setup() {
+    if (store.state.isLoggedIn){
+        this.isLoggedIn=true
+        router.push('/home')
+    }
+  },
   methods: {
     goToExample(){
         this.$router.push('/test');
     },
     created() {
-        if (window.Laravel.isLoggedIn){
+        if (store.state.isLoggedIn){
             this.isLoggedIn=true
         }
     },
