@@ -61,7 +61,7 @@
                     <button class="tweet-btn" @click="openTweetWindow">Tweet</button>
 
                     <div v-if="showTweetWindow" class="tweet-window">
-                        <textarea class="tweet-window" v-model="tweetText"></textarea>
+                        <textarea class="tweet-windows" v-model="tweetText"></textarea>
                         <button class="tweet-window-close" @click="closeTweetWindow">Close</button>
                         <button class="tweet-window-submit" @click="submitTweet">Submit</button>
                     </div>
@@ -470,13 +470,22 @@ body {
 .tweet-window {
 background-color:#262626 ;
 width: 270px;
-height: 140px;
+height: 130px;
 margin-left:0px;
-margin-top: 10px;
 border: none;
 color:white;
+resize: none;
+margin-top:20px;
+}
 
-
+.tweet-windows {
+background-color:#262626 ;
+width: 100%;
+height: 100%;
+margin-left:0px;
+border: none;
+color:white;
+resize: none;
 
 }
 .tweet-window-close{

@@ -1,5 +1,5 @@
 <template>
-<!--     <div>
+    <!-- <div>
         <router-link to="/">
             <div>
                 Go login
@@ -24,7 +24,7 @@ export default {
   }),
   methods: {
     goToExample(){
-        this.$router.push('/example');
+        this.$router.push('/test');
     },
     created() {
         if (window.Laravel.isLoggedIn){
