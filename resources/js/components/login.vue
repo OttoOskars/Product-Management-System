@@ -37,6 +37,9 @@
       <div class="container">
         <button class="sign-in" @click="() => TogglePopup('SignInTrigger')">Sign in</button>
       </div>
+      <div class="container">
+        <button class="sign-in" @click="logoutUser">Sign out</button>
+      </div>
     </div>
   </div>
 
@@ -117,9 +120,10 @@ export default {
       SignIn2Trigger: false,
     });
     
-    if (store.state.user) {
+    if (store.state.isLoggedIn) {
       router.push('/home');
     }
+    
     const validateEmail = async () => {
       email.value = email.value.toLowerCase();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -181,6 +185,14 @@ export default {
         }
       }
     };
+    const logoutUser = async () => {
+      try {
+        await store.dispatch('logout'); // Call the logout action from your store
+        router.push('/'); // Redirect to the login page or wherever you want after logging out
+      } catch (error) {
+        console.error(error);
+      }
+    };
 		return {
       Popup,
 			popupTriggers,
@@ -192,6 +204,7 @@ export default {
       loginUser,
       errorLogin,
       emailError,
+      logoutUser,
 		}
 	},
   data: () => ({

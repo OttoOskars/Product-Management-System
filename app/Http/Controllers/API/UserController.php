@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers\API;
-
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -9,12 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
-
 use Carbon\Carbon;
 
 class UserController extends Controller
 {
-
     public function checkEmail(Request $request)
     {
         $user = User::where('Email', $request->Email)->first();
@@ -31,6 +27,7 @@ class UserController extends Controller
         ];
         return response()->json($response);
     }
+
     public function login(Request $request)
     {
         $credentials = [
@@ -43,7 +40,9 @@ class UserController extends Controller
         if ($user) {
             // Check the password
             if (Hash::check($request->Password, $user->Password)) {
-                Auth::login($user);
+                $token = $user->createToken('authToken')->plainTextToken; // Create and get the user token
+                $user->token = $token;
+
                 $success = true;
                 $message = 'User logged in successfully';
             } else {
@@ -57,11 +56,11 @@ class UserController extends Controller
         $response = [
             'success' => $success,
             'message' => $message,
-            'user' => $user
+            'user' => $user,
+            'token' => $token
         ];
         return response()->json($response);
     }
-
 
     public function register(Request $request)
     {
@@ -81,34 +80,37 @@ class UserController extends Controller
 
                     $correctTag = '@' . ltrim($request->UserTag, '@');
                     $user->UserTag = $correctTag;
-                    $user->Email =strtolower($request->Email);
+                    $user->Email = strtolower($request->Email);
                     $user->Password = Hash::make($request->Password);
-    
+
                     $dob = Carbon::parse($request->DOB)->format('Y-m-d');
                     $user->DOB = $dob;
                     $user->save();
-    
+
                     $success = true;
                     $message = 'User created successfully';
-                    Auth::loginUsingId($user->id);
+                    $token = $user->createToken('authToken')->plainTextToken; // Create and get the user token
+                    $user->token = $token;
                 }
             }
         } catch (\Illuminate\Database\QueryException $ex) {
             $success = false;
             $message = 'An error occurred while creating the user.';
         }
-    
+
         $response = [
             'success' => $success,
             'message' => $message,
-            'user' => $user
+            'user' => $user,
+            'token' => $token
         ];
         return response()->json($response);
     }
+
     public function logout(Request $request)
     {
         try {
-            Auth::logout();
+            $request->user()->tokens()->delete(); // Revoke user tokens
             $success = true;
             $message = 'User logged out successfully';
         } catch (\Exception $ex) {
@@ -122,4 +124,8 @@ class UserController extends Controller
         return response()->json($response);
     }
 
+    public function getUser()
+    {
+        return auth()->user();
+    }
 }

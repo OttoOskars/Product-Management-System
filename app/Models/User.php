@@ -1,16 +1,16 @@
 <?php
+namespace app\Models;
 
-namespace App\Models;
-
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, Notifiable;
+
     protected $table = 'users';
     protected $primaryKey = 'UserID';
 
@@ -22,12 +22,15 @@ class User extends Authenticatable
         'DOB',
     ];
 
-
     protected $hidden = [
         'Password',
     ];
 
-    protected $casts = [
-        'Password' => 'hashed',
-    ];
+    /**
+     * Get the personal access tokens for the user.
+     */
+    public function tokens(): MorphMany
+    {
+        return $this->morphMany(PersonalAccessToken::class, 'tokenable');
+    }
 }
