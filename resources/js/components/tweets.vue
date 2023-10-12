@@ -36,7 +36,7 @@
                     <div class="top">
                         <div class="userinfo">
                             <p class="username">username</p>
-                            <p class="usertag">-  @usertag</p>
+                            <p class="usertag">@usertag</p>
                         </div>
                         <div class="content-text">
                             <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus animi omnis quisquam quam voluptates saepe. Exercitationem?</p>
@@ -56,7 +56,7 @@
                     <div class="top">
                         <div class="userinfo">
                             <p class="username">username</p>
-                            <p class="usertag">-  @usertag</p>
+                            <p class="usertag">@usertag</p>
                         </div>
                         <div class="content-text">
                             <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus animi omnis quisquam quam voluptates saepe. Exercitationem?</p>
@@ -94,7 +94,7 @@ export default{
     width:5/12*100%;
     z-index:99;
     backdrop-filter: blur(5px);
-    border-bottom:solid 1px #ffffff;
+    border-bottom:solid 1px #2F3336;
 
     .title{
         width:100%;
@@ -160,7 +160,7 @@ export default{
     box-sizing: border-box;
     gap:10px;
     padding:10px;
-    border-bottom: 1px solid #ffffff;
+    border-bottom: 1px solid #2F3336;
 
     .right-side{
         width:90%;
@@ -189,6 +189,10 @@ export default{
                     color:#ffffff;
                     resize: none;
                     transition: height 0.2s;
+                    border-left:none;
+                    border-right:none;
+                    border-top:none;
+                    border-color:#2F3336;
                 }
             }
         }
@@ -224,7 +228,7 @@ export default{
     gap:10px;
     box-sizing: border-box;
     padding:10px;
-    border-bottom: 1px solid #ffffff;
+    border-bottom: 1px solid #2F3336;
     .right-side{
         width:90%;
         height:100%;
@@ -246,6 +250,18 @@ export default{
                 align-items: center;
                 color:white;
                 padding-top:2px;
+                .username{
+                    margin:0;
+                    font-weight: bold;
+                    font-size: 14px;
+                    color:white;
+                }
+                .usertag{
+                    padding-left:5px;
+                    margin:0;
+                    font-size: 14px;
+                    color:#6A6F74;
+                }
             }
 
             .content-text{
@@ -268,7 +284,7 @@ export default{
                 border-radius:25px;
                 width:300px;
                 height:300px;
-                border:solid 1px #ffffff;
+                border:solid 1px #2F3336;
                 background-color: white;
             }
         }

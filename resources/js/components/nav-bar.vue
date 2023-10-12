@@ -45,7 +45,7 @@ export default{
         box-sizing: border-box;
         padding-left:100px;
 
-        border-right:solid 1px #ffffff;
+        border-right:solid 1px #2F3336;
         background:none;
 
         color:white;
@@ -78,14 +78,13 @@ export default{
             justify-content: space-between;
 
             border-radius: 50px;
-            border:none;
             background-color:black;
+            border:none;
 
             color:white;
-
-            button:hover{
-                background-color: #6e767d;
-            }
+        }
+        button:hover{
+            background-color: #6e767d;
         }
     }
 
@@ -133,7 +132,7 @@ export default{
                 margin:0;
             }
             .usertag{
-                color: #6e767d;
+                color: #6A6F74;
                 font-size: 14px;
                 margin:0;
             }

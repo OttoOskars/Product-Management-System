@@ -83,7 +83,7 @@ export default{
     box-sizing: border-box;
     padding:10px 140px 10px 30px;
 
-    border-left:solid 1px #ffffff;
+    border-left:solid 1px #2F3336;
     background:none;
 
     color:white;
@@ -91,10 +91,21 @@ export default{
 .search-input-container {
     width:100%;
     height:60px;
+    position:fixed;
+    top:0;
+    box-sizing: border-box;
+    z-index:99;
+    padding:5px 0px;
+    background-color: black;
+    display:flex;
+    align-items:center;
 
     .search-input {
-        width:100%;
-        height:100%;
+        width:200px;
+        height:90%;
+        border-radius: 50px;
+        border:none;
+        background-color: #16181C;
     }
 
     .search-icon {
@@ -117,7 +128,7 @@ export default{
 .who-to-follow{
     width:100%;
     height:auto;
-    background-color: rgb(26, 26, 26);
+    background-color: #16181C;
     display:flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -174,7 +185,7 @@ export default{
                         margin:0;
                     }
                     .usertag{
-                        color: #6e767d;
+                        color: #71767B;
                         font-size: 14px;
                         margin:0;
                     }
@@ -218,7 +229,7 @@ export default{
 .trends{
     width:100%;
     height:400px;
-    background-color: rgb(26, 26, 26);
+    background-color: #16181C;
     display:flex;
     flex-direction: column;
     box-sizing: border-box;
