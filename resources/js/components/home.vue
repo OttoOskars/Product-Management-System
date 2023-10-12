@@ -1,8 +1,14 @@
 <template>
     <div class="home">
-        <NavBar></NavBar>
-        <Tweets></Tweets>
-        <Search></Search>
+        <div class="navbar">
+            <NavBar></NavBar>
+        </div>
+        <div class="tweets">
+            <Tweets></Tweets>
+        </div>
+        <div class="search">
+            <Search></Search>
+        </div>
     </div>
 </template>
 <script>
@@ -27,10 +33,26 @@ export default {
 </script>
 <style lang="scss" scoped>
 .home{
-    background-color: bisque;
+    font-family: Arial, sans-serif;
+    margin: 0 auto;
     display:flex;
     flex-direction: row;
-    width:100%;
-    min-height: 100vh;
+
 }
+.navbar{
+    min-height:100%;
+    width: 3/12*100%;
+
+}
+.search{
+    min-height: 100%;
+    width:4/12*100%;
+
+}
+.tweets{
+    min-height:100%;
+    width:5/12*100%;
+
+}
+
 </style>
