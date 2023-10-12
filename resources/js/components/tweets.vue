@@ -68,6 +68,66 @@
                     <div class="bottom"><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon></div>
                 </div>
             </div>
+            <div class="post">
+                <div class="left-side">
+                    <img>
+                </div>
+                <div class="right-side">
+                    <div class="top">
+                        <div class="userinfo">
+                            <p class="username">username</p>
+                            <p class="usertag">@usertag</p>
+                        </div>
+                        <div class="content-text">
+                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus animi omnis quisquam quam voluptates saepe. Exercitationem?</p>
+                        </div>
+                    </div>
+                    <div class="content-img">
+                        <img>
+                    </div>
+                    <div class="bottom"><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon></div>
+                </div>
+            </div>
+            <div class="post">
+                <div class="left-side">
+                    <img>
+                </div>
+                <div class="right-side">
+                    <div class="top">
+                        <div class="userinfo">
+                            <p class="username">username</p>
+                            <p class="usertag">@usertag</p>
+                        </div>
+                        <div class="content-text">
+                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus animi omnis quisquam quam voluptates saepe. Exercitationem?</p>
+                        </div>
+                    </div>
+                    <div class="content-img">
+                        <img>
+                    </div>
+                    <div class="bottom"><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon></div>
+                </div>
+            </div>
+            <div class="post">
+                <div class="left-side">
+                    <img>
+                </div>
+                <div class="right-side">
+                    <div class="top">
+                        <div class="userinfo">
+                            <p class="username">username</p>
+                            <p class="usertag">@usertag</p>
+                        </div>
+                        <div class="content-text">
+                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus animi omnis quisquam quam voluptates saepe. Exercitationem?</p>
+                        </div>
+                    </div>
+                    <div class="content-img">
+                        <img>
+                    </div>
+                    <div class="bottom"><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon></div>
+                </div>
+            </div>
             <!-- More posts -->
         </div>
     </div>

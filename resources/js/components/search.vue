@@ -1,7 +1,15 @@
 <template>
     <div class="search-container">
         <div class="search-input-container">
-            <input type="text" class="search-input" maxlength="30" placeholder="Search">
+            <input 
+                type="text"
+                class="search-input" 
+                maxlength="30" 
+                placeholder="Search"
+                :class="{ 'focused': isInputFocused }"
+                @focus="inputFocus"
+                @blur="inputBlur"
+                >
             <ion-icon name="search-outline" class="search-icon"></ion-icon>
         </div>
         <div class="who-to-follow">
@@ -70,48 +78,79 @@
 <script>
 export default{
     name: 'Search',
+    data() {
+        return {
+            isInputFocused: false,
+        };
+    },
+    methods: {
+        inputFocus() {
+            this.isInputFocused = true;
+        },
+        inputBlur() {
+            this.isInputFocused = false;
+        },
+    },
 }
 </script>
 <style lang="scss" scoped>
 .search-container{
-    width: 100%;
+    width:100%;
     height: 100%;
     display:flex;
     flex-direction: column;
     gap:20px;
 
     box-sizing: border-box;
-    padding:10px 140px 10px 30px;
-
+    padding-left:30px;
+    padding-top:10px;
     border-left:solid 1px #2F3336;
     background:none;
 
     color:white;
 }
 .search-input-container {
-    width:100%;
-    height:60px;
-    position:fixed;
-    top:0;
+    width: 400px;
+    height: 60px;
+    position: fixed;
+    top: 0;
     box-sizing: border-box;
-    z-index:99;
-    padding:5px 0px;
+    z-index: 99;
+    padding: 5px 0 2px 0;
     background-color: black;
-    display:flex;
-    align-items:center;
-
+    display: flex;
+    align-items: center;
     .search-input {
-        width:200px;
-        height:90%;
+        width: 100%;
+        height: 90%;
         border-radius: 50px;
-        border:none;
-        background-color: #16181C;
+        padding-left:60px;
+        border:  1px solid transparent;
+        background-color: #202327;
+        position: relative;
+        color:white;
+        font-size: medium;
+    }
+
+    .search-input:focus + .search-icon {
+        background-color: black;
+        color: #1D9BF0;
+    }
+
+    .search-input::-webkit-input-placeholder {
+        color: #71767B;
     }
 
     .search-icon {
-        
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translate(0, -50%);
+        color: #71767B;
+        font-size: 24px;
     }
 }
+
 
 .title{
     width:100%;
@@ -126,7 +165,7 @@ export default{
     font-size: x-large;
 }
 .who-to-follow{
-    width:100%;
+    width:400px;
     height:auto;
     background-color: #16181C;
     display:flex;
@@ -227,8 +266,10 @@ export default{
     }
 }
 .trends{
-    width:100%;
-    height:400px;
+    position:sticky;
+    top:80px;
+    width:400px;
+    height:500px;
     background-color: #16181C;
     display:flex;
     flex-direction: column;
