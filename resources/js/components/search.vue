@@ -3,47 +3,22 @@
         <div class="search-input-container">
             <input 
                 type="text"
+                id="search-input"
                 class="search-input" 
                 maxlength="30" 
                 placeholder="Search"
                 :class="{ 'focused': isInputFocused }"
                 @focus="inputFocus"
                 @blur="inputBlur"
+                v-model="search"
                 >
             <ion-icon name="search-outline" class="search-icon"></ion-icon>
+            <button class="close-icon-btn" @click="clearSearch" :class="{ 'focused': isInputFocused }"><ion-icon name="close-circle-sharp" class="close-icon"></ion-icon></button>
         </div>
         <div class="who-to-follow">
             <div class="title">Who to follow</div>
             <div class="people-container">
-                <div class="person">
-                    <div class="user">
-                            <div class="user-img">
-                                <img> 
-                            </div>
-                            <div class="user-info">
-                                <p class="username">username</p>
-                                <p class="usertag">@usertag</p>
-                            </div>
-                        </div>
-                    <div class="button-container">
-                        <button class="follow-button">Follow</button>
-                    </div>
-                </div>
-                <div class="person">
-                    <div class="user">
-                            <div class="user-img">
-                                <img> 
-                            </div>
-                            <div class="user-info">
-                                <p class="username">username</p>
-                                <p class="usertag">@usertag</p>
-                            </div>
-                        </div>
-                    <div class="button-container">
-                        <button class="follow-button">Follow</button>
-                    </div>
-                </div>
-                <div class="person">
+                <div class="person" v-for="i in people" :key="i">
                     <div class="user">
                             <div class="user-img">
                                 <img> 
@@ -66,22 +41,38 @@
         <div class="trends">
             <div class="title">Trending Latvia</div>
             <div class="trend-container">
-                <div class="trend">
+                <div class="trend"  v-for="i in trends" :key="i">
                     <p class="trend-rank">1. News. Trending</p>
                     <p class="trend-name">Skolā bumba</p>
                     <p class="trend-posts">1232 posts</p>
                 </div>
             </div>
+            <div class="show-more-container">
+                <button class="show-more-btn">Show more</button>
+            </div>
         </div>
     </div>
 </template>
 <script>
+import { ref } from 'vue';
 export default{
     name: 'Search',
     data() {
         return {
             isInputFocused: false,
+            people: 3,
+            trends: 5,
         };
+    },
+    setup () {
+        const search = ref('');
+        const clearSearch = () => {
+            search.value = '';
+        }
+        return {
+            search,
+            clearSearch
+        }
     },
     methods: {
         inputFocus() {
@@ -91,6 +82,7 @@ export default{
             this.isInputFocused = false;
         },
     },
+
 }
 </script>
 <style lang="scss" scoped>
@@ -130,12 +122,19 @@ export default{
         position: relative;
         color:white;
         font-size: medium;
+        &.focused {
+            outline:none;
+            background-color: black; /* Change input background when focused */
+            border-color: #1D9BF0; /* Change input border when focused */
+            box-shadow: 0 0 5px #1D9BF0;
+        }
     }
 
-    .search-input:focus + .search-icon {
-        background-color: black;
+    .search-input:focus + .search-icon{
         color: #1D9BF0;
     }
+
+
 
     .search-input::-webkit-input-placeholder {
         color: #71767B;
@@ -149,12 +148,29 @@ export default{
         color: #71767B;
         font-size: 24px;
     }
+    .close-icon-btn{
+        position: absolute;
+        background:none;
+        border:none;
+        top: 50%;
+        right:7px;
+        transform: translate(0, -45%);
+        display:none;
+        cursor: pointer;
+        &.focused {
+            display:block;
+        }
+        .close-icon{
+        color: #1D9BF0;
+        font-size:30px;
+        }
+    }
 }
 
 
 .title{
     width:100%;
-    height:40px;
+    height:38px;
     display:flex;
     align-items: center;
     justify-content: flex-start;
@@ -171,24 +187,26 @@ export default{
     display:flex;
     flex-direction: column;
     box-sizing: border-box;
-    margin-top:60px;
+    margin-top:70px;
     border-radius: 25px;
     .people-container{
         box-sizing: border-box;
-        padding:15px;
+        padding-top:20px;
         width:100%;
         height:100%;
         display:flex;
         flex-direction: column;
         .person{
-            padding-top:10px;
-            padding-bottom:10px;
+            box-sizing: border-box;
+            padding:10px 20px;
             width:100%;
             height:auto;
             display:flex;
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
+            transition:all 0.3s;
+            cursor:pointer;
             .user{
                 width:auto;
                 height:100%;
@@ -237,19 +255,27 @@ export default{
                 align-items: center;
                 justify-content: center;
                 .follow-button{
-                    width:80px;
-                    height:35px;
+                    padding:10px 20px; 
                     display:flex;
                     align-items: center;
                     justify-content: center;
                     text-align: center;
                     border-radius: 50px;
                     border:none;
-                    background-color: rgb(255, 255, 255);
+                    background-color: white;
                     color:black;
+                    font-size:15px;
                     font-weight: bold;
+                    transition:all 0.3s;
+                    cursor:pointer;
+                }
+                .follow-button:hover{
+                    background-color: #D7DBDC;
                 }
             }
+        }
+        .person:hover{
+            background-color: #1D1F23;
         }
     }
 }
@@ -259,38 +285,51 @@ export default{
     height:auto;
     .show-more-btn{
         width:100%;
-        height:50px;
+        height:60px;
         border-bottom-left-radius: 25px;
         border-bottom-right-radius: 25px;
         border:none;
+        display:flex;
+        align-items: center;
+        padding-left:25px;
+        background: none;
+        font-size:18px;
+        color:#1D9BF0;
+        cursor: pointer;
+        transition:all 0.3s;
+    }
+    .show-more-btn:hover{
+        background-color: #1D1F23;
     }
 }
 .trends{
     position:sticky;
     top:80px;
     width:400px;
-    height:500px;
+    height:auto;
     background-color: #16181C;
     display:flex;
     flex-direction: column;
     box-sizing: border-box;
-    gap:10px;
     border-radius: 25px;
     .trend-container{
         width:100%;
         height:100%;
         display:flex;
         flex-direction: column;
-        padding-left: 20px;
-        padding-right: 20px;
+        padding-top:20px;
+        box-sizing: border-box;
         .trend{
             width:100%;
             height:auto;
             display:flex;
             flex-direction: column;
+            padding: 10px 20px;
+            box-sizing: border-box;
             gap:5px;
             justify-content: center;
             align-items: flex-start;
+            cursor:pointer;
             .trend-rank{
                 color: #6e767d;
                 font-size: 12px;
@@ -308,6 +347,9 @@ export default{
                 margin:0;
             }
 
+        }
+        .trend:hover{
+            background-color: #1D1F23;
         }
     }
 }
