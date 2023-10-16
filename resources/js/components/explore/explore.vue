@@ -1,10 +1,10 @@
 <template>
-    <div class="home">
+    <div class="explore">
         <div class="navbar">
             <NavBar></NavBar>
         </div>
-        <div class="tweets">
-            <Tweets></Tweets>
+        <div class="explore_trends">
+            <Explore></Explore>
         </div>
         <div class="search">
             <Search></Search>
@@ -12,15 +12,15 @@
     </div>
 </template>
 <script>
-import NavBar from './nav-bar.vue';
-import Tweets from './tweets.vue';
-import Search from './search.vue';
-import Popup from './Popup.vue';
+import NavBar from '../nav-bar.vue';
+import Explore from './explore_tweets.vue';
+import Search from './explore_search.vue';
+import Popup from '../Popup.vue';
 export default {
-  name: 'Home',
+  name: 'explore',
   components: {
     NavBar,
-    Tweets,
+    Explore,
     Search,
     Popup,
   },
@@ -32,7 +32,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.home{
+.explore{
     font-family: Arial, sans-serif;
     margin: 0 auto;
     display:flex;
@@ -49,7 +49,7 @@ export default {
     width:4/12*100%;
 
 }
-.tweets{
+.explore_trends{
     min-height:100%;
     width:5/12*100%;
 

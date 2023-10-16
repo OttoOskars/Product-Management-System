@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('Email')->unique();
             $table->date('DOB');
             $table->string('Password');
+            $table->string('ProfilePicture')->nullable();
+            $table->string('Banner')->nullable();
+            $table->string("Description",255)->nullable();
             $table->timestamps();
         });
     }

@@ -15,7 +15,7 @@
                 <div class="right-side">
                     <div class="top">
                         <div class="tweet-input-container">
-                            <textarea id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!"></textarea>
+                            <textarea id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
                         </div>
                     </div>
                     <div class="bottom">
@@ -87,6 +87,11 @@ export default{
         },
         switchToFollowing() {
             this.postType = 'following_tweets';
+        },
+        autoSize() {
+            const textarea = this.$refs.tweetInput;
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
         },
     },   
 }
