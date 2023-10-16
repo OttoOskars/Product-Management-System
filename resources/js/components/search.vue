@@ -108,9 +108,9 @@ export default{
         background-color: #16181C;
     }
 
-    .search-icon {
+    // .search-icon {
         
-    }
+    // }
 }
 
 .title{
@@ -268,6 +268,14 @@ export default{
             }
 
         }
+    }
+}
+
+@media (max-width: 700px) {
+    .search-container {
+      flex-direction: column;
+      width: 100%;
+      height: 95%;
     }
 }
 

@@ -70,4 +70,10 @@ export default {
     font-size: 20px;
     color:white;
 }
+
+@media (max-width: 570px) {
+  .pop-up-icon {
+    font-size: 60px;
+  }
+}
 </style>

@@ -300,4 +300,37 @@ export default{
     }
 
 }
+
+// @media (max-width: 1200px) {
+//     .tweets-container {
+//         flex-direction: column;
+//         width: 100%;
+//         height: auto;
+//     }
+    
+//     .post-container {
+//         padding-top: 70px; /* Reduce the padding to make space for the navbar */
+//     }
+
+//     .post-container .post {
+//         border-bottom: 1px solid #2F3336; /* Restore the border at the bottom of each post */
+//     }
+
+//     .create-tweet .right-side .top .tweet-input-container .tweet-input {
+//         height: 3rem; /* Set a fixed height for the tweet input to keep it responsive */
+//     }
+
+//     .create-tweet .right-side .bottom .buttons .tweet-btn {
+//         height: 40px; /* Set a fixed height for the tweet buttons */
+//     }
+
+//     .post .right-side .content-img img {
+//         width: 300px; /* Restore the fixed width for content images */
+//         height: 300px;
+//     }
+
+//     .post .right-side .bottom {
+//         justify-content: space-evenly; /* Restore the spacing between icons */
+//     }
+// }
 </style>

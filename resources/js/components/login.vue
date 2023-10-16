@@ -7,10 +7,10 @@
     <!-- Welcome text -->
   <div>
     <div>
-      <h1 class="login-text">Welcome</h1>
+      <h1 class="login-text-1">Welcome</h1>
     </div>
     <div>
-      <h2 class="login-text">Join today</h2>
+      <h2 class="login-text-2">Join today</h2>
     </div>
     <div>
 
@@ -228,7 +228,6 @@ export default {
     text-align: center;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
-
 }
 .text {
     font-family: Arial, Helvetica, sans-serif;
@@ -443,5 +442,154 @@ export default {
 .DateofBirth{
   margin-bottom:20px;
 }
-</style>
 
+@media (max-width: 410px) {
+    .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
+        width: 90%;
+    }
+    
+    .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in {
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    .sign-up-btn-apple, .sign-up-btn {
+      height: 40px;
+      font-size: 13px;
+    }
+
+    .create-account, .sign-in {
+      height: 35px;
+      font-size: 13px;
+    }
+
+    .text {
+      font-size: 13px;
+    }
+
+    
+
+    // .login-text-1 {
+    //   font-size: 30px;
+    // }
+
+    // .login-text-2 {
+    //   font-size: 25px;
+    // }
+}
+
+@media (max-width: 570px) {
+  .Sign-Pop-Up {
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+  }
+
+  .twitter-logo {
+    font-size: 100px;
+  }
+  .Bold-text {
+    font-size: 22px;
+  }
+  .SignInput {
+    font-size: 20px;
+  }
+
+  .FormButton {
+    font-size: 14px;
+    height: 30px;
+  }
+
+  .input-wrap {
+    height: 45px;
+  }
+}
+
+@media (max-width: 410px) {
+  .Sign-Pop-Up {
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+  }
+  .twitter-logo {
+    font-size: 90px;
+  }
+  .Bold-text {
+    font-size: 20px;
+  }
+
+  .SignInput {
+    font-size: 18px;
+  }
+
+  .FormButton {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 380px) {
+  .Sign-Pop-Up {
+    width: 100%;
+    margin: 0 auto;
+    padding: 8px;
+  }
+  .twitter-logo {
+    font-size: 80px;
+  }
+  .Bold-text {
+    font-size: 18px;
+  }
+
+  .SignInput {
+    font-size: 16px;
+  }
+
+  .FormButton {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 350px) {
+  .Sign-Pop-Up {
+    width: 100%;
+    margin: 0 auto;
+    padding: 6px;
+  }
+  .twitter-logo {
+    font-size: 70px;
+  }
+  .Bold-text {
+    font-size: 16px;
+  }
+
+  .SignInput {
+    font-size: 14px;
+  }
+
+  .FormButton {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 340px) {
+  .Sign-Pop-Up {
+    width: 100%;
+    margin: 0 auto;
+    padding: 4px;
+  }
+  .twitter-logo {
+    font-size: 60px;
+  }
+  .Bold-text {
+    font-size: 14px;
+  }
+
+  .SignInput {
+    font-size: 12px;
+  }
+
+  .FormButton {
+    font-size: 14px;
+  }
+}
+</style>

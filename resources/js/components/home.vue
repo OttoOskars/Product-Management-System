@@ -37,7 +37,6 @@ export default {
     margin: 0 auto;
     display:flex;
     flex-direction: row;
-
 }
 .navbar{
     min-height:100%;
@@ -55,4 +54,29 @@ export default {
 
 }
 
+@media (max-width: 1200px) {
+    // .navbar {
+    //   position: fixed;
+    //   bottom: 0;
+    //   width: 100%;
+    //   display: flex;
+    //   flex-direction: row;
+    //   justify-content: space-between;
+    //   align-items: center;
+    //   padding: 10px;
+    //   background-color: black;
+    //   z-index: 999;
+    // }
+
+    // .tweets {
+    //   // flex-grow: 1;
+    //   // overflow-y: scroll;
+    //   width: 65%; /* Adjust the width */
+    //   max-height: calc(100vh - 70px); 
+    // }
+
+    .search {
+      width: 35%
+    }
+}
 </style>
