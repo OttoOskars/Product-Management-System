@@ -70,10 +70,75 @@ export default {
     font-size: 20px;
     color:white;
 }
-
 @media (max-width: 570px) {
-  .pop-up-icon {
-    font-size: 60px;
-  }
+    .pop-up{
+        .pop-up-inner{
+            margin-left: 10px;
+            margin-right: 10px;
+            .pop-up-icon{
+                font-size: 29px;
+            }
+        }
+    }
+}
+
+@media (max-width: 410px) {
+    .pop-up{
+        .pop-up-inner{
+            margin-left: 10px;
+            margin-right: 10px;
+            .pop-up-icon{
+                font-size: 27px;
+            }
+        }
+    }
+}
+
+@media (max-width: 380px) {
+    .pop-up{
+        .pop-up-inner{
+            margin-left: 10px;
+            margin-right: 10px;
+            .pop-up-icon{
+                font-size: 25px;
+            }
+        }
+    }
+}
+
+@media (max-width: 350px) {
+    .pop-up{
+        .pop-up-inner{
+            margin-left: 10px;
+            margin-right: 10px;
+            .pop-up-icon{
+                font-size: 23px;
+            }
+        }
+    }
+}
+
+@media (max-width: 340px) {
+    .pop-up{
+        .pop-up-inner{
+            margin-left: 10px;
+            margin-right: 10px;
+            .pop-up-icon{
+                font-size: 22px;
+            }
+        }
+    }
+}
+
+@media (max-width: 325px) {
+    .pop-up{
+        .pop-up-inner{
+            margin-left: 10px;
+            margin-right: 10px;
+            .pop-up-icon{
+                font-size: 20px;
+            }
+        }
+    }
 }
 </style>

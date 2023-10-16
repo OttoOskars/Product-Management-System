@@ -52,7 +52,7 @@
         <div v-if ="emailError" class="warning-1">{{ emailError }}</div>
       </div>
       <button class="FormButton" @click="() => validateEmail()">Next</button>
-      <p style="color:#434343; font-size:small">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
+      <p style="color:#434343" class="p">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
   </Popup>
 
@@ -79,7 +79,7 @@
         <div v-if ="errorLogin" class="warning-1">{{ errorLogin }}</div>
       </div>
       <button type="button" class="FormButton" @click="loginUser($event)">Log in</button>
-      <p style="color:#434343; font-size:small">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
+      <p style="color:#434343" class="p">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
   </Popup>
   <create-account v-if="showCreateAccount" @close-page="toggleShowAccount" />
@@ -224,7 +224,7 @@ export default {
   color:#1da1f2;
   font-size:125px;
 }
-.login-text {
+.login-text-1, .login-text-2 {
     text-align: center;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
@@ -387,7 +387,7 @@ export default {
   background: none;
   position:relative;
   top:8px;
-  width:100%;
+  width:90%;
 }
 .SignInput:disabled{
   color:#434343;
@@ -424,6 +424,9 @@ export default {
   left:7px;
   padding:0 5px 0 5px;
 }
+.p{
+  font-size: 13px;
+}
 .sign-link-button{
   border:none;
   background:none;
@@ -443,153 +446,483 @@ export default {
   margin-bottom:20px;
 }
 
-@media (max-width: 410px) {
-    .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
-        width: 90%;
-    }
-    
-    .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in {
-        padding: 10px;
-        font-size: 16px;
-    }
-
-    .sign-up-btn-apple, .sign-up-btn {
-      height: 40px;
-      font-size: 13px;
-    }
-
-    .create-account, .sign-in {
-      height: 35px;
-      font-size: 13px;
-    }
-
-    .text {
-      font-size: 13px;
-    }
-
-    
-
-    // .login-text-1 {
-    //   font-size: 30px;
-    // }
-
-    // .login-text-2 {
-    //   font-size: 25px;
-    // }
-}
-
 @media (max-width: 570px) {
+  .twitter-logo {
+    font-size: 100px;
+  }
+  .login-text-1 {
+    font-size: 30px;
+  }
+  .login-text-2 {
+    font-size: 25px;
+  }
+  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
+    width: 90%;
+  }
+  .sign-up-btn {
+    img {
+      height: 23px;
+    }
+  }
+  .apple-logo {
+    font-size: 25px;
+  }
+  .sign-up-btn-apple, .sign-up-btn {
+    height: 40px;
+    font-size: 13px;
+    padding: 10px;
+  }
+  .create-account, .sign-in {
+    height: 35px;
+    font-size: 13px;
+    padding: 10px;
+  }
+  .text {
+    font-size: 13px;
+  }
   .Sign-Pop-Up {
     width: 100%;
     margin: 0 auto;
     padding: 10px;
-  }
-
-  .twitter-logo {
-    font-size: 100px;
   }
   .Bold-text {
     font-size: 22px;
   }
   .SignInput {
-    font-size: 20px;
+    font-size: 15px;
+    top: 4px;
   }
-
   .FormButton {
     font-size: 14px;
     height: 30px;
   }
-
   .input-wrap {
-    height: 45px;
+    height: 44px;
+    label {
+      font-size: 16px;
+      padding:5px;
+      position:absolute;
+      top:7px;
+      left:5px;
+    }
+  }
+  .SignInput:focus+label,
+  .SignInput:disabled+label,
+  .SignInput:valid+label{
+    font-size:14px;
+    top:3px;
+    left:5px;
+    padding:0 5px 0 5px;
+  }
+  .sign-link-button {
+    font-size: 15px;
+  }
+  .p {
+    font-size: 14px;
+  }
+  .warning-1 {
+    font-size: 11px;
+    margin-top: 3px;
   }
 }
 
 @media (max-width: 410px) {
-  .Sign-Pop-Up {
-    width: 100%;
-    margin: 0 auto;
-    padding: 10px;
-  }
   .twitter-logo {
     font-size: 90px;
   }
+  .login-text-1 {
+    font-size: 28px;
+  }
+  .login-text-2 {
+    font-size: 23px;
+  }
+  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
+    width: 90%;
+  }
+  .sign-up-btn {
+    img {
+      height: 21px;
+    }
+  }
+  .apple-logo {
+    font-size: 23px;
+  }
+  .sign-up-btn-apple, .sign-up-btn {
+    height: 38px;
+    font-size: 12px;
+    padding: 9px;
+  }
+  .create-account, .sign-in {
+    height: 33px;
+    font-size: 12px;
+    padding: 9px;
+  }
+  .text {
+    font-size: 12px;
+  }
+  .Sign-Pop-Up {
+    width: 100%;
+    margin: 0 auto;
+    padding: 9px;
+  }
   .Bold-text {
-    font-size: 20px;
+    font-size: 21px;
   }
-
   .SignInput {
-    font-size: 18px;
-  }
-
-  .FormButton {
     font-size: 14px;
+    top: 3px;
+  }
+  .FormButton {
+    font-size: 13px;
+    height: 28px;
+  }
+  .input-wrap {
+    height: 41px;
+    label {
+      font-size: 15px;
+      padding:5px;
+      position:absolute;
+      top:7px;
+      left:5px;
+    }
+  }
+  .SignInput:focus+label,
+  .SignInput:disabled+label,
+  .SignInput:valid+label{
+    font-size:13px;
+    top:3px;
+    left:5px;
+    padding:0 5px 0 5px;
+  }
+  .sign-link-button {
+    font-size: 14px;
+  }
+  .p {
+    font-size: 13px;
+  }
+  .warning-1 {
+    font-size: 11px;
+    margin-top: 3px;
   }
 }
 
 @media (max-width: 380px) {
+  .twitter-logo {
+    font-size: 80px;
+  }
+  .login-text-1 {
+    font-size: 26px;
+  }
+  .login-text-2 {
+    font-size: 21px;
+  }
+  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
+    width: 90%;
+  }
+  .sign-up-btn {
+    img {
+      height: 19px;
+    }
+  }
+  .apple-logo {
+    font-size: 21px;
+  }
+  .sign-up-btn-apple, .sign-up-btn {
+    height: 36px;
+    font-size: 11px;
+    padding: 8px;
+  }
+  .create-account, .sign-in {
+    height: 31px;
+    font-size: 11px;
+    padding: 8px;
+  }
+  .text {
+    font-size: 11px;
+  }
   .Sign-Pop-Up {
     width: 100%;
     margin: 0 auto;
     padding: 8px;
   }
-  .twitter-logo {
-    font-size: 80px;
-  }
   .Bold-text {
-    font-size: 18px;
+    font-size: 20px;
   }
-
   .SignInput {
-    font-size: 16px;
+    font-size: 13px;
+    top: 2px;
   }
-
   .FormButton {
-    font-size: 14px;
+    font-size: 12px;
+    height: 26px;
+  }
+  .input-wrap {
+    height: 38px;
+    label {
+      font-size: 14px;
+      padding:5px;
+      position:absolute;
+      top:7px;
+      left:5px;
+    }
+  }
+  .SignInput:focus+label,
+  .SignInput:disabled+label,
+  .SignInput:valid+label{
+    font-size:11px;
+    top:2px;
+    left:5px;
+    padding:0 5px 0 5px;
+  }
+  .sign-link-button {
+    font-size: 13px;
+  }
+  .p {
+    font-size: 12px;
+  }
+  .warning-1 {
+    font-size: 11px;
+    margin-top: 3px;
   }
 }
 
 @media (max-width: 350px) {
+  .twitter-logo {
+    font-size: 70px;
+  }
+  .login-text-1 {
+    font-size: 24px;
+  }
+  .login-text-2 {
+    font-size: 19px;
+  }
+  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
+    width: 90%;
+  }
+  .sign-up-btn {
+    img {
+      height: 17px;
+    }
+  }
+  .apple-logo {
+    font-size: 19px;
+  }
+  .sign-up-btn-apple, .sign-up-btn {
+    height: 34px;
+    font-size: 10px;
+    padding: 7px;
+  }
+  .create-account, .sign-in {
+    height: 29px;
+    font-size: 10px;
+    padding: 7px;
+  }
+  .text {
+    font-size: 10px;
+  }
+  .Sign-Pop-Up {
+    width: 100%;
+    margin: 0 auto;
+    padding: 7px;
+  }
+  .Bold-text {
+    font-size: 19px;
+  }
+  .SignInput {
+    font-size: 12px;
+    top: 1px;
+  }
+  .FormButton {
+    font-size: 11px;
+    height: 24px;
+  }
+  .input-wrap {
+    height: 35px;
+    label {
+      font-size: 13px;
+      padding:5px;
+      position:absolute;
+      top:4px;
+      left:5px;
+    }
+  }
+  .SignInput:focus+label,
+  .SignInput:disabled+label,
+  .SignInput:valid+label{
+    font-size:10px;
+    top:4px;
+    left:5px;
+    padding:0 5px 0 5px;
+  }
+  .sign-link-button {
+    font-size: 12px;
+  }
+  .p {
+    font-size: 11px;
+  }
+  .warning-1 {
+    font-size: 10px;
+    margin-top: 3px;
+  }
+}
+
+@media (max-width: 340px) {
+  .twitter-logo {
+    font-size: 65px;
+  }
+  .login-text-1 {
+    font-size: 22px;
+  }
+  .login-text-2 {
+    font-size: 17px;
+  }
+  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
+    width: 90%;
+  }
+  .sign-up-btn {
+    img {
+      height: 16px;
+    }
+  }
+  .apple-logo {
+    font-size: 18px;
+  }
+  .sign-up-btn-apple, .sign-up-btn {
+    height: 33px;
+    font-size: 10px;
+    padding: 7px;
+  }
+  .create-account, .sign-in {
+    height: 28px;
+    font-size: 10px;
+    padding: 7px;
+  }
+  .text {
+    font-size: 10px;
+  }
+  .Sign-Pop-Up {
+    width: 100%;
+    margin: 0 auto;
+    padding: 7px;
+  }
+  .Bold-text {
+    font-size: 19px;
+  }
+  .SignInput {
+    font-size: 11px;
+    top: 0px;
+  }
+  .FormButton {
+    font-size: 11px;
+    height: 23px;
+  }
+  .input-wrap {
+    height: 32px;
+    label {
+      font-size: 12px;
+      padding:5px;
+      position:absolute;
+      top:3px;
+      left:5px;
+    }
+  }
+  .SignInput:focus+label,
+  .SignInput:disabled+label,
+  .SignInput:valid+label{
+    font-size:10px;
+    top:3px;
+    left:5px;
+    padding:0 5px 0 5px;
+  }
+  .sign-link-button {
+    font-size: 11px;
+  }
+  .p {
+    font-size: 10px;
+  }
+  .warning-1 {
+    font-size: 10px;
+    margin-top: 3px;
+  }
+}
+
+@media (max-width: 325px) {
+  .twitter-logo {
+    font-size: 60px;
+  }
+  .login-text-1 {
+    font-size: 20px;
+  }
+  .login-text-2 {
+    font-size: 15px;
+  }
+  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
+    width: 90%;
+  }
+  .sign-up-btn {
+    img {
+      height: 15px;
+    }
+  }
+  .apple-logo {
+    font-size: 17px;
+  }
+  .sign-up-btn-apple, .sign-up-btn {
+    height: 32px;
+    font-size: 9px;
+    padding: 6px;
+  }
+  .create-account, .sign-in {
+    height: 27px;
+    font-size: 9px;
+    padding: 6px;
+  }
+  .text {
+    font-size: 9px;
+  }
   .Sign-Pop-Up {
     width: 100%;
     margin: 0 auto;
     padding: 6px;
   }
-  .twitter-logo {
-    font-size: 70px;
-  }
   .Bold-text {
-    font-size: 16px;
+    font-size: 18px;
   }
-
   .SignInput {
-    font-size: 14px;
+    font-size: 10px;
+    top: 0px;
   }
-
   .FormButton {
-    font-size: 14px;
+    font-size: 10px;
+    height: 23px;
   }
-}
-
-@media (max-width: 340px) {
-  .Sign-Pop-Up {
-    width: 100%;
-    margin: 0 auto;
-    padding: 4px;
+  .input-wrap {
+    height: 30px;
+    label {
+      font-size: 12px;
+      padding:5px;
+      position:absolute;
+      top:3px;
+      left:5px;
+    }
   }
-  .twitter-logo {
-    font-size: 60px;
+  .SignInput:focus+label,
+  .SignInput:disabled+label,
+  .SignInput:valid+label{
+    font-size:10px;
+    top:3px;
+    left:5px;
+    padding:0 5px 0 5px;
   }
-  .Bold-text {
-    font-size: 14px;
+  .sign-link-button {
+    font-size: 11px;
   }
-
-  .SignInput {
-    font-size: 12px;
+  .p {
+    font-size: 10px;
   }
-
-  .FormButton {
-    font-size: 14px;
+  .warning-1 {
+    font-size: 9px;
+    margin-top: 3px;
   }
 }
 </style>
