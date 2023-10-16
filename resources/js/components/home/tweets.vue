@@ -3,8 +3,8 @@
         <div class="top-bar">
             <div class="title">Home</div>
             <div class="post-type">
-                <button>For you</button>
-                <button>Following</button>
+                <button @click="switchToTweets" class="post-type-btn" :class ="{ 'active-post-type': postType == 'tweets' }">For you<div class="active-line" :class ="{ 'active': postType == 'tweets' }"></div></button>
+                <button @click="switchToFollowing" class="post-type-btn" :class ="{ 'active-post-type': postType == 'following_tweets' }">Following<div class="active-line" :class ="{ 'active': postType == 'following_tweets' }"></div></button>
             </div>
         </div>
         <div class="post-container">
@@ -15,24 +15,20 @@
                 <div class="right-side">
                     <div class="top">
                         <div class="tweet-input-container">
-<<<<<<< HEAD:resources/js/components/tweets.vue
-                            <textarea class="tweet-input" rows="3"></textarea>
-=======
                             <textarea id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
->>>>>>> 639033aec9fbea71a1688ed11c8d29fdd93a4566:resources/js/components/home/tweets.vue
                         </div>
                     </div>
                     <div class="bottom">
                         <div class="buttons">
-                            <button class="tweet-btn">Tweet</button>
-                            <button class="tweet-btn">Tweet</button>
-                            <button class="tweet-btn">Tweet</button>
+                            <button class="tweet-btn"><ion-icon name="images-outline" class="create-tweet-icon"></ion-icon></button>
+                            <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
+                            <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
                         </div>
-                        <button class="post-button">POST</button>
+                        <button class="post-button" >Post</button>
                     </div>
                 </div>
             </div>
-            <div class="post"> 
+            <div class="post" v-for="i in currentPosts" :key="i"> 
                 <div class="left-side">
                     <img>
                 </div>
@@ -41,6 +37,7 @@
                         <div class="userinfo">
                             <p class="username">username</p>
                             <p class="usertag">@usertag</p>
+                            <p class="time-posted">2h</p>
                         </div>
                         <div class="content-text">
                             <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus animi omnis quisquam quam voluptates saepe. Exercitationem?</p>
@@ -49,27 +46,20 @@
                     <div class="content-img">
                         <img>
                     </div>
-                    <div class="bottom"><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon></div>
-                </div>
-            </div>
-            <div class="post">
-                <div class="left-side">
-                    <img>
-                </div>
-                <div class="right-side">
-                    <div class="top">
-                        <div class="userinfo">
-                            <p class="username">username</p>
-                            <p class="usertag">@usertag</p>
-                        </div>
-                        <div class="content-text">
-                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus animi omnis quisquam quam voluptates saepe. Exercitationem?</p>
-                        </div>
+                    <div class="bottom">
+                        <button class="post-btn-container heart-btn">
+                            <div class="icon-container"><ion-icon name="heart-outline" class="post-icon"></ion-icon></div>
+                            <p class="post-btn-nr">123</p>
+                        </button>
+                        <button class="post-btn-container comment-btn">
+                            <div class="icon-container"><ion-icon name="chatbox-outline" class="post-icon"></ion-icon></div>
+                            <p class="post-btn-nr">432</p>
+                        </button>
+                        <button class="post-btn-container retweet-btn">
+                            <div class="icon-container"><ion-icon name="arrow-redo-outline" class="post-icon"></ion-icon></div>
+                            <p class="post-btn-nr">53</p>
+                        </button>
                     </div>
-                    <div class="content-img">
-                        <img>
-                    </div>
-                    <div class="bottom"><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon><ion-icon name="ellipsis-horizontal"></ion-icon></div>
                 </div>
             </div>
             <!-- More posts -->
@@ -79,8 +69,6 @@
 <script>
 export default{
     name: 'Tweets',
-<<<<<<< HEAD:resources/js/components/tweets.vue
-=======
     data(){
         return {
             tweets: 5,
@@ -106,7 +94,6 @@ export default{
             textarea.style.height = textarea.scrollHeight + 'px';
         },
     },   
->>>>>>> 639033aec9fbea71a1688ed11c8d29fdd93a4566:resources/js/components/home/tweets.vue
 }
 </script>
 <style lang="scss" scoped>
@@ -133,11 +120,13 @@ export default{
         box-sizing: border-box;
         height:50%;
         display:flex;
-        justify-content: flex-start;
         align-items: center;
+        justify-content: flex-start;
         color:white;
         padding:10px;
-
+        padding-left:20px;
+        font-size: 23px;
+        font-weight:bold;
     }
     .post-type{
         width:100%;
@@ -145,19 +134,44 @@ export default{
         display:flex;
         flex-direction:row;
         justify-content: space-between;
-        button{
-            width:50%;
-            height:100%;
-            align-items: center;
-            justify-content: center;
-            color:white;
-            padding:10px;
 
-
-            border:none;
-            background:none;
-        }
     }
+}
+.post-type-btn{
+    width:50%;
+    height:100%;
+    position:relative;
+    align-items: center;
+    justify-content: center;
+    color:#71767B;
+    padding:10px;
+    border:none;
+    background:none;
+    transition:all 0.3s;
+    font-size: 16px;
+    font-weight:600;
+}
+.post-type-btn:hover{
+    background-color: #202223;
+}
+.active-post-type{
+    color:white;
+    font-size: 16px;
+    font-weight: 700;
+}
+.active-line{
+    height:4px;
+    width:75px;
+    background-color: #1D9BF0;
+    border-radius:5px;
+    position:absolute;
+    bottom:1px;
+    display:none;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.active-line.active{
+    display:block;
 }
 
 .post-container{
@@ -191,7 +205,7 @@ export default{
     flex-direction:row;
     box-sizing: border-box;
     gap:10px;
-    padding:10px;
+    padding:15px;
     border-bottom: 1px solid #2F3336;
 
     .right-side{
@@ -214,6 +228,8 @@ export default{
                 display:flex;
                 align-items: center;
                 justify-content: center;
+                padding-top: 10px;
+                padding-right:10px;
                 .tweet-input{
                     width:100%;
                     height:100%;
@@ -221,10 +237,17 @@ export default{
                     color:#ffffff;
                     resize: none;
                     transition: height 0.2s;
-                    border-left:none;
-                    border-right:none;
-                    border-top:none;
-                    border-color:#2F3336;
+                    font-family: Arial, sans-serif;
+                    font-size: 22px;
+                    border:none;
+                    display:flex;
+                    align-items: center;
+                    padding:5px 5px;
+                }
+                .tweet-input:focus{
+                    outline:none;
+                    border-bottom:1px solid #2F3336;
+                    padding: 5px 5px 15px 5px;
                 }
             }
         }
@@ -237,16 +260,51 @@ export default{
             .buttons{
                 display:flex;
                 flex-direction: row;
-                gap:20px;
-
+                align-items: center;
+                gap:5px;
                 .tweet-btn{
-                    height:100%;
-                    width:auto;
+                    height:40px;
+                    width:40px;
+                    background:none;
+                    border-radius:50%;
+                    border:none;
+                    display:flex;
+                    justify-content: center;
+                    align-items: center;
+                    cursor:pointer;
+                    .create-tweet-icon{
+                        font-size:20px;
+                        color:#1D9BF0;
+                        --ionicon-stroke-width: 40px;
+                    }
+                }
+                .tweet-btn:hover{
+                    background-color: rgba($color: #1D9BF0, $alpha: 0.1);
                 }
             }
             .post-button{
-                width:75px;
-                height:100%;
+                width:auto;
+                padding:20px;
+                height:auto;
+                display:flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                border-radius: 50px;
+                border:none;
+                background-color: #1D9BF0;
+                color:white;
+                font-size: medium;
+                font-weight: bold;
+                transition: all 0.3s;
+                cursor:pointer;
+            }
+            .post-button:hover{
+                background-color: #1d8dd7;
+            }
+            .post-button:disabled{
+                background-color: #0F4E78;
+                color:#808080;
             }
         }
     }
@@ -259,20 +317,23 @@ export default{
     flex-direction:row;
     gap:10px;
     box-sizing: border-box;
-    padding:10px;
+    padding:15px 10px 5px 15px;
     border-bottom: 1px solid #2F3336;
+    cursor:pointer;
     .right-side{
         width:90%;
         height:100%;
         display:flex;
-        gap:10px;
         flex-direction:column;
+        box-sizing: border-box;
+        gap:5px;
 
         .top{
             width:100%;
             height:auto;
             display:flex;
             flex-direction:column;
+            padding-left:5px;
             .userinfo{
                 width:100%;
                 height:10px;
@@ -280,18 +341,23 @@ export default{
                 flex-direction:row;
                 justify-content: flex-start;
                 align-items: center;
+                gap:7px;
                 color:white;
                 padding-top:2px;
                 .username{
                     margin:0;
                     font-weight: bold;
-                    font-size: 14px;
+                    font-size: 17px;
                     color:white;
                 }
                 .usertag{
-                    padding-left:5px;
                     margin:0;
-                    font-size: 14px;
+                    font-size: 17px;
+                    color:#6A6F74;
+                }
+                .time-posted{
+                    margin:0;
+                    font-size: 17px;
                     color:#6A6F74;
                 }
             }
@@ -302,10 +368,12 @@ export default{
                 text-align: left;
                 color:white;
                 padding:0px;
+                font-size:17px;
             }
 
         }
         .content-img{
+            padding-left:5px;
             width:auto;
             height:auto;
             display:flex;
@@ -313,8 +381,8 @@ export default{
             align-items: center;
             box-sizing: border-box;
             img{
-                border-radius:25px;
-                width:300px;
+                border-radius:15px;
+                width:100%;
                 height:300px;
                 border:solid 1px #2F3336;
                 background-color: white;
@@ -322,47 +390,84 @@ export default{
         }
         .bottom{
             width:100%;
-            height:30px;
+            height:40px;
             display:flex;
             flex-direction: row;
-            justify-content: space-evenly;
+            justify-content: space-between;
             color:#ffffff;
+            .post-btn-container{
+                display:flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                width:auto;
+                height:100%;
+                background: none;
+                border-radius:50px;
+                border:none;
+                text-align: left;
+                transition: all 0.3s;
+                cursor:pointer;
+                .post-btn-nr{
+                    color:#6A6F74;
+                    font-size:14px;
+                    padding-top:1px;
+                }
+            }
+            .comment-btn:hover{
+                .icon-container{
+                    background-color: rgba($color: #1D9BF0, $alpha: 0.2);
+                    .post-icon{
+                        color:#1D9BF0;
+                    }
+                }
+                .post-btn-nr{
+                    color:#1D9BF0;
+                }
+            }
+            .heart-btn:hover{
+                .icon-container{
+                    background-color: rgba($color: #F31C80, $alpha: 0.2);
+                    .post-icon{
+                        color:#F31C80;
+                    }
+                }
+                .post-btn-nr{
+                    color:#F31C80;
+                }
+            }
+            .retweet-btn:hover{
+                .icon-container{
+                    background-color: rgba($color: #00BA7C, $alpha: 0.2);
+                    .post-icon{
+                        color:#00BA7C;
+                    }
+                }
+                .post-btn-nr{
+                    color:#00BA7C;
+                }
+            }
+            .icon-container{
+                height:40px;
+                width:40px;
+                background:none;
+                border-radius:50%;
+                border:none;
+                display:flex;
+                justify-content: center;
+                align-items: center;
+                cursor:pointer;
+                .post-icon{
+                    font-size:20px;
+                    color:#71767B;
+                    --ionicon-stroke-width: 40px;
+                }
+                
+            }
         }
-
     }
-
 }
-
-// @media (max-width: 1200px) {
-//     .tweets-container {
-//         flex-direction: column;
-//         width: 100%;
-//         height: auto;
-//     }
-    
-//     .post-container {
-//         padding-top: 70px; /* Reduce the padding to make space for the navbar */
-//     }
-
-//     .post-container .post {
-//         border-bottom: 1px solid #2F3336; /* Restore the border at the bottom of each post */
-//     }
-
-//     .create-tweet .right-side .top .tweet-input-container .tweet-input {
-//         height: 3rem; /* Set a fixed height for the tweet input to keep it responsive */
-//     }
-
-//     .create-tweet .right-side .bottom .buttons .tweet-btn {
-//         height: 40px; /* Set a fixed height for the tweet buttons */
-//     }
-
-//     .post .right-side .content-img img {
-//         width: 300px; /* Restore the fixed width for content images */
-//         height: 300px;
-//     }
-
-//     .post .right-side .bottom {
-//         justify-content: space-evenly; /* Restore the spacing between icons */
-//     }
-// }
+.post:hover{
+    background-color: #080808;
+}
 </style>
