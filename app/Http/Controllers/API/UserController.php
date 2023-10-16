@@ -128,4 +128,103 @@ class UserController extends Controller
     {
         return auth()->user();
     }
+
+    public function updateName(Request $request)
+    {
+        $user = auth()->user();
+        $newName = $request->Name;
+
+        if ($newName) {
+            $user->Name = $newName;
+            $user->save();
+            $success = true;
+            $message = 'Name updated successfully';
+
+        } else {
+            $success = false;
+            $message = 'Name cannot be empty';
+        }
+
+        $response = [
+            'success' => $success,
+            'message' => $message,
+        ];
+        return response()->json($response);
+    }
+
+    public function updateDescription(Request $request)
+    {
+        $user = auth()->user();
+        $newDescription = $request->Description;
+
+        if ($newDescription) {
+            $user->description = $newDescription;
+            $user->save();
+            $success = true;
+            $message = 'Description updated successfully';
+
+        } else {
+            $success = false;
+            $message = 'Description cannot be empty';
+        }
+
+        $response = [
+            'success' => $success,
+            'message' => $message,
+        ];
+        return response()->json($response);
+    }
+    
+    public function updateProfilePicture(Request $request)
+    {
+        if ($request->hasFile('profile_picture')) {
+            $ProfilePicture = $request->file('profile_picture');
+            $fileName = time() . '_' . $ProfilePicture->getClientOriginalName();
+            $path = $ProfilePicture->storeAs('profile_pictures', $fileName, 'public');
+
+            if (auth()->user()->ProfilePicture) {
+                Storage::delete('/public/' . auth()->user()->ProfilePicture);
+            }
+
+            auth()->user()->ProfilePicture = $path;
+            auth()->user()->save();
+            $success = true;
+            $message = 'Profile picture uploaded successfully';
+        } else {
+            $success = false;
+            $message = 'Please select a valid image file.';
+        }
+
+        $response = [
+            'success' => $success,
+            'message' => $message,
+        ];
+        return response()->json($response);
+    }
+    public function updateBanner(Request $request)
+    {
+        if ($request->hasFile('banner_picture')) {
+            $BannerPicture = $request->file('banner_picture');
+            $fileName = time() . '_' . $BannerPicture->getClientOriginalName();
+            $path = $Banner->storeAs('banner_pictures', $fileName, 'public');
+
+            if (auth()->user()->Banner) {
+                Storage::delete('/public/' . auth()->user()->Banner);
+            }
+
+            auth()->user()->Banner = $path;
+            auth()->user()->save();
+            $success = true;
+            $message = 'Banner picture uploaded successfully';
+        } else {
+            $success = false;
+            $message = 'Please select a valid image file.';
+        }
+
+        $response = [
+            'success' => $success,
+            'message' => $message,
+        ];
+        return response()->json($response);
+    }
 }

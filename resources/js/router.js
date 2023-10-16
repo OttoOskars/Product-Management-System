@@ -17,7 +17,12 @@ const router = createRouter({
     },
     {
       path: '/home2',
-      component: () => import('./components/home.vue'),
+      component: () => import('./components/home/home.vue'),
+      meta: { requiresAuth: false }, // Public route
+    },
+    {
+      path: '/explore',
+      component: () => import('./components/explore/explore.vue'),
       meta: { requiresAuth: false }, // Public route
     },
     {

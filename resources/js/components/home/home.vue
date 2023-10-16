@@ -12,10 +12,10 @@
     </div>
 </template>
 <script>
-import NavBar from './nav-bar.vue';
+import NavBar from '../nav-bar.vue';
 import Tweets from './tweets.vue';
 import Search from './search.vue';
-import Popup from './Popup.vue';
+import Popup from '../Popup.vue';
 export default {
   name: 'Home',
   components: {

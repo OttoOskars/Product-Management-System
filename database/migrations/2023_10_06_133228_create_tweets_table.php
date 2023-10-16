@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('TweetText');
             $table->unsignedBigInteger('UserID');
             $table->foreign('UserID')->references('UserID')->on('users');
+            $table->string('TweetImage')->nullable();
             $table->timestamps();
         });
     }

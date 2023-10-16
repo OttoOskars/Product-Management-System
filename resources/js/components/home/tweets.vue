@@ -15,7 +15,11 @@
                 <div class="right-side">
                     <div class="top">
                         <div class="tweet-input-container">
+<<<<<<< HEAD:resources/js/components/tweets.vue
                             <textarea class="tweet-input" rows="3"></textarea>
+=======
+                            <textarea id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
+>>>>>>> 639033aec9fbea71a1688ed11c8d29fdd93a4566:resources/js/components/home/tweets.vue
                         </div>
                     </div>
                     <div class="bottom">
@@ -75,6 +79,34 @@
 <script>
 export default{
     name: 'Tweets',
+<<<<<<< HEAD:resources/js/components/tweets.vue
+=======
+    data(){
+        return {
+            tweets: 5,
+            following_tweets: 1,
+            postType: 'tweets',
+        }
+    },
+    computed: {
+        currentPosts() {
+            return this.postType === 'tweets' ? this.tweets : this.following_tweets;
+        },
+    },
+    methods: {
+        switchToTweets() {
+            this.postType = 'tweets';
+        },
+        switchToFollowing() {
+            this.postType = 'following_tweets';
+        },
+        autoSize() {
+            const textarea = this.$refs.tweetInput;
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        },
+    },   
+>>>>>>> 639033aec9fbea71a1688ed11c8d29fdd93a4566:resources/js/components/home/tweets.vue
 }
 </script>
 <style lang="scss" scoped>
