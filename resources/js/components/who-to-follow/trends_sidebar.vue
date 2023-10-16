@@ -15,29 +15,6 @@
             <ion-icon name="search-outline" class="search-icon"></ion-icon>
             <button class="close-icon-btn" @click="clearSearch" :class="{ 'focused': isInputFocused }"><ion-icon name="close-circle-sharp" class="close-icon"></ion-icon></button>
         </div>
-        <div class="who-to-follow">
-            <div class="title">Who to follow</div>
-            <div class="people-container">
-                <div class="person" v-for="i in people" :key="i">
-                    <div class="user">
-                            <div class="user-img">
-                                <img> 
-                            </div>
-                            <div class="user-info">
-                                <p class="username">username</p>
-                                <p class="usertag">@usertag</p>
-                            </div>
-                        </div>
-                    <div class="button-container">
-                        <button class="follow-button">Follow</button>
-                    </div>
-                </div>
-                <!-- Add more people -->
-            </div>
-            <div class="show-more-container">
-                <button class="show-more-btn" @click="redirectTo('/people')">Show more</button>
-            </div>
-        </div>
         <div class="trends">
             <div class="title">Trending Latvia</div>
             <div class="trend-container">
@@ -60,7 +37,6 @@ export default{
     data() {
         return {
             isInputFocused: false,
-            people: 3,
             trends: 5,
         };
     },
@@ -83,7 +59,7 @@ export default{
         },
         redirectTo(where) {
             this.$router.push(where);
-        },
+        }
     },
 
 }
@@ -95,7 +71,7 @@ export default{
     display:flex;
     flex-direction: column;
     gap:20px;
-
+    position:fixed;
     box-sizing: border-box;
     padding-left:30px;
     padding-top:10px;
@@ -182,105 +158,6 @@ export default{
     padding-top:20px;
     font-weight: bold;
     font-size: x-large;
-}
-.who-to-follow{
-    width:400px;
-    height:auto;
-    background-color: #16181C;
-    display:flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    margin-top:70px;
-    border-radius: 25px;
-    .people-container{
-        box-sizing: border-box;
-        padding-top:20px;
-        width:100%;
-        height:100%;
-        display:flex;
-        flex-direction: column;
-        .person{
-            box-sizing: border-box;
-            padding:10px 20px;
-            width:100%;
-            height:auto;
-            display:flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            transition:all 0.3s;
-            cursor:pointer;
-            .user{
-                width:auto;
-                height:100%;
-                display:flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: flex-start;
-                .user-img{
-                    width:auto;
-                    height:auto;
-                    display:flex;
-                    align-items: center;
-                    justify-content: center;
-                    img{
-                        width:50px;
-                        height:50px;
-                        border-radius:50%;
-                        background-color: #ffffff;
-                    }
-                }
-                .user-info{
-                    padding-left:10px;
-                    width:100%;
-                    height:100%;
-                    display:flex;
-                    flex-direction: column;
-                    align-items: flex-start;
-                    justify-content: center;
-                    gap:10px;
-                    .username{
-                        font-weight: bold;
-                        font-size: 14px;
-                        margin:0;
-                    }
-                    .usertag{
-                        color: #71767B;
-                        font-size: 14px;
-                        margin:0;
-                    }
-                }
-            }
-            .button-container{
-                width:auto;
-                height:100%;
-                display:flex;
-                align-items: center;
-                justify-content: center;
-                .follow-button{
-                    padding:10px 20px; 
-                    display:flex;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                    border-radius: 50px;
-                    border:none;
-                    background-color: white;
-                    color:black;
-                    font-size:15px;
-                    font-weight: bold;
-                    transition:all 0.3s;
-                    cursor:pointer;
-                }
-                .follow-button:hover{
-                    background-color: #D7DBDC;
-                }
-            }
-        }
-        .person:hover{
-            background-color: #1D1F23;
-        }
-    }
 }
 
 .show-more-container{

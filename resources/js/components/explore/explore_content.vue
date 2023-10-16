@@ -1,14 +1,38 @@
 <template>
     <div class="tweets-container">
-        <div class="top-bar">
-            <div class="title">Home</div>
-            <div class="post-type">
-                <button @click="switchToTweets" class="post-type-btn" :class ="{ 'active-post-type': postType == 'tweets' }">For you<div class="active-line" :class ="{ 'active': postType == 'tweets' }"></div></button>
-                <button @click="switchToFollowing" class="post-type-btn" :class ="{ 'active-post-type': postType == 'following_tweets' }">Following<div class="active-line" :class ="{ 'active': postType == 'following_tweets' }"></div></button>
-            </div>
+        <div class="top-bar"> 
+            <input 
+                type="text"
+                id="search-input"
+                class="search-input" 
+                maxlength="30" 
+                placeholder="Search"
+                :class="{ 'focused': isInputFocused }"
+                @focus="inputFocus"
+                @blur="inputBlur"
+                v-model="search"
+                >
+            <ion-icon name="search-outline" class="search-icon"></ion-icon>
         </div>
+
         <div class="post-container">
-            <div class="post" v-for="i in currentPosts" :key="i"> 
+            <div class="trend-container">
+                <p class="title">Trends for you</p>
+                <div class="trend" v-for="i in trends" :key="i">
+                    <div class="trend-info">
+                        <p class="trend-rank">Trending in Latvia</p>
+                        <p class="trend-name">Skolā bumba</p>
+                        <p class="trend-posts">1232 posts</p>
+                    </div>
+                    <div class="more-icon">
+                        <ion-icon name="ellipsis-horizontal"></ion-icon>
+                    </div>
+                </div>
+                <div class="show-more-container">
+                    <button class="show-more-btn">Show more</button>
+                </div>
+            </div>
+            <div class="post" v-for="i in tweets" :key="i"> 
                 <div class="left-side">
                     <img>
                 </div>
@@ -47,31 +71,34 @@
     </div>
 </template>
 <script>
+import { ref } from 'vue';
 export default{
     name: 'Tweets',
     data(){
         return {
+            isInputFocused: false,
             tweets: 5,
-            following_tweets: 1,
-            postType: 'tweets',
+            trends: 6,
+        }
+    },
+    setup () {
+        const search = ref('');
+        const clearSearch = () => {
+            search.value = '';
+        }
+        return {
+            search,
+            clearSearch
         }
     },
     computed: {
-        currentPosts() {
-            return this.postType === 'tweets' ? this.tweets : this.following_tweets;
-        },
     },
     methods: {
-        switchToTweets() {
-            this.postType = 'tweets';
+        inputFocus() {
+            this.isInputFocused = true;
         },
-        switchToFollowing() {
-            this.postType = 'following_tweets';
-        },
-        autoSize() {
-            const textarea = this.$refs.tweetInput;
-            textarea.style.height = 'auto';
-            textarea.style.height = textarea.scrollHeight + 'px';
+        inputBlur() {
+            this.isInputFocused = false;
         },
     },   
 }
@@ -80,82 +107,156 @@ export default{
 .tweets-container{
     width:100%;
     height:auto;
+    color:white;
 }
 
 .top-bar{
-    width:100%;
-    height:125px;
-    display:flex;
-    flex-direction:column;
+    height:60px;
     background-color:rgba($color: #000000, $alpha: 0.8);
     position:fixed;
     top:0;
     width:5/12*100%;
     z-index:99;
+    box-sizing: border-box;
     backdrop-filter: blur(5px);
-    border-bottom:solid 1px #2F3336;
-
-    .title{
-        width:100%;
-        box-sizing: border-box;
-        height:50%;
-        display:flex;
-        align-items: center;
-        justify-content: flex-start;
+    display: flex;
+    align-items: center;
+    padding:0 20px;
+    .search-input {
+        width: 100%;
+        height: 80%;
+        border-radius: 50px;
+        padding-left:60px;
+        border:  1px solid transparent;
+        background-color: #202327;
+        position: relative;
         color:white;
-        padding:10px;
-        padding-left:20px;
-        font-size: 23px;
-        font-weight:bold;
+        font-size: medium;
+        &.focused {
+            outline:none;
+            background-color: black; /* Change input background when focused */
+            border-color: #1D9BF0; /* Change input border when focused */
+            box-shadow: 0 0 5px #1D9BF0;
+        }
     }
-    .post-type{
+
+    .search-input:focus + .search-icon{
+        color: #1D9BF0;
+    }
+
+
+
+    .search-input::-webkit-input-placeholder {
+        color: #71767B;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 40px;
+        top: 50%;
+        transform: translate(0, -50%);
+        color: #71767B;
+        font-size: 24px;
+    }
+}
+
+.title{
+    width:100%;
+    height:28px;
+    display:flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    padding-left:20px;
+    font-weight: bold;
+    font-size: 22px;
+}
+.trend-container{
+    width:100%;
+    height:auto;
+    display:flex;
+    flex-direction:column;
+    box-sizing: border-box;
+    border-bottom: 1px solid #2F3336;
+    .trend{
         width:100%;
-        height:50%;
+        height:auto;
         display:flex;
         flex-direction:row;
         justify-content: space-between;
-
+        align-items: center;
+        box-sizing: border-box;
+        padding:10px 20px;
+        .more-icon{
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            width:40px;
+            height:40px;
+            border-radius: 50%;
+            background-color: black;
+            color:#6A6F74;
+            cursor:pointer;
+            transition: all 0.3s;
+        }
+        .more-icon:hover{
+            background-color: rgba($color: #1D9BF0, $alpha: 0.1);
+            color:#1D9BF0;
+        }
+    }
+    .trend-info{
+        width:100%;
+        height:auto;
+        display:flex;
+        flex-direction:column;
+        gap:6px;
+        box-sizing: border-box;
+        cursor:pointer;
+        .trend-rank{
+            color: #6e767d;
+            font-size: 13px;
+            margin:0;
+        }
+        .trend-name{
+            color:white;
+            font-weight: bold;
+            font-size: 16px;
+            margin:0;
+        }
+        .trend-posts{
+            color: #6e767d;
+            font-size: 13px;
+            margin:0;
+        }
+    }
+    .trend:hover{
+        background-color: #080808;
     }
 }
-.post-type-btn{
-    width:50%;
-    height:100%;
-    position:relative;
-    align-items: center;
-    justify-content: center;
-    color:#71767B;
-    padding:10px;
-    border:none;
-    background:none;
-    transition:all 0.3s;
-    font-size: 16px;
-    font-weight:600;
-}
-.post-type-btn:hover{
-    background-color: #202223;
-}
-.active-post-type{
-    color:white;
-    font-size: 16px;
-    font-weight: 700;
-}
-.active-line{
-    height:4px;
-    width:75px;
-    background-color: #1D9BF0;
-    border-radius:5px;
-    position:absolute;
-    bottom:1px;
-    display:none;
-    left: 50%;
-    transform: translateX(-50%);
-}
-.active-line.active{
-    display:block;
+
+.show-more-container{
+    width:100%;
+    height:auto;
+    .show-more-btn{
+        width:100%;
+        height:60px;
+        border:none;
+        display:flex;
+        align-items: center;
+        padding-left:20px;
+        background: none;
+        font-size:17px;
+        color:#1D9BF0;
+        cursor: pointer;
+        transition:all 0.3s;
+    }
+    .show-more-btn:hover{
+        background-color: #080808;
+    }
 }
 
 .post-container{
-    padding-top:125px;
+    padding-top:50px;
     width:100%;
     height:auto;
     display:flex;
@@ -177,119 +278,6 @@ export default{
     }
 }
 
-
-.create-tweet{
-    width:100%;
-    min-height:fit-content;
-    display:flex;
-    flex-direction:row;
-    box-sizing: border-box;
-    gap:10px;
-    padding:15px;
-    border-bottom: 1px solid #2F3336;
-
-    .right-side{
-        width:90%;
-        height:100%;
-        display:flex;
-        gap:10px;
-        flex-direction:column;
-        .top{
-            width:100%;
-            height:80%;
-            display:flex;
-            align-items: center;
-            justify-content: flex-start;
-            box-sizing: border-box;
-            padding:0px;
-            .tweet-input-container{
-                width:100%;
-                height:100%;
-                display:flex;
-                align-items: center;
-                justify-content: center;
-                padding-top: 10px;
-                padding-right:10px;
-                .tweet-input{
-                    width:100%;
-                    height:100%;
-                    background-color: #000000;
-                    color:#ffffff;
-                    resize: none;
-                    transition: height 0.2s;
-                    font-family: Arial, sans-serif;
-                    font-size: 22px;
-                    border:none;
-                    display:flex;
-                    align-items: center;
-                    padding:5px 5px;
-                }
-                .tweet-input:focus{
-                    outline:none;
-                    border-bottom:1px solid #2F3336;
-                    padding: 5px 5px 15px 5px;
-                }
-            }
-        }
-        .bottom{
-            width:100%;
-            height:40px;
-            display:flex;
-            flex-direction: row;
-            justify-content: space-between;
-            .buttons{
-                display:flex;
-                flex-direction: row;
-                align-items: center;
-                gap:5px;
-                .tweet-btn{
-                    height:40px;
-                    width:40px;
-                    background:none;
-                    border-radius:50%;
-                    border:none;
-                    display:flex;
-                    justify-content: center;
-                    align-items: center;
-                    cursor:pointer;
-                    .create-tweet-icon{
-                        font-size:20px;
-                        color:#1D9BF0;
-                        --ionicon-stroke-width: 40px;
-                    }
-                }
-                .tweet-btn:hover{
-                    background-color: rgba($color: #1D9BF0, $alpha: 0.1);
-                }
-            }
-            .post-button{
-                width:auto;
-                padding:20px;
-                height:auto;
-                display:flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                border-radius: 50px;
-                border:none;
-                background-color: #1D9BF0;
-                color:white;
-                font-size: medium;
-                font-weight: bold;
-                transition: all 0.3s;
-                cursor:pointer;
-            }
-            .post-button:hover{
-                background-color: #1d8dd7;
-            }
-            .post-button:disabled{
-                background-color: #0F4E78;
-                color:#808080;
-            }
-        }
-    }
-
-}
 .post{
     width:100%;
     min-height:auto;

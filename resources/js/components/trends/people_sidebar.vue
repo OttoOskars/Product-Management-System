@@ -1,5 +1,20 @@
 <template>
     <div class="search-container">
+        <div class="search-input-container">
+            <input 
+                type="text"
+                id="search-input"
+                class="search-input" 
+                maxlength="30" 
+                placeholder="Search"
+                :class="{ 'focused': isInputFocused }"
+                @focus="inputFocus"
+                @blur="inputBlur"
+                v-model="search"
+                >
+            <ion-icon name="search-outline" class="search-icon"></ion-icon>
+            <button class="close-icon-btn" @click="clearSearch" :class="{ 'focused': isInputFocused }"><ion-icon name="close-circle-sharp" class="close-icon"></ion-icon></button>
+        </div>
         <div class="who-to-follow">
             <div class="title">Who to follow</div>
             <div class="people-container">
@@ -20,23 +35,42 @@
                 <!-- Add more people -->
             </div>
             <div class="show-more-container">
-                <button class="show-more-btn">Show more</button>
+                <button class="show-more-btn" @click="redirectTo('/people')">Show more</button>
             </div>
         </div>
     </div>
 </template>
 <script>
+import { ref } from 'vue';
 export default{
     name: 'Search',
     data() {
         return {
+            isInputFocused: false,
             people: 3,
             trends: 5,
         };
     },
     setup () {
+        const search = ref('');
+        const clearSearch = () => {
+            search.value = '';
+        }
+        return {
+            search,
+            clearSearch
+        }
     },
     methods: {
+        inputFocus() {
+            this.isInputFocused = true;
+        },
+        inputBlur() {
+            this.isInputFocused = false;
+        },
+        redirectTo(where) {
+            this.$router.push(where);
+        }
     },
 
 }
@@ -49,7 +83,6 @@ export default{
     flex-direction: column;
     gap:20px;
     position:fixed;
-
     box-sizing: border-box;
     padding-left:30px;
     padding-top:10px;
@@ -57,6 +90,71 @@ export default{
     background:none;
 
     color:white;
+}
+.search-input-container {
+    width: 400px;
+    height: 60px;
+    position: fixed;
+    top: 0;
+    box-sizing: border-box;
+    z-index: 99;
+    padding: 5px 0 2px 0;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    .search-input {
+        width: 100%;
+        height: 90%;
+        border-radius: 50px;
+        padding-left:60px;
+        border:  1px solid transparent;
+        background-color: #202327;
+        position: relative;
+        color:white;
+        font-size: medium;
+        &.focused {
+            outline:none;
+            background-color: black;
+            border-color: #1D9BF0;
+            box-shadow: 0 0 5px #1D9BF0;
+        }
+    }
+
+    .search-input:focus + .search-icon{
+        color: #1D9BF0;
+    }
+
+
+
+    .search-input::-webkit-input-placeholder {
+        color: #71767B;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translate(0, -50%);
+        color: #71767B;
+        font-size: 24px;
+    }
+    .close-icon-btn{
+        position: absolute;
+        background:none;
+        border:none;
+        top: 50%;
+        right:7px;
+        transform: translate(0, -45%);
+        display:none;
+        cursor: pointer;
+        &.focused {
+            display:block;
+        }
+        .close-icon{
+        color: #1D9BF0;
+        font-size:30px;
+        }
+    }
 }
 
 
@@ -79,6 +177,7 @@ export default{
     display:flex;
     flex-direction: column;
     box-sizing: border-box;
+    margin-top:70px;
     border-radius: 25px;
     .people-container{
         box-sizing: border-box;

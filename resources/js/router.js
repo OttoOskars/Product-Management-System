@@ -26,6 +26,16 @@ const router = createRouter({
       meta: { requiresAuth: false }, // Public route
     },
     {
+      path: '/trends',
+      component: () => import('./components/trends/trends.vue'),
+      meta: { requiresAuth: false }, // Public route
+    },
+    {
+      path: '/people',
+      component: () => import('./components/who-to-follow/people.vue'),
+      meta: { requiresAuth: false }, // Public route
+    },
+    {
       path: '/home',
       component: () => import('./components/homepage.vue'),
       meta: { requiresAuth: true }, // Protected route
