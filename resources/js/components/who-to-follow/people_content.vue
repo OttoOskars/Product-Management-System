@@ -177,7 +177,7 @@ export default {
 }
 
 .back-icon:hover {
-    background-color: rgba($color: #1a1a1a, $alpha: 1);
+    background-color: rgba($color: #1a1a1a, $alpha: 0.9);
 
 }
 </style>
