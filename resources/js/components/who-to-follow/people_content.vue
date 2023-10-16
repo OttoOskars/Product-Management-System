@@ -7,27 +7,19 @@
             <div class="title">People who follow</div>
         </div>
 
-        <div class="who-to-follow">
-            <div v-for="(people, index) in people" :key="index" class="who-to-follow__block">
-                <div class="who-to-follow__container">
-                    <img :src="people.img" alt="" class="who-image">
-                    <div>
-                        <div class="who-to-follow__name">
-                            {{ people.name }}
-                        </div>
-                        <div class="who-to-follow__username">
-                            {{ people.username }}
-                        </div>
+        <div class="people-container">
+            <div v-for="(people, index) in people" :key="index" class="person">
+                <div class="user-info">
+                    <img :src="people.img" alt="" class="person-img">
+                    <div class="person-info">
+                        <p class="username">{{ people.name }}</p>
+                        <p class="usertag">{{ people.username }}</p>
                     </div>
-                    <button class="who-to-follow__btn" @click="handleFollow(index)"
-                        :class="{ 'followed-btn': people.followed }">
-                        {{ people.followed ? 'Followed' : 'Follow' }}
-                    </button>
                 </div>
+                <button class="follow-btn" @click="handleFollow(index)" :class="{ 'followed-btn': people.followed }">
+                        {{ people.followed ? 'Followed' : 'Follow' }}
+                </button>
             </div>
-<!-- Add more people -->
-
-            <!-- Add more people -->
         </div>
     </div>
 </template>
@@ -93,77 +85,80 @@ export default {
     font-size: 22px;
 }
 
-.trend-container {
-    width: 100%;
-    height: auto;
-    display: flex;
-    flex-direction: column;
+
+.people-container{
+    width:100%;
+    height:auto;
+    display:flex;
+    flex-direction:column;
     box-sizing: border-box;
-    border-bottom: 1px solid #2F3336;
     padding-top: 60px;
-
-    .trend {
-        width: 100%;
-        height: auto;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
+    .person{
+        width:100%;
+        height:70px;
+        display:flex;
+        flex-direction:row;
         align-items: center;
+        justify-content: space-between;
         box-sizing: border-box;
-        padding: 10px 20px;
+        padding: 40px 20px;
+        cursor:pointer;
+        transition: all 0.3s;
+        &:hover{
+            background-color: #080808;
+        }
 
-        .more-icon {
-            display: flex;
+        .user-info{
+            display:flex;
+            flex-direction:row;
             align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: black;
-            color: #6A6F74;
+            justify-content: flex-start;
+            box-sizing: border-box;
+            gap:10px;
+            img{
+                width:50px;
+                height:50px;
+                border-radius:50%;
+                background-color: rgb(255, 255, 255);
+            }
+            .person-info{
+                display:flex;
+                flex-direction:column;
+                align-items: flex-start;
+                justify-content: flex-start;
+                gap:5px;
+                .username{
+                    color: white;
+                    font-weight: bold;
+                    font-size: 16px;
+                    margin:0;
+                }
+                .usertag{
+                    color: #6e767d;
+                    font-size: 14px;
+                    margin: 0;
+                }
+            }
+        }
+        .follow-btn {
+            background-color: #1e87f9;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 20px;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .more-icon:hover {
-            background-color: rgba($color: #1D9BF0, $alpha: 0.1);
-            color: #1D9BF0;
-        }
-    }
-
-    .trend-info {
-        width: 100%;
-        height: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        box-sizing: border-box;
-        cursor: pointer;
-
-        .trend-rank {
-            color: #6e767d;
-            font-size: 13px;
-            margin: 0;
-        }
-
-        .trend-name {
-            color: white;
+            height: 40px;
+            width: 80px;
             font-weight: bold;
-            font-size: 16px;
-            margin: 0;
         }
 
-        .trend-posts {
-            color: #6e767d;
-            font-size: 13px;
-            margin: 0;
+        .followed-btn {
+            background-color: white;
+            color:#1d9bf0
         }
-    }
-
-    .trend:hover {
-        background-color: #080808;
     }
 }
+
 
 .back-icon {
     display: flex;
@@ -185,69 +180,4 @@ export default {
     background-color: rgba($color: #1a1a1a, $alpha: 1);
 
 }
-/* PEOPLE WHO FOLLOW */
-
-.who-to-follow {
-    width: 100%;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    border-bottom: 1px solid #2F3336;
-    padding-top: 60px;
-    justify-content: center;
-
-}
-
-.who-to-follow__container {
-    box-sizing: border-box;
-    gap: 10px;
-    justify-content: center;
-}
-
-
-
-.who-image{
-    width: 53px;
-    height: 53px;
-    border-radius: 50%;
-    padding-left: 10px;
-}
-
-.who-to-follow__btn {
-    background-color: #1e87f9;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 20px;
-    cursor: pointer;
-    position: relative;
-    left: 190px;
-    bottom: 50px;
-    height: 40px;
-    width: 80px;
-    font-weight: bold;
-}
-
-.followed-btn {
-    background-color: white;
-    color:#1d9bf0
-}
-
-
-.who-to-follow__name {
-    position: relative;
-    left: 60px;
-    bottom: 20px;
-    padding-left: 10px;
-}
-
-.who-to-follow__username {
-    position: relative;
-    left: 60px;
-    bottom: 15px;
-    color: gray;
-    padding-left: 10px;
-}
-
 </style>
