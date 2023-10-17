@@ -73,7 +73,6 @@ export default {
 @media (max-width: 912px) {
     .pop-up{
         .pop-up-inner{
-            margin-bottom: 700px;
         }
     }
 }
@@ -81,7 +80,6 @@ export default {
 @media (max-width: 820px) {
     .pop-up{
         .pop-up-inner{
-            margin-bottom: 470px;
         }
     }
 }
@@ -89,7 +87,6 @@ export default {
 @media (max-width: 768px) {
     .pop-up{
         .pop-up-inner{
-            margin-bottom: 50px;
         }
     }
 }
@@ -97,9 +94,6 @@ export default {
 @media (max-width: 570px) {
     .pop-up{
         .pop-up-inner{
-            margin-left: 10px;
-            margin-right: 10px;
-            margin-bottom: 270px;
             .pop-up-icon{
                 font-size: 29px;
             }
@@ -110,7 +104,6 @@ export default {
 @media (max-width: 540px) {
     .pop-up{
         .pop-up-inner{
-            margin-bottom: 130px;
         }
     }
 }
@@ -118,7 +111,6 @@ export default {
 @media (max-width: 412px) {
     .pop-up{
         .pop-up-inner{
-            margin-bottom: 280px;
         }
     }
 }
@@ -126,9 +118,6 @@ export default {
 @media (max-width: 410px) {
     .pop-up{
         .pop-up-inner{
-            margin-left: 10px;
-            margin-right: 10px;
-            margin-bottom: 280px;
             .pop-up-icon{
                 font-size: 27px;
             }
@@ -139,9 +128,6 @@ export default {
 @media (max-width: 380px) {
     .pop-up{
         .pop-up-inner{
-            margin-left: 10px;
-            margin-right: 10px;
-            margin-bottom: 210px;
             .pop-up-icon{
                 font-size: 25px;
             }
@@ -152,9 +138,6 @@ export default {
 @media (max-width: 350px) {
     .pop-up{
         .pop-up-inner{
-            margin-left: 10px;
-            margin-right: 10px;
-            margin-bottom: 180px;
             .pop-up-icon{
                 font-size: 23px;
             }
@@ -165,9 +148,6 @@ export default {
 @media (max-width: 340px) {
     .pop-up{
         .pop-up-inner{
-            margin-left: 10px;
-            margin-right: 10px;
-            margin-bottom: 200px;
             .pop-up-icon{
                 font-size: 22px;
             }
@@ -178,9 +158,6 @@ export default {
 @media (max-width: 325px) {
     .pop-up{
         .pop-up-inner{
-            margin-left: 10px;
-            margin-right: 10px;
-            margin-bottom: 220px;
             .pop-up-icon{
                 font-size: 20px;
             }
