@@ -97,7 +97,7 @@
         </div>
   
         <div class="birth_date">
-          <h3>Date of birth</h3>
+          <h3 class="date">Date of birth</h3>
           <p class="p">This will not be shown publicly. Confirm your own age, even if this account is for a business, a pet, or something else.</p>
         </div>
         <div>
@@ -182,7 +182,7 @@
     },
     computed: {
       allFieldsFilled() {
-        return this.name &&this.username && this.email && this.password && this.confirmPassword && this.month && this.day && this.year;
+        return this.name && this.username && this.email && this.password && this.confirmPassword && this.month && this.day && this.year;
       },
       daysInMonth() {
         if (["April", "June", "September", "November"].includes(this.month)) {
@@ -367,7 +367,7 @@
 .account-background{
   background:rgba(29, 161, 242, 0.1);
   z-index: 99;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right:0;
@@ -380,7 +380,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 500px;
-  height: 700px;
+  height: 670px;
   background-color: black;
   border-radius: 20px;
   font-family: Arial, Helvetica, sans-serif;
@@ -552,5 +552,756 @@ select option { color: white; }
   position: absolute;
   top: 10px;
   left: 10px;
+}
+@media (width: 1024px) {
+  .account-container {
+    width: 450px;
+    height: 560px;
+  }
+  .heading_create {
+    top: 10px;
+    left: 30px;
+    font-size: 12px;
+  }
+  .X {
+    width: 25px;
+    height: 25px;
+  }
+  .X-2 {
+    top: 5px;
+    left: 5px;
+  }
+  input[type="text"], input[type="password"], input[type="email"] {
+    height: 40px;
+    width: 390px;
+  }
+  .name {
+    top: 70px;
+    left: 30px;
+    width: 390px;
+  }
+  .username {
+    top: 85px;
+    left: 30px;
+    width: 390px;
+  }
+  .email {
+    top: 100px;
+    left: 30px;
+    width: 390px;
+  }
+  .password {
+    top: 115px;
+    left: 30px;
+    width: 390px;
+  }
+  .confirm_password {
+    top: 130px;
+    left: 30px;
+    width: 390px;
+  }
+  .birth_date {
+    top: 330px;
+    left: 30px;
+  }
+  .date {
+    font-size: 16px;
+  }
+  .p {
+    font-size: 11px;
+    width: 390px;
+  }
+  select {
+    height: 40px;
+    font-size: 12px;
+  }
+  .select-1 {
+    width: 170px;
+  }
+  .select-2 {
+    width: 70px;
+  }
+  .select-3 {
+    width: 130px;
+  }
+  .months {
+    top: 230px;
+    left: 30px;
+  }
+  .days {
+    top: 190px;
+    left: 210px;
+  }
+  .years {
+    top: 150px;
+    left: 290px;
+  }
+  .next {
+    font-size: 12px;
+    width: 390px;
+    height: 40px;
+    left: 30px;
+    top: 500px;
+  }
+  .input-label {
+    font-size: 12px;
+  }
+  .input-label.active {
+    font-size: 9px;
+  }
+  .account-input {
+    padding-top: 18px;
+    font-size: 11px;
+  }
+  .warning {
+    top: 80%;
+    font-size: 10px;
+  }
+}
+// =================================================================
+@media (max-width: 650px) {
+  .account-container {
+    width: 550px;
+    height: 650px;
+  }
+  .heading_create {
+    top: 10px;
+    left: 40px;
+    font-size: 14px;
+  }
+  .X {
+    width: 27px;
+    height: 27px;
+  }
+  .X-2 {
+    top: 6px;
+    left: 6px;
+  }
+  input[type="text"], input[type="password"], input[type="email"] {
+    height: 50px;
+    width: 470px;
+  }
+  .name {
+    top: 70px;
+    left: 40px;
+    width: 470px;
+  }
+  .username {
+    top: 85px;
+    left: 40px;
+    width: 470px;
+  }
+  .email {
+    top: 100px;
+    left: 40px;
+    width: 470px;
+  }
+  .password {
+    top: 115px;
+    left: 40px;
+    width: 470px;
+  }
+  .confirm_password {
+    top: 130px;
+    left: 40px;
+    width: 470px;
+  }
+  .birth_date {
+    top: 380px;
+    left: 40px;
+  }
+  .date {
+    font-size: 18px;
+  }
+  .p {
+    font-size: 13px;
+    width: 470px;
+  }
+  select {
+    height: 50px;
+    font-size: 14px;
+  }
+  .select-1 {
+    width: 200px;
+  }
+  .select-2 {
+    width: 90px;
+  }
+  .select-3 {
+    width: 160px;
+  }
+  .months {
+    top: 230px;
+    left: 40px;
+  }
+  .days {
+    top: 180px;
+    left: 250px;
+  }
+  .years {
+    top: 130px;
+    left: 350px;
+  }
+  .next {
+    font-size: 14px;
+    width: 470px;
+    height: 50px;
+    left: 40px;
+    top: 570px;
+  }
+  .input-label {
+    font-size: 14px;
+  }
+  .input-label.active {
+    font-size: 11px;
+  }
+  .account-input {
+    padding-top: 18px;
+    font-size: 13px;
+  }
+  .warning {
+    top: 75%;
+    font-size: 12px;
+  }
+}
+// =======================================================================================
+@media (max-width: 600px) {
+  .account-container {
+    width: 500px;
+    height: 600px;
+  }
+  .heading_create {
+    top: 10px;
+    left: 30px;
+    font-size: 13px;
+  }
+  .X {
+    width: 26px;
+    height: 26px;
+  }
+  .X-2 {
+    top: 5px;
+    left: 5px;
+  }
+  input[type="text"], input[type="password"], input[type="email"] {
+    height: 45px;
+    width: 440px;
+  }
+  .name {
+    top: 70px;
+    left: 30px;
+    width: 440px;
+  }
+  .username {
+    top: 85px;
+    left: 30px;
+    width: 440px;
+  }
+  .email {
+    top: 100px;
+    left: 30px;
+    width: 440px;
+  }
+  .password {
+    top: 115px;
+    left: 30px;
+    width: 440px;
+  }
+  .confirm_password {
+    top: 130px;
+    left: 30px;
+    width: 440px;
+  }
+  .birth_date {
+    top: 350px;
+    left: 30px;
+  }
+  .date {
+    font-size: 17px;
+  }
+  .p {
+    font-size: 12px;
+    width: 440px;
+  }
+  select {
+    height: 45px;
+    font-size: 13px;
+  }
+  .select-1 {
+    width: 190px;
+  }
+  .select-2 {
+    width: 80px;
+  }
+  .select-3 {
+    width: 150px;
+  }
+  .months {
+    top: 230px;
+    left: 30px;
+  }
+  .days {
+    top: 185px;
+    left: 230px;
+  }
+  .years {
+    top: 140px;
+    left: 320px;
+  }
+  .next {
+    font-size: 13px;
+    width: 440px;
+    height: 45px;
+    left: 30px;
+    top: 530px;
+  }
+  .input-label {
+    font-size: 13px;
+  }
+  .input-label.active {
+    font-size: 10px;
+  }
+  .account-input {
+    padding-top: 18px;
+    font-size: 12px;
+  }
+  .warning {
+    top: 80%;
+    font-size: 11px;
+  }
+}
+// ===============================================================================================
+@media (max-width: 550px) {
+  .account-container {
+    width: 450px;
+    height: 560px;
+  }
+  .heading_create {
+    top: 10px;
+    left: 30px;
+    font-size: 12px;
+  }
+  .X {
+    width: 25px;
+    height: 25px;
+  }
+  .X-2 {
+    top: 5px;
+    left: 5px;
+  }
+  input[type="text"], input[type="password"], input[type="email"] {
+    height: 40px;
+    width: 390px;
+  }
+  .name {
+    top: 70px;
+    left: 30px;
+    width: 390px;
+  }
+  .username {
+    top: 85px;
+    left: 30px;
+    width: 390px;
+  }
+  .email {
+    top: 100px;
+    left: 30px;
+    width: 390px;
+  }
+  .password {
+    top: 115px;
+    left: 30px;
+    width: 390px;
+  }
+  .confirm_password {
+    top: 130px;
+    left: 30px;
+    width: 390px;
+  }
+  .birth_date {
+    top: 330px;
+    left: 30px;
+  }
+  .date {
+    font-size: 16px;
+  }
+  .p {
+    font-size: 11px;
+    width: 390px;
+  }
+  select {
+    height: 40px;
+    font-size: 12px;
+  }
+  .select-1 {
+    width: 170px;
+  }
+  .select-2 {
+    width: 70px;
+  }
+  .select-3 {
+    width: 130px;
+  }
+  .months {
+    top: 230px;
+    left: 30px;
+  }
+  .days {
+    top: 190px;
+    left: 210px;
+  }
+  .years {
+    top: 150px;
+    left: 290px;
+  }
+  .next {
+    font-size: 12px;
+    width: 390px;
+    height: 40px;
+    left: 30px;
+    top: 500px;
+  }
+  .input-label {
+    font-size: 12px;
+  }
+  .input-label.active {
+    font-size: 9px;
+  }
+  .account-input {
+    padding-top: 18px;
+    font-size: 11px;
+  }
+  .warning {
+    top: 80%;
+    font-size: 10px;
+  }
+}
+// ===========================================================================
+@media (max-width: 500px) {
+  .account-container {
+    width: 400px;
+    height: 560px;
+  }
+  .heading_create {
+    top: 10px;
+    left: 30px;
+    font-size: 12px;
+  }
+  .X {
+    width: 25px;
+    height: 25px;
+  }
+  .X-2 {
+    top: 5px;
+    left: 5px;
+  }
+  input[type="text"], input[type="password"], input[type="email"] {
+    height: 40px;
+    width: 340px;
+  }
+  .name {
+    top: 70px;
+    left: 30px;
+    width: 340px;
+  }
+  .username {
+    top: 85px;
+    left: 30px;
+    width: 340px;
+  }
+  .email {
+    top: 100px;
+    left: 30px;
+    width: 340px;
+  }
+  .password {
+    top: 115px;
+    left: 30px;
+    width: 340px;
+  }
+  .confirm_password {
+    top: 130px;
+    left: 30px;
+    width: 340px;
+  }
+  .birth_date {
+    top: 330px;
+    left: 30px;
+  }
+  .date {
+    font-size: 16px;
+  }
+  .p {
+    font-size: 11px;
+    width: 340px;
+  }
+  select {
+    height: 40px;
+    font-size: 12px;
+  }
+  .select-1 {
+    width: 150px;
+  }
+  .select-2 {
+    width: 60px;
+  }
+  .select-3 {
+    width: 110px;
+  }
+  .months {
+    top: 230px;
+    left: 30px;
+  }
+  .days {
+    top: 190px;
+    left: 190px;
+  }
+  .years {
+    top: 150px;
+    left: 260px;
+  }
+  .next {
+    font-size: 12px;
+    width: 340px;
+    height: 40px;
+    left: 30px;
+    top: 500px;
+  }
+  .input-label {
+    font-size: 12px;
+  }
+  .input-label.active {
+    font-size: 9px;
+  }
+  .account-input {
+    padding-top: 18px;
+    font-size: 11px;
+  }
+  .warning {
+    top: 80%;
+    font-size: 10px;
+  }
+}
+// ===============================================================================================
+@media (max-width: 450px) {
+  .account-container {
+    width: 350px;
+    height: 500px;
+  }
+  .heading_create {
+    top: 10px;
+    left: 20px;
+    font-size: 10px;
+  }
+  .X {
+    width: 23px;
+    height: 23px;
+  }
+  .X-2 {
+    top: 5px;
+    left: 5px;
+  }
+  input[type="text"], input[type="password"], input[type="email"] {
+    height: 35px;
+    width: 310px;
+  }
+  .name {
+    top: 60px;
+    left: 20px;
+    width: 310px;
+  }
+  .username {
+    top: 75px;
+    left: 20px;
+    width: 310px;
+  }
+  .email {
+    top: 90px;
+    left: 20px;
+    width: 310px;
+  }
+  .password {
+    top: 105px;
+    left: 20px;
+    width: 310px;
+  }
+  .confirm_password {
+    top: 120px;
+    left: 20px;
+    width: 310px;
+  }
+  .birth_date {
+    top: 300px;
+    left: 20px;
+  }
+  .date {
+    font-size: 14px;
+  }
+  .p {
+    font-size: 10px;
+    width: 310px;
+  }
+  select {
+    height: 35px;
+    font-size: 11px;
+    border: 1px solid gray;
+  }
+  .select-1 {
+    width: 140px;
+  }
+  .select-2 {
+    width: 50px;
+  }
+  .select-3 {
+    width: 100px;
+  }
+  .months {
+    top: 210px;
+    left: 20px;
+  }
+  .days {
+    top: 175px;
+    left: 170px;
+  }
+  .years {
+    top: 140px;
+    left: 230px;
+  }
+  .next {
+    font-size: 11px;
+    width: 310px;
+    height: 35px;
+    left: 20px;
+    top: 440px;
+  }
+  .input-label {
+    font-size: 11px;
+  }
+  .input-label.active {
+    font-size: 8px;
+  }
+  .account-input {
+    padding-top: 16px;
+    font-size: 10px;
+    border: 1px solid gray;
+  }
+  .account-input:focus {
+    border: 1px solid blue;
+  }
+  .warning {
+    top: 80%;
+    font-size: 9px;
+  }
+}
+// ==============================================================================================
+@media (max-width: 400px) {
+  .account-container {
+    width: 300px;
+    height: 410px;
+  }
+  .heading_create {
+    top: 8px;
+    left: 15px;
+    font-size: 9px;
+  }
+  .X {
+    width: 22px;
+    height: 22px;
+  }
+  .X-2 {
+    top: 4px;
+    left: 4px;
+  }
+  input[type="text"], input[type="password"], input[type="email"] {
+    height: 30px;
+    width: 270px;
+  }
+  .name {
+    top: 50px;
+    left: 15px;
+    width: 270px;
+  }
+  .username {
+    top: 60px;
+    left: 15px;
+    width: 270px;
+  }
+  .email {
+    top: 70px;
+    left: 15px;
+    width: 270px;
+  }
+  .password {
+    top: 80px;
+    left: 15px;
+    width: 270px;
+  }
+  .confirm_password {
+    top: 90px;
+    left: 15px;
+    width: 270px;
+  }
+  .birth_date {
+    top: 240px;
+    left: 15px;
+  }
+  .date {
+    font-size: 13px;
+  }
+  .p {
+    font-size: 9px;
+    width: 270px;
+  }
+  select {
+    height: 30px;
+    font-size: 10px;
+    border: 1px solid gray;
+  }
+  .select-1 {
+    width: 130px;
+  }
+  .select-2 {
+    width: 45px;
+  }
+  .select-3 {
+    width: 75px;
+  }
+  .months {
+    top: 160px;
+    left: 15px;
+  }
+  .days {
+    top: 130px;
+    left: 155px;
+  }
+  .years {
+    top: 100px;
+    left: 210px;
+  }
+  .next {
+    font-size: 10px;
+    width: 270px;
+    height: 30px;
+    left: 15px;
+    top: 360px;
+  }
+  .input-label {
+    font-size: 10px;
+  }
+  .input-label.active {
+    font-size: 7px;
+  }
+  .account-input {
+    padding-top: 14px;
+    font-size: 9px;
+    border: 1px solid gray;
+  }
+  .account-input:focus {
+    border: 1px solid blue;
+  }
+  .warning {
+    top: 75%;
+    font-size: 8px;
+  }
 }
 </style>
