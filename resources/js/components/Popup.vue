@@ -23,7 +23,7 @@ export default {
     bottom:0;
     left:0;
     right:0;
-    z-index: 99;
+    z-index: 20;
     background:rgba(29, 161, 242, 0.1);
     display:flex;
     justify-content:center;
@@ -70,26 +70,7 @@ export default {
     font-size: 20px;
     color:white;
 }
-@media (max-width: 912px) {
-    .pop-up{
-        .pop-up-inner{
-        }
-    }
-}
 
-@media (max-width: 820px) {
-    .pop-up{
-        .pop-up-inner{
-        }
-    }
-}
-
-@media (max-width: 768px) {
-    .pop-up{
-        .pop-up-inner{
-        }
-    }
-}
 
 @media (max-width: 570px) {
     .pop-up{
@@ -101,19 +82,8 @@ export default {
     }
 }
 
-@media (max-width: 540px) {
-    .pop-up{
-        .pop-up-inner{
-        }
-    }
-}
 
-@media (max-width: 412px) {
-    .pop-up{
-        .pop-up-inner{
-        }
-    }
-}
+
 
 @media (max-width: 410px) {
     .pop-up{

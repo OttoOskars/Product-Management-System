@@ -95,13 +95,12 @@ export default{
     display:flex;
     flex-direction: column;
     gap:20px;
-
     box-sizing: border-box;
     padding-left:30px;
     padding-top:10px;
     border-left:solid 1px #2F3336;
-    background:none;
-
+    background:black;
+    z-index:10;
     color:white;
 }
 .search-input-container {
@@ -355,6 +354,28 @@ export default{
             background-color: #1D1F23;
         }
     }
+    
 }
-
+@media (max-width: 1250px) {
+    .who-to-follow{
+        width:300px;
+    }
+    .search-input-container{
+        width:300px;
+    }
+    .trends{
+        width:300px;
+    }
+}
+@media (max-width: 1100px) {
+    .who-to-follow{
+        width:300px;
+    }
+    .search-input-container{
+        width:300px;
+    }
+    .trends{
+        width:300px;
+    }
+}
 </style>

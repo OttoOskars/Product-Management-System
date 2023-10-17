@@ -37,46 +37,57 @@ export default {
     margin: 0 auto;
     display:flex;
     flex-direction: row;
+    box-sizing: border-box;
 }
 .navbar{
-    min-height:100%;
     width: 3/12*100%;
-
+    box-sizing: border-box;
 }
 .search{
     min-height: 100%;
     width:4/12*100%;
-
+    box-sizing: border-box;
 }
 .tweets{
     min-height:100%;
     width:5/12*100%;
-
+    box-sizing: border-box;
 }
 
-@media (max-width: 1200px) {
-    // .navbar {
-    //   position: fixed;
-    //   bottom: 0;
-    //   width: 100%;
-    //   display: flex;
-    //   flex-direction: row;
-    //   justify-content: space-between;
-    //   align-items: center;
-    //   padding: 10px;
-    //   background-color: black;
-    //   z-index: 999;
-    // }
-
-    // .tweets {
-    //   // flex-grow: 1;
-    //   // overflow-y: scroll;
-    //   width: 65%; /* Adjust the width */
-    //   max-height: calc(100vh - 70px); 
-    // }
-
-    .search {
-      width: 35%
+@media (max-width: 1250px) {
+    .navbar{
+        width:100px;
+    }
+    .search{
+        width:4/12*100%
+    }
+    .tweets{
+        width:7/12*100%
+    }
+}
+@media (max-width: 1000px) {
+    .navbar{
+        width:100px;
+    }
+    .search{
+        display:none;
+    }
+    .tweets{
+        width:11/12*100%
+    }
+}
+@media (max-width: 500px) {
+    .navbar{
+        width:100%;
+        position:fixed;
+        bottom:0;
+        z-index:9999;
+    }
+    .search{
+        display:none;
+    }
+    .tweets{
+        width:100%
     }
 }
 </style>

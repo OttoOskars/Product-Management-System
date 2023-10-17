@@ -2,6 +2,12 @@
     <div class="tweets-container">
         <div class="top-bar">
             <div class="title">Home</div>
+            <div class="title2">
+                <div class="user-img"><img></div>
+                <div class="logo">
+                    <ion-icon name="logo-yahoo"></ion-icon>
+                </div>
+            </div>
             <div class="post-type">
                 <button @click="switchToTweets" class="post-type-btn" :class ="{ 'active-post-type': postType == 'tweets' }">For you<div class="active-line" :class ="{ 'active': postType == 'tweets' }"></div></button>
                 <button @click="switchToFollowing" class="post-type-btn" :class ="{ 'active-post-type': postType == 'following_tweets' }">Following<div class="active-line" :class ="{ 'active': postType == 'following_tweets' }"></div></button>
@@ -33,7 +39,24 @@
                     <img>
                 </div>
                 <div class="right-side">
-                    <div class="top">
+                    <!-- ############################################# -->
+                    <div class="top2">
+                        <div class="person-image">
+                            <img>
+                        </div>
+                        <div class="info-content">
+                            <div class="userinfo">
+                                <p class="username">username</p>
+                                <p class="usertag">@usertag</p>
+                                <p class="time-posted">2h</p>
+                            </div>
+                            <div class="content-text">
+                                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus animi omnis quisquam quam voluptates saepe. Exercitationem?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ############################################# -->
+                    <div class="post-top">
                         <div class="userinfo">
                             <p class="username">username</p>
                             <p class="usertag">@usertag</p>
@@ -111,7 +134,7 @@ export default{
     position:fixed;
     top:0;
     width:5/12*100%;
-    z-index:99;
+    z-index:9;
     backdrop-filter: blur(5px);
     border-bottom:solid 1px #2F3336;
 
@@ -152,7 +175,7 @@ export default{
     font-weight:600;
 }
 .post-type-btn:hover{
-    background-color: #202223;
+    background-color:rgba($color: #202223, $alpha: 0.8);
 }
 .active-post-type{
     color:white;
@@ -328,7 +351,7 @@ export default{
         box-sizing: border-box;
         gap:5px;
 
-        .top{
+        .post-top{
             width:100%;
             height:auto;
             display:flex;
@@ -383,7 +406,7 @@ export default{
             img{
                 border-radius:15px;
                 width:100%;
-                height:300px;
+                height:150px;
                 border:solid 1px #2F3336;
                 background-color: white;
             }
@@ -467,7 +490,239 @@ export default{
         }
     }
 }
+.top2{
+    display:none;
+}
 .post:hover{
     background-color: #080808;
+}
+@media (max-width: 1250px) {
+    .top-bar{
+        width:7/12*100%;
+    }
+}
+@media (max-width: 1100px) {
+    .top-bar{
+        width:7/12*100%;
+    }
+}
+@media (max-width: 1000px) {
+    .top-bar{
+        width:11/12*100%;
+    }
+}
+
+@media (min-width: 500px) {
+    .user-img, .logo{
+        display:none !important;
+    }
+}
+@media (max-width: 500px) {
+    .top-bar{
+        width:100%;
+        height:125px;
+    } 
+    .title{
+        display:none !important;
+    }
+    .title2{
+        width:100%;
+        box-sizing: border-box;
+        height:70%;
+    }
+    .user-img{
+        position:fixed;
+        top:10px;
+        left:20px;
+        width: auto;
+        height:auto;
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        img{
+            width:50px;
+            height:50px;
+
+            border-radius:50%;
+            background-color: rgb(255, 255, 255);
+        }
+    }
+    .logo{
+        display:flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        color:white;
+        position:absolute;
+        font-size:25px;
+        top:10px;
+        left:50%;
+        transform: translate(-50%);
+    }
+    .post-type{
+        width:100%;
+        height:30%;
+        display:flex;
+        flex-direction:row;
+        justify-content: space-between;
+
+    }
+    .post-type-btn{
+        width:50%;
+        height:100%;
+        position:relative;
+        align-items: center;
+        justify-content: center;
+        color:#71767B;
+        padding:10px;
+        border:none;
+        background:none;
+        transition:all 0.3s;
+        font-size: 15px;
+        font-weight:500;
+    }
+    .active-post-type{
+        color:white;
+        font-weight: 600;
+    }
+
+    .left-side, .post-top{
+        display:none !important;
+    }
+    .right-side{
+        width:100% !important;
+    }
+    .top2{
+        width:100%;
+        height:auto;
+        display:flex;
+        flex-direction:row;
+        .person-image{
+            width: 50px;
+            height: auto;
+            display:flex;
+            align-items: center;
+            align-items: flex-start;
+            img{
+                width:50px;
+                height:50px;
+
+                border-radius:50%;
+                background-color: rgb(255, 255, 255);
+            }
+        }
+        .info-content{
+            width:100%;
+            height:auto;
+            display:flex;
+            flex-direction:column;
+            padding-left:5px;
+            .userinfo{
+                width:100%;
+                height:10px;
+                display:flex;
+                flex-direction:row;
+                justify-content: flex-start;
+                align-items: center;
+                gap:7px;
+                color:white;
+                padding-top:2px;
+                .username{
+                    margin:0;
+                    font-weight: bold;
+                    font-size: 15px;
+                    color:white;
+                }
+                .usertag{
+                    margin:0;
+                    font-size: 15px;
+                    color:#6A6F74;
+                }
+                .time-posted{
+                    margin:0;
+                    font-size: 15px;
+                    color:#6A6F74;
+                }
+            }
+
+            .content-text{
+                width:100%;
+                height:auto;
+                text-align: left;
+                color:white;
+                padding:0px;
+                font-size:15px;
+            }
+        }
+
+
+    }
+    .post{
+        width:100%;
+        min-height:auto;
+        display:flex;
+        flex-direction:row;
+        gap:5px!important;
+        box-sizing: border-box;
+        padding:15px 10px 5px 10px;
+        border-bottom: 1px solid #2F3336;
+    }
+    .content-img{
+        padding:0 !important;
+    }
+    .tweet-input{
+        width:100%;
+        height:100%;
+        font-size: 18px !important;
+    }
+    .post-button{
+        width:auto;
+        padding: 5px 15px!important;
+        height:auto;
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 50px;
+        border:none;
+        background-color: #1D9BF0;
+        color:white;
+        font-size: 12px!important;
+        font-weight: bold;
+        transition: all 0.3s;
+        cursor:pointer;
+    }
+    .tweet-btn{
+        height:30px!important;
+        width:30px!important;
+        background:none;
+        border-radius:50%;
+        border:none;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        cursor:pointer;
+        .create-tweet-icon{
+            font-size:20px;
+            color:#1D9BF0;
+            --ionicon-stroke-width: 40px;
+        }
+    }
+    .bottom{
+        width:100%;
+        height:40px!important;
+        .post-btn-container{
+            width:auto;
+            height:100%;
+            border-radius:50%;
+            transition: all 0.3s;
+            cursor:pointer;
+            .post-btn-nr{
+                color:#6A6F74;
+                font-size:10px !important;
+                padding-top:1px;
+            }
+        }
+    }
 }
 </style>
