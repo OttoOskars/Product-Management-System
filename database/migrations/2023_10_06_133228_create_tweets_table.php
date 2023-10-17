@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tweets', function (Blueprint $table) {
             $table->id('TweetID');
-            $table->string('TweetText');
+            $table->string('TweetText')->nullable();;
             $table->string('TweetImage')->nullable();
             $table->unsignedBigInteger('UserID');
             $table->foreign('UserID')->references('UserID')->on('users');

@@ -29,9 +29,10 @@ class User extends Authenticatable
         'Password',
     ];
 
-    /**
-     * Get the personal access tokens for the user.
-     */
+     public function tweets()
+    {
+        return $this->hasMany(Tweet::class, 'UserID');
+    }
     public function tokens(): MorphMany
     {
         return $this->morphMany(PersonalAccessToken::class, 'tokenable');

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Events\TweetDeleting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Tweet extends Model
 {
@@ -18,5 +20,14 @@ class Tweet extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'UserID'); // Define the relationship with the User model
+    }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($tweet) {
+            Log::info('Event sent twitter.php');
+            event(new TweetDeleting($tweet));
+        });
     }
 }

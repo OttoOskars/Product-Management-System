@@ -61,10 +61,17 @@
                     <button class="tweet-btn" @click="openTweetWindow">Tweet</button>
 
                     <div v-if="showTweetWindow" class="tweet-window">
-                        <textarea class="tweet-windows" v-model="tweetText"></textarea>
+                        <textarea class="tweet-windows" ref="tweetInput" v-model="tweet"></textarea>
+                        <input type="file" @change="handleFileUpload" accept="image/*" />
                         <button class="tweet-window-close" @click="closeTweetWindow">Close</button>
                         <button class="tweet-window-submit" @click="submitTweet">Submit</button>
                     </div>
+                    <form @submit.prevent="createTweet">
+                        <textarea v-model="tweet" placeholder="What's on your mind?"></textarea>
+                        <input type="file" @change="onImageChange" />
+                        <button type="submit">Create Tweet</button>
+                    </form>
+                    <img alt="Image Description">
                     <button @click="logoutUser">Logout</button>
                 <a href="#" class="profile-btn">
                 <div class="profile-info">
@@ -103,6 +110,7 @@
                     </div>
                 </div>
             </div>
+
             <div class ="tweets">
                 <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
                 <div class="tweets__main">
@@ -238,6 +246,28 @@
                     </div>
                 </div>
             </div>
+            <div v-for="tweet in tweets" :key="tweet.TweetID" class ="tweets">
+                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
+                <div class="tweets__main">
+                    <div class="tweets__header">
+                        <div class="tweets__name">
+                            {{ tweet.user.Name }}
+                        </div>
+                        <div class="tweets__twname">
+                            {{ tweet.user.UserTag }}
+                        </div>
+                        <div class="tweets__publish-time">
+                            {{ tweet.created_ago }}
+                        </div>
+                    </div>
+                    <div class="tweets__content">
+                        <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
+                        <img v-if="tweet.TweetImage" :src="'/storage/' + tweet.TweetImage" alt="Tweet Image" />
+                    </div>
+                    <button @click="deleteTweet(tweet.TweetID)" v-if="tweet.user.UserID === user.UserID">Delete Tweet</button>
+                </div>
+            </div>
+        </div>
         </div>
 
         <!--Labais-->
@@ -317,11 +347,10 @@
                     </div>
                 </div>
             </div>
-        </div>
-
 </template>
 
 <script>
+import { ref } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
@@ -332,6 +361,9 @@ export default {
         ...mapState(['user']),
     },
     data: () => ({
+        tweets: [],
+        tweet: '',
+        tweetImage: null,
         showTweetWindow: false,
         followed: false,
         people: [
@@ -360,9 +392,10 @@ export default {
         };
         return {
         logoutUser,
-            }
+        }
 	},
     methods: {
+
         handleFollow(index) {
             this.people[index].followed = !this.people[index].followed;
         },
@@ -372,10 +405,75 @@ export default {
         closeTweetWindow() {
             this.showTweetWindow = false;
         },
-        submitTweet() {
-            this.closeTweetWindow();
+
+        GetAllTweets() {
+            axios.get('/api/all-tweets') // Update the URL as per your Laravel routes
+            .then(response => {
+                this.tweets = response.data.tweets;
+            })
+            .catch(error => {
+                console.error(error);
+            });
         },
 
+        submitTweet() {
+            this.closeTweetWindow();
+            this.createPost();
+        },
+        onImageChange(event) {
+            this.tweetImage = event.target.files[0];
+        },
+        async createTweet() {
+            const formData = new FormData();
+            formData.append('tweetText', this.tweet);
+            if (this.tweetImage) {
+                formData.append('tweetImage', this.tweetImage);
+            }
+
+            try {
+                const response = await this.$axios.post('/api/tweets', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+
+                // Handle the success response and reset the form
+                this.tweet = '';
+                this.tweetImage = null;
+                this.GetAllTweets();
+            } catch (error) {
+                console.error(error);
+                // Handle any errors that occur during tweet creation
+            }
+        },
+        deleteTweet(tweetId) {
+            if (!tweetId) {
+                console.log("Tweet ID not retrieved");
+            // Handle the case where tweetId is not available (e.g., show an error message)
+            return;
+            }
+
+            // Send the DELETE request to the appropriate API endpoint
+            axios.delete(`/api/tweets/${tweetId}`)
+            .then(response => {
+                // Handle the success response, maybe by updating your tweet list
+                this.GetAllTweets();
+                this.fetchTweets(); // You might have a method to fetch tweets
+            })
+            .catch(error => {
+                // Handle any errors, show a message, etc.
+            });
+        },
+
+    },
+    mounted() {
+        axios.get('/api/all-tweets') // Update the URL as per your Laravel routes
+            .then(response => {
+                this.tweets = response.data.tweets;
+            })
+            .catch(error => {
+                console.error(error);
+            });
     },
 
 };

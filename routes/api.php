@@ -17,3 +17,6 @@ Route::post('updateName', [UserController::class, 'updateName']);
 Route::post('updateDesc', [UserController::class, 'updateDescription']);
 Route::post('updatePFP', [UserController::class, 'updateProfilePicture']);
 Route::post('updateBanner', [UserController::class, 'updateBanner']);
+
+Route::get('/all-tweets', [TweetController::class, 'getAllTweets']);
+Route::delete('/tweets/{id}',[TweetController::class, 'deleteTweet']);
