@@ -126,7 +126,8 @@ class UserController extends Controller
 
     public function getUser()
     {
-        return auth()->user();
+       /*  return auth()->user(); */
+       return Auth::user();
     }
 
     public function updateName(Request $request)

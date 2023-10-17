@@ -44,7 +44,7 @@
                     <span style="font-size: 18px; margin-left: 20px;">Bookmarks</span>
                 </div>
             </button>
-            
+
             <button>
                 <div class="button-content">
                     <ion-icon name="person-outline" style="font-size: 24px;"></ion-icon>
@@ -65,11 +65,11 @@
                     <span style="font-size: 18px; margin-left: 10px;">Tweet</span>
                 </div>
             </button>
-            
+
         </div>
         <div class="profile"><!-- display-flex row align-items-center padding:???-->
             <div class="user-img"><!-- +/- 20% -->
-                <img> 
+                <img>
             </div><!-- +/- 60% -->
             <div class="user-info"><!-- display-flex column -->
                 <p class="username">username</p>
@@ -104,7 +104,7 @@ export default{
         color:white;
     }
     .buttons{
-        width:100%;
+        width:90%;
         display: flex;
         flex-direction: column;
         gap:10px;
