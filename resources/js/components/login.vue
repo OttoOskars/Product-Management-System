@@ -445,7 +445,7 @@ export default {
 .DateofBirth{
   margin-bottom:20px;
 }
-
+// ========================================================================================
 @media (max-width: 570px) {
   .twitter-logo {
     font-size: 100px;
@@ -525,7 +525,7 @@ export default {
     margin-top: 3px;
   }
 }
-
+// =======================================================================================
 @media (max-width: 410px) {
   .twitter-logo {
     font-size: 90px;
@@ -605,7 +605,7 @@ export default {
     margin-top: 3px;
   }
 }
-
+// ================================================================================================
 @media (max-width: 380px) {
   .twitter-logo {
     font-size: 80px;
@@ -685,7 +685,7 @@ export default {
     margin-top: 3px;
   }
 }
-
+// ========================================================================================
 @media (max-width: 350px) {
   .twitter-logo {
     font-size: 70px;
@@ -765,7 +765,7 @@ export default {
     margin-top: 3px;
   }
 }
-
+// ==============================================================================================
 @media (max-width: 340px) {
   .twitter-logo {
     font-size: 65px;
@@ -845,7 +845,7 @@ export default {
     margin-top: 3px;
   }
 }
-
+// =================================================================================================
 @media (max-width: 325px) {
   .twitter-logo {
     font-size: 60px;
@@ -923,6 +923,105 @@ export default {
   .warning-1 {
     font-size: 9px;
     margin-top: 3px;
+  }
+}
+// =================================================================================================
+@media (max-width: 305px) {
+  .twitter-logo {
+    font-size: 55px;
+  }
+  .login-text-1 {
+    font-size: 19px;
+  }
+  .login-text-2 {
+    font-size: 14px;
+  }
+  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
+    width: 90%;
+  }
+  .sign-up-btn {
+    img {
+      height: 14px;
+    }
+  }
+  .apple-logo {
+    font-size: 16px;
+  }
+  .sign-up-btn-apple, .sign-up-btn {
+    height: 31px;
+    font-size: 9px;
+    padding: 6px;
+  }
+  .create-account, .sign-in {
+    height: 26px;
+    font-size: 9px;
+    padding: 6px;
+  }
+  .text {
+    font-size: 9px;
+  }
+  .Sign-Pop-Up {
+    width: 100%;
+    margin: 0 auto;
+    padding: 6px;
+  }
+  .Bold-text {
+    font-size: 16px;
+  }
+  .SignInput {
+    font-size: 9px;
+    top: 0px;
+  }
+  .FormButton {
+    font-size: 9px;
+    height: 22px;
+  }
+  .input-wrap {
+    height: 29px;
+    label {
+      font-size: 11px;
+      padding:5px;
+      position:absolute;
+      top:3px;
+      left:5px;
+    }
+  }
+  .SignInput:focus+label,
+  .SignInput:disabled+label,
+  .SignInput:valid+label{
+    font-size:9px;
+    top:3px;
+    left:5px;
+    padding:0 5px 0 5px;
+  }
+  .sign-link-button {
+    font-size: 10px;
+  }
+  .p {
+    font-size: 9px;
+  }
+  .warning-1 {
+    font-size: 9px;
+    margin-top: 3px;
+  }
+}
+// ========================================================================================
+@media (max-width: 291px) {
+  .Bold-text {
+    font-size: 15px;
+  }
+
+  .sign-link-button {
+    font-size: 9px;
+  }
+  .p {
+    font-size: 8px;
+  }
+}
+// ==========================================================================================
+@media (max-width: 280px) {
+  .Bold-text {
+    font-size: 14px;
   }
 }
 </style>
