@@ -88,7 +88,7 @@
             </ul>
         </div>
 
-        <!--Vidus-->
+<!-- 
         <div class="container__main-scroll">
             <div class ="tweets">
                 <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
@@ -245,7 +245,8 @@
                         <img class="tweets__bilde" src="https://www.mintarrow.com/wp-content/uploads/2021/12/RESIZED-Family-04344.jpg">
                     </div>
                 </div>
-            </div>
+            </div> -->
+        <div class="container__main-scroll">
             <div v-for="tweet in tweets" :key="tweet.TweetID" class ="tweets">
                 <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
                 <div class="tweets__main">
@@ -265,13 +266,34 @@
                         <img v-if="tweet.TweetImage" :src="'/storage/' + tweet.TweetImage" alt="Tweet Image" />
                     </div>
                     <button @click="deleteTweet(tweet.TweetID)" v-if="tweet.user.UserID === user.UserID">Delete Tweet</button>
+                    <div v-if="commentsByTweet[tweet.TweetID]">
+                    <div v-for="comment in commentsByTweet[tweet.TweetID]" :key="comment.CommentID">
+                        <div class="comment" style="width:200px; height:100px; display:flex; background-color: bisque; color:black">
+                            <div class="comment__header">
+                                <div class="comment__name">
+                                    {{ comment.user && comment.user.Name }}
+                                </div>
+                                <div class="comment__twname">
+                                    {{ comment.user && comment.user.UserTag }}
+                                </div>
+                            </div>
+                            <div class="comment__content">
+                                {{ comment.CommentText }}
+                            </div>
+                        </div>
+                        <button @click="deleteComment( comment.TweetID,comment.CommentID)" v-if="comment.user && comment.user.UserID === user.UserID">Delete Tweet</button>
+                    </div>
+                    <button @click="createComment(tweet.TweetID, commentText)">Comment</button>
+                    <textarea v-model="commentText" class="comment" placeholder="Add a comment..."></textarea>
+                </div>
                 </div>
             </div>
         </div>
-        </div>
+    </div>
+<!--         </div> -->
 
         <!--Labais-->
-        <div class="container__foryou">
+<!--         <div class="container__foryou">
             <div class="trends-for-you__container">
                 <div class="trends-for-you__header">
                     Trends for you
@@ -346,7 +368,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 </template>
 
 <script>
@@ -363,6 +385,9 @@ export default {
     data: () => ({
         tweets: [],
         tweet: '',
+        commentText: '',
+        comments: [],
+        commentsByTweet: {},
         tweetImage: null,
         showTweetWindow: false,
         followed: false,
@@ -436,43 +461,88 @@ export default {
                         'Content-Type': 'multipart/form-data',
                     },
                 });
-
-                // Handle the success response and reset the form
                 this.tweet = '';
                 this.tweetImage = null;
                 this.GetAllTweets();
             } catch (error) {
                 console.error(error);
-                // Handle any errors that occur during tweet creation
             }
         },
         deleteTweet(tweetId) {
             if (!tweetId) {
                 console.log("Tweet ID not retrieved");
-            // Handle the case where tweetId is not available (e.g., show an error message)
             return;
             }
-
-            // Send the DELETE request to the appropriate API endpoint
             axios.delete(`/api/tweets/${tweetId}`)
             .then(response => {
-                // Handle the success response, maybe by updating your tweet list
                 this.GetAllTweets();
-                this.fetchTweets(); // You might have a method to fetch tweets
+                this.fetchTweets();
             })
             .catch(error => {
-                // Handle any errors, show a message, etc.
             });
         },
+        async GetAllComments(tweetId) {
+            try {
+                const response = await axios.get(`/api/comments/${tweetId}`);
+
+                if (!this.commentsByTweet[tweetId]) {
+                this.commentsByTweet[tweetId] = [];
+                }
+
+                this.commentsByTweet[tweetId] = response.data.comments;
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async createComment(tweetId, commentText) {
+            const formData = new FormData();
+            formData.append('tweetId', tweetId);
+            formData.append('commentText', commentText);
+
+            try {
+                const response = await this.$axios.post('/api/create-comments', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                });
+
+                if (!this.commentsByTweet[tweetId]) {
+                this.commentsByTweet[tweetId] = [];
+                }
+
+                this.commentsByTweet[tweetId].push(response.data.comment);
+                this.commentText = '';
+                this.GetAllComments(tweetId)
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async deleteComment(tweetId, commentId) {
+            if (!commentId) {
+                console.log("Comment ID not retrieved");
+                return;
+            }
+            try {
+                const response = await this.$axios.delete(`/api/delete-comments/${commentId}`);
+                this.GetAllComments(tweetId);
+            } catch (error) {
+                console.error(error);
+            }
+        }
 
     },
     mounted() {
-        axios.get('/api/all-tweets') // Update the URL as per your Laravel routes
+        // Fetch all tweets
+        this.$axios.get('/api/all-tweets')
             .then(response => {
-                this.tweets = response.data.tweets;
+            this.tweets = response.data.tweets;
+
+            this.tweets.forEach(tweet => {
+                this.GetAllComments(tweet.TweetID);
+            });
             })
             .catch(error => {
-                console.error(error);
+            console.error(error);
             });
     },
 
@@ -527,7 +597,6 @@ body {
     justify-content: flex-start;
     align-items: flex-start;
     z-index: 100;
-    position: fixed;
 
 }
 

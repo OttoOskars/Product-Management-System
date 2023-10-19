@@ -21,7 +21,7 @@
                 <div class="person" v-for="i in people" :key="i">
                     <div class="user">
                             <div class="user-img">
-                                <img> 
+                                <img @click.stop="openProfile(i)"> 
                             </div>
                             <div class="user-info">
                                 <p class="username">username</p>
@@ -70,7 +70,13 @@ export default{
         },
         redirectTo(where) {
             this.$router.push(where);
-        }
+        },
+        openProfile(id){
+            console.log(id);
+        },
+        openTweet(id) {
+            console.log(id);
+        },
     },
 
 }
@@ -292,5 +298,26 @@ export default{
         background-color: #1D1F23;
     }
 }
-
+@media (max-width: 1250px) {
+    .who-to-follow{
+        width:300px;
+    }
+    .search-input-container{
+        width:300px;
+    }
+    .trends{
+        width:300px;
+    }
+}
+@media (max-width: 1100px) {
+    .who-to-follow{
+        width:300px;
+    }
+    .search-input-container{
+        width:300px;
+    }
+    .trends{
+        width:300px;
+    }
+}
 </style>

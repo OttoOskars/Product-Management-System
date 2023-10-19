@@ -3,7 +3,7 @@
         <div class="top-bar">
             <div class="title">Home</div>
             <div class="title2">
-                <div class="user-img"><img></div>
+                <div class="user-img" @click="openProfile(i)"><img></div>
                 <div class="logo">
                     <ion-icon name="logo-yahoo"></ion-icon>
                 </div>
@@ -16,7 +16,7 @@
         <div class="post-container">
             <div class="create-tweet">
                 <div class="left-side">
-                    <img>
+                    <img  @click="openProfile(i)">
                 </div>
                 <div class="right-side">
                     <div class="top">
@@ -34,15 +34,15 @@
                     </div>
                 </div>
             </div>
-            <div class="post" v-for="i in currentPosts" :key="i"> 
+            <div class="post" v-for="i in currentPosts" :key="i"  @click="openTweet(i)"> 
                 <div class="left-side">
-                    <img>
+                    <img  @click.stop="openProfile(i)">
                 </div>
                 <div class="right-side">
                     <!-- ############################################# -->
                     <div class="top2">
                         <div class="person-image">
-                            <img>
+                            <img @click.stop="openProfile(i)">
                         </div>
                         <div class="info-content">
                             <div class="userinfo">
@@ -74,7 +74,7 @@
                             <div class="icon-container"><ion-icon name="heart-outline" class="post-icon"></ion-icon></div>
                             <p class="post-btn-nr">123</p>
                         </button>
-                        <button class="post-btn-container comment-btn">
+                        <button class="post-btn-container comment-btn" @click="() => TogglePopup('CommentTrigger')">
                             <div class="icon-container"><ion-icon name="chatbox-outline" class="post-icon"></ion-icon></div>
                             <p class="post-btn-nr">432</p>
                         </button>
@@ -88,15 +88,61 @@
             <!-- More posts -->
         </div>
     </div>
+    <Popup v-if="popupTriggers.CommentTrigger" :TogglePopup="() => TogglePopup('CommentTrigger')">
+        <div class="create-popup">
+            <div class="top">
+                <div class="left-side-popup">
+                    <img  @click="openProfile(i)">
+                </div>
+                <div class="right-side-popup">
+                    <div class="userinfo-popup">
+                        <p class="username">username</p>
+                        <p class="usertag">@usertag</p>
+                    </div>
+                    <div class="tweet-input-container">
+                        <textarea id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom">
+                <div class="buttons">
+                    <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
+                    <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
+                </div>
+                <button class="popup-button" >Comment</button>
+            </div>
+        </div>
+    </Popup>
 </template>
 <script>
+import { ref } from 'vue';
+import Popup from '../Popup.vue';
 export default{
     name: 'Tweets',
+    components: {
+        Popup,
+    },
     data(){
         return {
             tweets: 5,
             following_tweets: 1,
             postType: 'tweets',
+        }
+    },
+    setup(){
+        const popupTriggers = ref({
+            CommentTrigger: false,
+        });
+        const TogglePopup = (trigger) => {
+            popupTriggers.value[trigger] = !popupTriggers.value[trigger]
+            if (!popupTriggers.value[trigger]) {
+                /* clear text area */
+            }
+		}
+        return {
+            popupTriggers,
+            TogglePopup,
         }
     },
     computed: {
@@ -112,9 +158,23 @@ export default{
             this.postType = 'following_tweets';
         },
         autoSize() {
+            const maxRows = 10;
             const textarea = this.$refs.tweetInput;
             textarea.style.height = 'auto';
-            textarea.style.height = textarea.scrollHeight + 'px';
+            const customLineHeight = 1.5; // Match the line-height value from your CSS
+            const maxHeight = maxRows * customLineHeight * parseFloat(getComputedStyle(textarea).fontSize);
+
+            if (textarea.scrollHeight <= maxHeight) {
+                textarea.style.height = textarea.scrollHeight + 'px';
+            } else {
+                textarea.style.height = maxHeight + 'px';
+            }
+        },
+        openProfile(id){
+            console.log(id);
+        },
+        openTweet(id) {
+            console.log(id);
         },
     },   
 }
@@ -199,6 +259,7 @@ export default{
 
 .post-container{
     padding-top:125px;
+    padding-bottom:45px;
     width:100%;
     height:auto;
     display:flex;
@@ -215,12 +276,152 @@ export default{
             height:50px;
             border-radius: 50%;
             background-color: white;
-
         }
     }
 }
 
+.create-popup{
+    width:500px;
+    min-height: 300px;
+    display:flex;
+    flex-direction:column;
+    box-sizing: border-box;
+    justify-content: space-between;
+    padding:30px 0px 0px 0px;
+    box-sizing: border-box;
+    .top{
+        width:100%;
+        display:flex;
+        flex-direction: row;
+        box-sizing: border-box;
+        gap:15px;
+        padding:30px 35px 20px 20px;
 
+        .left-side-popup{
+            width:50px;
+            height:100%;
+            display:flex;
+            flex-direction:column;
+            box-sizing: border-box;
+            img{
+                width:50px;
+                height:50px;
+                border-radius: 50%;
+                background-color: white;
+            }
+        }
+        .right-side-popup{
+            width:90%;
+            height:100%;
+            display:flex;
+            flex-direction:column;
+            box-sizing: border-box;
+            .userinfo-popup{
+                width:100%;
+                height:20px;
+                display:flex;
+                flex-direction: row;
+                gap:5px;
+                .username{
+                    margin:0;
+                    font-weight: bold;
+                    font-size: 17px;
+                    color:white;
+                }
+                .usertag{
+                    margin:0;
+                    font-size: 17px;
+                    color:#6A6F74;
+                }
+            }
+            .tweet-input-container{
+                width:100%;
+                height:100%;
+                display:flex;
+                align-items: center;
+                justify-content: center;
+                padding-top: 10px;
+                padding-right:10px;
+                .tweet-input{
+                    width:100%;
+                    height:100%;
+                    background-color: #000000;
+                    color:#ffffff;
+                    resize: none;
+                    transition: height 0.2s;
+                    font-family: Arial, sans-serif;
+                    font-size: 22px;
+                    border:none;
+                    display:flex;
+                    align-items: center;
+                }
+                .tweet-input:focus{
+                    outline:none;
+                }
+            }
+        }
+    }
+
+    .bottom{
+        width:100%;
+        height:60px;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border-top:1px solid #2F3336;
+        padding: 10px;
+        box-sizing: border-box;
+        .buttons{
+            display:flex;
+            flex-direction: row;
+            align-items: center;
+            gap:5px;
+            .tweet-btn{
+                height:40px;
+                width:40px;
+                background:none;
+                border-radius:50%;
+                border:none;
+                display:flex;
+                justify-content: center;
+                align-items: center;
+                cursor:pointer;
+                .create-tweet-icon{
+                    font-size:20px;
+                    color:#1D9BF0;
+                    --ionicon-stroke-width: 40px;
+                }
+            }
+            .tweet-btn:hover{
+                background-color: rgba($color: #1D9BF0, $alpha: 0.1);
+            }
+        }
+        .popup-button{
+            width:auto;
+            padding:20px;
+            height:auto;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 50px;
+            border:none;
+            background-color: #1D9BF0;
+            color:white;
+            font-size: medium;
+            font-weight: bold;
+            transition: all 0.3s;
+            cursor:pointer;
+        }
+        .comment-button:hover{
+            background-color: #1d8dd7;
+        }
+        .comment-button:disabled{
+            background-color: #0F4E78;
+            color:#808080;
+        }
+    }
+}
 .create-tweet{
     width:100%;
     min-height:fit-content;
@@ -406,7 +607,7 @@ export default{
             img{
                 border-radius:15px;
                 width:100%;
-                height:150px;
+                height:300px;
                 border:solid 1px #2F3336;
                 background-color: white;
             }
@@ -520,7 +721,7 @@ export default{
 @media (max-width: 500px) {
     .top-bar{
         width:100%;
-        height:125px;
+        height:90px;
     } 
     .title{
         display:none !important;
@@ -532,16 +733,16 @@ export default{
     }
     .user-img{
         position:fixed;
-        top:10px;
-        left:20px;
+        top:5px;
+        left:10px;
         width: auto;
         height:auto;
         display:flex;
         align-items: center;
         justify-content: center;
         img{
-            width:50px;
-            height:50px;
+            width:40px;
+            height:40px;
 
             border-radius:50%;
             background-color: rgb(255, 255, 255);
@@ -555,7 +756,7 @@ export default{
         color:white;
         position:absolute;
         font-size:25px;
-        top:10px;
+        top:5px;
         left:50%;
         transform: translate(-50%);
     }
@@ -604,8 +805,8 @@ export default{
             align-items: center;
             align-items: flex-start;
             img{
-                width:50px;
-                height:50px;
+                width:40px;
+                height:40px;
 
                 border-radius:50%;
                 background-color: rgb(255, 255, 255);
@@ -721,6 +922,82 @@ export default{
                 color:#6A6F74;
                 font-size:10px !important;
                 padding-top:1px;
+            }
+        }
+    }
+    .content-img{
+            padding-left:5px;
+            width:auto;
+            height:auto;
+            display:flex;
+            justify-content: flex-start;
+            align-items: center;
+            box-sizing: border-box;
+            img{
+                border-radius:15px;
+                width:100%;
+                border:solid 1px #2F3336;
+                background-color: white;
+            }
+    }
+    .post-container{
+        padding-top:90px;
+        width:100%;
+        height:auto;
+        display:flex;
+        flex-direction:column;
+        box-sizing: border-box;
+    }
+    .create-popup{
+        width:100% !important;
+        min-height: 250px;
+        padding:30px 0px 0px 0px;
+        box-sizing: border-box;
+        .top{
+            width:100%;
+            gap:5px;
+            padding:20px 15px 10px 10px;
+
+            .left-side-popup{
+                width:40px;
+                box-sizing: border-box;
+                img{
+                    width:40px;
+                    height:40px;
+                }
+            }
+            .right-side-popup{
+                gap:5px;
+                .userinfo-popup{
+                    gap:5px;
+                    .username{
+                        margin:0;
+                        font-size: 13px;
+                    }
+                    .usertag{
+                        margin:0;
+                        font-size: 13px;
+
+                    }
+                }
+                .tweet-input-container{
+                    padding:0;
+                    padding-right:10px;
+                    .tweet-input{
+                        font-size: 14px !important;
+                    }
+                }
+            }
+        }
+
+        .bottom{
+            width:100%;
+            height:40px !important;
+            display:flex;
+            padding: 5px 10px;
+            .popup-button{
+                padding:12px;
+                font-size: 11px;
             }
         }
     }

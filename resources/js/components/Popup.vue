@@ -1,7 +1,7 @@
 <template>
     <div class="pop-up">
         <div class="pop-up-inner">
-            <ion-icon name="logo-twitter" class="pop-up-icon"></ion-icon>
+            <ion-icon name="logo-yahoo" class="pop-up-icon"></ion-icon>
             <div class="pop-up-close-div">
                 <button class="pop-up-close" @click="TogglePopup()"><ion-icon name="close" class="close"></ion-icon></button>
             </div>
@@ -23,14 +23,13 @@ export default {
     bottom:0;
     left:0;
     right:0;
-    z-index: 20;
+    z-index: 100;
     background:rgba(29, 161, 242, 0.1);
     display:flex;
     justify-content:center;
     align-items:center;
     .pop-up-inner {
         background:#000000;
-        padding:20px 70px;
         border-radius:20px;
         display:flex;
         flex-direction:column;
@@ -43,8 +42,8 @@ export default {
             left:10px;
         }
         .pop-up-close {
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             background-color: #000;
             display:flex;
@@ -59,78 +58,34 @@ export default {
         .pop-up-icon{
             color:white;
             position:absolute;
-            font-size:30px;
-            top:5px;
+            font-size:25px;
+            top:10px;
             left:50%;
             transform: translate(-50%);
         }
     }
 }
 .close{
-    font-size: 20px;
+    font-size: 25px;
     color:white;
 }
-
-
-@media (max-width: 570px) {
-    .pop-up{
-        .pop-up-inner{
-            .pop-up-icon{
-                font-size: 29px;
-            }
-        }
+@media (max-width: 500px) {
+    .pop-up-inner {
+        width:100%;
     }
 }
-
-
-
-
-@media (max-width: 410px) {
-    .pop-up{
-        .pop-up-inner{
-            .pop-up-icon{
-                font-size: 27px;
-            }
+@media (max-width: 450px) {
+    .pop-up-inner {
+        .pop-up-close-div{
+            top:5px !important;
+            left:5px !important;
         }
-    }
-}
-
-@media (max-width: 380px) {
-    .pop-up{
-        .pop-up-inner{
-            .pop-up-icon{
-                font-size: 25px;
-            }
+        .pop-up-close{
+            width:30px!important;
+            height:30px!important;
         }
-    }
-}
-
-@media (max-width: 350px) {
-    .pop-up{
-        .pop-up-inner{
-            .pop-up-icon{
-                font-size: 23px;
-            }
-        }
-    }
-}
-
-@media (max-width: 340px) {
-    .pop-up{
-        .pop-up-inner{
-            .pop-up-icon{
-                font-size: 22px;
-            }
-        }
-    }
-}
-
-@media (max-width: 325px) {
-    .pop-up{
-        .pop-up-inner{
-            .pop-up-icon{
-                font-size: 20px;
-            }
+        .pop-up-icon{
+            font-size: 20px!important;
         }
     }
 }

@@ -40,19 +40,55 @@ export default {
 
 }
 .navbar{
-    min-height:100%;
     width: 3/12*100%;
 
 }
 .search{
-    min-height: 100%;
+    height: 100%;
     width:4/12*100%;
 
 }
 .explore_content{
-    min-height:100%;
+    height:100%;
     width:5/12*100%;
 
+}
+
+@media (max-width: 1250px) {
+    .navbar{
+        width:100px;
+    }
+    .search{
+        width:4/12*100%
+    }
+    .explore_content{
+        width:7/12*100%
+    }
+}
+@media (max-width: 1000px) {
+    .navbar{
+        width:100px;
+    }
+    .search{
+        display:none;
+    }
+    .explore_content{
+        width:11/12*100%
+    }
+}
+@media (max-width: 500px) {
+    .navbar{
+        width:100%;
+        position:fixed;
+        bottom:0;
+        z-index:99;
+    }
+    .search{
+        display:none;
+    }
+    .explore_content{
+        width:100%
+    }
 }
 
 </style>
