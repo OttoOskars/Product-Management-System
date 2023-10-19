@@ -5,7 +5,9 @@
     </div>
     <div class="right-side">
       <div class="sign-container">
-        <ion-icon name="logo-yahoo" class="y-logo2"></ion-icon>
+        <div class="logo-container">
+          <ion-icon name="logo-yahoo" class="y-logo2"></ion-icon>
+        </div>
         <p class="title-welcome">Welcome</p>
         <div class="sign-up-container">
           <p class="title-join">Join today.</p>
@@ -473,7 +475,7 @@ export default {
   }
 }
 // ========================================================================================
-@media (min-width: 1000px) {
+@media (min-width: 450px) {
   .y-logo2{
     display:none;
   }
@@ -482,10 +484,6 @@ export default {
   .login-container{
     .y-logo1{
       display:none;
-    }
-    .y-logo2{
-      display:block;
-      font-size:50px;
     }
     .left-side{
       display:none;
@@ -522,8 +520,14 @@ export default {
       display:none;
     }
     .right-side{
+      text-align: center;
       .sign-container{
         width:100%;
+        .logo-container{
+          display:flex;
+          justify-content: center;
+          align-items: center;
+        }
         .title-welcome{
           font-size:40px;
           font-weight:600;
