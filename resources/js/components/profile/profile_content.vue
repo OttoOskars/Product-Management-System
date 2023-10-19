@@ -7,7 +7,9 @@
             <div class="user-img">
                 <img> 
             </div>
-            <button class="edit-profile">Edit profile</button>
+            <div class="edit-button">
+                <button class="edit-profile">Edit profile</button>
+            </div>
         </div>
         <div class="profile-info">
             <div class="user-info">
@@ -111,14 +113,14 @@ export default {
         }
         .image {
             padding-left: 0px;
-            height: 80%;
+            height: 100%;
             width: 100%;
             background-color: gray;
             z-index: 9;
         }
         .user-img{
             position: absolute;
-            margin-top: 220px;
+            margin-top: 170px;
             margin-left: 10px;
             width:auto;
             height:auto;
@@ -133,17 +135,16 @@ export default {
                 background-color: #ffffff;
             }
         }
+        .edit-button {
+            margin-top: 10px;
+            margin-right: 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
         .edit-profile{
-            position: absolute;
-            margin-top: 310px;
-            margin-left: 500px;
             height: 40px;
             width: 120px;
             padding:10px 20px; 
-            display:flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
             border-radius: 50px;
             border:none;
             background-color: white;
@@ -158,7 +159,7 @@ export default {
         }
     }
     .profile-info {
-        margin-top: 100px;
+        margin-top: 70px;
         margin-left: 10px;
         .user-info {
             margin-top: 10px;
@@ -199,7 +200,7 @@ export default {
         display:flex;
         flex-direction:row;
         justify-content: space-between;
-        margin-top: 30px;
+        margin-top: 50px;
     }
     .post-type-btn{
         width:50%;
@@ -240,7 +241,7 @@ export default {
     .topics{
         display: flex;
         flex-direction: column;
-        margin-top: 20px;
+        margin-top: 30px;
         margin-left: 10px;
         .topics-2 {
             font-weight: bold;
