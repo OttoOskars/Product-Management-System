@@ -39,7 +39,6 @@ export default {
     flex-direction: row;
 }
 .navbar{
-    min-height:100%;
     width: 3/12*100%;
 }
 .search{
