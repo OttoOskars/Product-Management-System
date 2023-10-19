@@ -7,7 +7,9 @@
             <div class="user-img">
                 <img> 
             </div>
-            <button class="edit-profile">Edit profile</button>
+            <div class="edit-button">
+                <button class="edit-profile">Edit profile</button>
+            </div>
         </div>
         <div class="profile-info">
             <div class="user-info">
@@ -111,14 +113,14 @@ export default {
         }
         .image {
             padding-left: 0px;
-            height: 80%;
+            height: 100%;
             width: 100%;
             background-color: gray;
             z-index: 9;
         }
         .user-img{
             position: absolute;
-            margin-top: 220px;
+            margin-top: 170px;
             margin-left: 10px;
             width:auto;
             height:auto;
@@ -133,17 +135,16 @@ export default {
                 background-color: #ffffff;
             }
         }
+        .edit-button {
+            margin-top: 10px;
+            margin-right: 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
         .edit-profile{
-            position: absolute;
-            margin-top: 310px;
-            margin-left: 500px;
             height: 40px;
             width: 120px;
             padding:10px 20px; 
-            display:flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
             border-radius: 50px;
             border:none;
             background-color: white;
@@ -158,7 +159,7 @@ export default {
         }
     }
     .profile-info {
-        margin-top: 100px;
+        margin-top: 70px;
         margin-left: 10px;
         .user-info {
             margin-top: 10px;
@@ -199,7 +200,7 @@ export default {
         display:flex;
         flex-direction:row;
         justify-content: space-between;
-        margin-top: 30px;
+        margin-top: 50px;
     }
     .post-type-btn{
         width:50%;
@@ -240,7 +241,7 @@ export default {
     .topics{
         display: flex;
         flex-direction: column;
-        margin-top: 20px;
+        margin-top: 30px;
         margin-left: 10px;
         .topics-2 {
             font-weight: bold;
@@ -249,6 +250,92 @@ export default {
         .topics-3 {
             color: gray;
             margin-top: 5px;
+        }
+    }
+
+    @media (max-width: 850px) and (min-width: 501px) {
+        .user-img, .name, .user, .description, .joined, .follow, .topics{
+            margin-left: 20px !important;
+        }
+    }
+
+    @media (max-width: 500px) {
+        .top {
+            height:270px;
+            .back-icon{
+                width:35px;
+                height:35px;
+                font-size:20px;
+            }
+            .title{
+                height:35px;
+                font-size: 20px;
+            }
+            .tweet-count {
+                font-size: 14px;
+                margin-left: 55px;
+            }
+            .user-img{
+                margin-top: 160px !important;
+                img{
+                    width: 120px !important;
+                    height: 120px !important;
+                }
+            }
+            .edit-profile{
+                height: 35px !important;
+                width: 100px !important;
+                font-size:13px !important;
+                padding: 10px 10px !important;
+            }
+        }
+        .profile-info {
+            margin-top: 60px;
+            .user-info {
+                .name {
+                    font-size: 20px;
+                }
+                .user {
+                    font-size: 14px;
+                }
+                .description {
+                    font-size: 15px;
+                }
+                .joined {
+                    font-size: 14px;
+                }
+            }
+        }
+        .follow {
+            .amount {
+                font-size: 15px;
+            }
+            .following {
+                font-size: 14px;
+            }
+        }
+        .post-type{
+            height:45px;
+            margin-top: 40px;
+        }
+        .post-type-btn{
+            font-size: 14px;
+        }
+        .active-post-type{
+            font-size: 14px;
+        }
+        .active-line{
+            height:3px;
+            width:70px;
+        }
+        .topics{
+            margin-top: 40px;
+            .topics-2 {
+                font-size: 20px;
+            }
+            .topics-3 {
+                font-size: 14px;
+            }
         }
     }
 </style>
