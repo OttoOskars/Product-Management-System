@@ -260,6 +260,9 @@ export default {
     }
 
     @media (max-width: 500px) {
+        .profile-container{
+            padding-bottom: 35px;
+        }
         .top {
             height:270px;
             .back-icon{
