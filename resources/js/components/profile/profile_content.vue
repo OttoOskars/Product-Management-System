@@ -252,4 +252,84 @@ export default {
             margin-top: 5px;
         }
     }
+
+    @media (max-width: 500px) {
+        .top {
+            height:270px;
+            .back-icon{
+                width:35px;
+                height:35px;
+                font-size:20px;
+            }
+            .title{
+                height:35px;
+                font-size: 20px;
+            }
+            .tweet-count {
+                font-size: 14px;
+                margin-left: 55px;
+            }
+            .user-img{
+                margin-top: 160px !important;
+                img{
+                    width: 120px !important;
+                    height: 120px !important;
+                }
+            }
+            .edit-profile{
+                height: 35px !important;
+                width: 100px !important;
+                font-size:13px !important;
+                padding: 10px 10px !important;
+            }
+        }
+        .profile-info {
+            margin-top: 60px;
+            .user-info {
+                .name {
+                    font-size: 20px;
+                }
+                .user {
+                    font-size: 14px;
+                }
+                .description {
+                    font-size: 15px;
+                }
+                .joined {
+                    font-size: 14px;
+                }
+            }
+        }
+        .follow {
+            .amount {
+                font-size: 15px;
+            }
+            .following {
+                font-size: 14px;
+            }
+        }
+        .post-type{
+            height:45px;
+            margin-top: 40px;
+        }
+        .post-type-btn{
+            font-size: 14px;
+        }
+        .active-post-type{
+            font-size: 14px;
+        }
+        .active-line{
+            height:3px;
+            width:70px;
+        }
+        .topics{
+            margin-top: 40px;
+            .topics-2 {
+                font-size: 20px;
+            }
+            .topics-3 {
+                font-size: 14px;
+            }
+        }
+    }
 </style>
