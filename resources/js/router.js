@@ -36,6 +36,11 @@ const router = createRouter({
       meta: { requiresAuth: false }, // Public route
     },
     {
+      path: '/profile',
+      component: () => import('./components/profile/profile.vue'),
+      meta: { requiresAuth: false }, // Public route
+    },
+    {
       path: '/home',
       component: () => import('./components/homepage.vue'),
       meta: { requiresAuth: true }, // Protected route
