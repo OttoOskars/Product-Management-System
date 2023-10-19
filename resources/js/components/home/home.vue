@@ -81,7 +81,7 @@ export default {
         width:100%;
         position:fixed;
         bottom:0;
-        z-index:9999;
+        z-index:99;
     }
     .search{
         display:none;

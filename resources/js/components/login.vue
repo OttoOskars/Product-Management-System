@@ -1,41 +1,29 @@
 <template>
-  <!-- Twitter logo -->
-  <div class="container">
-    <ion-icon name="logo-twitter" class="twitter-logo"></ion-icon>
-  </div>
-
-    <!-- Welcome text -->
-  <div>
-    <div>
-      <h1 class="login-text-1">Welcome</h1>
+  <div class="login-container">
+    <div class="left-side">
+      <ion-icon name="logo-yahoo" class="y-logo1"></ion-icon>
     </div>
-    <div>
-      <h2 class="login-text-2">Join today</h2>
-    </div>
-    <div>
-
-      <!-- Google x Apple sign up buttons -->
-      <div class="container">
-        <button  class="sign-up-btn" @click="toggleShowAccount"> <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg">Sign up with Google</button>
-      </div>
-      <div class="container">
-        <button class="sign-up-btn-apple" @click="toggleShowAccount"> <span><ion-icon class="apple-logo" name="logo-apple"></ion-icon></span>Sign up with Apple</button>
-      </div>
-
-      <!-- Create account -->
-      <div class="line">
-        <div class="left"></div>
-        <span class="text">or</span>
-        <div class="right"></div>
-      </div>
-      <div class="container">
-        <button class="create-account" @click="toggleShowAccount">Create account</button>
-      </div>
-      <div class="container">
-        <p class="text">Already have an account?</p>
-      </div>
-      <div class="container">
-        <button class="sign-in" @click="() => TogglePopup('SignInTrigger')">Sign in</button>
+    <div class="right-side">
+      <div class="sign-container">
+        <ion-icon name="logo-yahoo" class="y-logo2"></ion-icon>
+        <p class="title-welcome">Welcome</p>
+        <div class="sign-up-container">
+          <p class="title-join">Join today.</p>
+          <div class="sign-up-button-container">
+            <button  class="sign-up-btn-google" @click="toggleShowAccount"><span><ion-icon class="google-logo" name="logo-google"></ion-icon></span>Sign up with Google</button>
+            <button class="sign-up-btn-apple" @click="toggleShowAccount"><span><ion-icon class="apple-logo" name="logo-apple"></ion-icon></span>Sign up with Apple</button>
+          </div>
+          <div class="line">
+            <div class="left"></div>
+            <span class="text">or</span>
+            <div class="right"></div>
+          </div>
+          <button class="create-account-btn" @click="toggleShowAccount">Create account</button>
+        </div>
+        <div class="sign-in-container">
+          <p class="title-already">Already have an account?</p>
+          <button class="sign-in-btn" @click="() => TogglePopup('SignInTrigger')">Sign in</button>
+        </div>
       </div>
     </div>
   </div>
@@ -43,7 +31,7 @@
   <!-- Sign In 1 popup -->
   <Popup v-if="popupTriggers.SignInTrigger" :TogglePopup="() => TogglePopup('SignInTrigger')">
     <div class="Sign-Pop-Up">
-      <h1 class="Bold-text">Sign in to Twitter</h1>
+      <h1 class="title">Sign in to Twitter</h1>
       <div>
         <div class="input-wrap">
           <input autocomplete="off" type="text" id="sign-in-email" class="SignInput" v-model="email" required :class="{ 'invalid-email': !isEmailValid.value }">
@@ -52,14 +40,14 @@
         <div v-if ="emailError" class="warning-1">{{ emailError }}</div>
       </div>
       <button class="FormButton" @click="() => validateEmail()">Next</button>
-      <p style="color:#434343" class="p">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
+      <p style="color:#434343" class="text">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
   </Popup>
 
     <!-- Sign In 2 popup -->
   <Popup v-if="popupTriggers.SignIn2Trigger" :TogglePopup="() => TogglePopup('SignIn2Trigger')">
     <div class="Sign-Pop-Up">
-      <h1 class="Bold-text">Password</h1>
+      <h1 class="title">Password</h1>
       <div class="input-wrap disabled-input">
         <input type="text" class="SignInput" id="sign-in-email-disabled" :value="email" required disabled>
         <label for="sign-in-email-disabled">Email</label>
@@ -79,7 +67,7 @@
         <div v-if ="errorLogin" class="warning-1">{{ errorLogin }}</div>
       </div>
       <button type="button" class="FormButton" @click="loginUser($event)">Log in</button>
-      <p style="color:#434343" class="p">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
+      <p style="color:#434343" class="text">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
   </Popup>
   <create-account v-if="showCreateAccount" @close-page="toggleShowAccount" />
@@ -213,815 +201,452 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+
 .warning-1 {
     color: red;
     font-size: 12px;
 }
-.apple-logo{
-  font-size:27.5px;
-}
-.twitter-logo{
-  color:#1da1f2;
-  font-size:125px;
-}
-.login-text-1, .login-text-2 {
-    text-align: center;
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
-}
-.text {
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 0 10px;
-    color: white;
-}
+.login-container{
+  position:fixed;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  display:flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  padding:80px 0px;
 
-.sign-up-btn-apple{
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: white;
-  border: none;
-  border-radius: 50px;
-  color: #333;
-  padding: 6px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  margin: 4px 2px;
-  margin-left: auto;
-  margin-right: auto;
-  width: 400px;
-  cursor: pointer;
-  span{margin-right: 10px;}
-  img{margin-right: 10px;}
-  transition:all ease 0.2s;
-}
-.sign-up-btn-apple:hover {
-  background-color: rgb(223, 223, 223);
-}
-.sign-up-btn {
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: white;
-  border: none;
-  border-radius: 50px;
-  color: #333;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  margin: 4px 2px;
-  margin-left: auto;
-  margin-right: auto;
-  width: 400px;
-  cursor: pointer;
-  span{margin-right: 10px;}
-  img{margin-right: 10px;}
-  transition:all ease 0.2s;
-}
-.sign-up-btn:hover{
-  background-color: rgb(223, 223, 223);
-}
-.container {
-    text-align: center;
-}
-.line {
-    display: flex;
-    justify-content: center;
+  color:white;
+  .left-side{
+    width:55%;
+    height:100%;
+    display:flex;
     align-items: center;
-    width: 400px;
-    margin: 10px auto;
-    .left, .right {
-        flex: 1;
-        height: 1px;
-        background-color: lightgray;
+    justify-content: center;
+    .y-logo1{
+      font-size:400px;
     }
-}
-.create-account {
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: blue;
-  border: none;
-  border-radius: 50px;
-  color: white;
-  font-weight: bold;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  margin: 4px 2px;
-  margin-left: auto;
-  margin-right: auto;
-  width: 400px;
-  cursor: pointer;
-  transition:all ease 0.2s;
-}
-.create-account:hover {
-    background-color: rgb(7, 7, 222);
+  }
+  .right-side{
+    width:45%;
+    height:100%;
+    display:flex;
+    flex-direction: column;
+
+    .sign-container{
+      display:flex;
+      flex-direction: column;
+      justify-content: center;
+      width:400px;
+      height:100%;
+      .title-welcome{
+        font-size:80px;
+        font-weight:600;
+        margin:0;
+      }
+      .sign-up-container{
+        display:flex;
+        flex-direction: column;
+        gap:10px;
+        padding:30px 0px;
+        .title-join{
+          font-size:40px;
+          font-weight:600;
+          margin:0px;
+          padding-bottom:20px;
+        }
+        .sign-up-button-container{
+          display:flex;
+          flex-direction:column;
+          gap:15px;
+          .sign-up-btn-google, .sign-up-btn-apple{
+            width:100%;
+            height:45px;
+            border-radius: 50px;
+            border:none;
+            background-color: white;
+            display:flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap:5px;
+            font-size:16px;
+            font-weight:bold;
+            transition:0.3s;
+            cursor:pointer;
+            &:hover{
+              background-color: rgb(205, 205, 205);
+            }
+            span{
+              font-size:25px;
+            }
+          }
+          .sign-up-btn-google{
+            span{
+              padding-top:5px;
+            }
+          }
+          .sign-up-btn-apple{
+            span{
+              padding-top:2px;
+            }
+          }
+        }
+        .line{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          color: lightgray;
+          .left, .right{
+            flex: 1;
+            height: 1px;
+            background-color: lightgray;
+          }
+          .text{
+            font-size: 18px;
+            padding:0 10px;
+          }
+        }
+        .create-account-btn{
+          width:100%;
+          height:45px;
+          border-radius: 50px;
+          border:none;
+          background-color: #1da1f2;;
+          color:white;
+          display:flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          gap:5px;
+          font-size:16px;
+          font-weight:bold;
+          transition:0.3s;
+          cursor:pointer;
+          &:hover{
+            background-color: #2394db;;
+          }
+        }
+      }
+      .sign-in-container{
+        display:flex;
+        flex-direction: column;
+        .title-already{
+          font-size:20px;
+          font-weight: 600;
+        }
+        .sign-in-btn{
+          width:100%;
+          height:45px;
+          border-radius: 50px;
+          border:solid 2px #1da1f2;;
+          background-color: black;;
+          color:white;
+          display:flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          gap:5px;
+          font-size:16px;
+          font-weight:bold;
+          transition:0.3s;
+          cursor:pointer;
+          &:hover{
+            background-color: #171717;
+          }
+        }
+      }
+    }
+
+  }
 }
 
-.sign-in {
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: black;
-  border: 1px solid blue;
-  border-radius: 50px;
-  color: blue;
-  font-weight: bold;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  margin: 4px 2px;
-  margin-left: auto;
-  margin-right: auto;
-  width: 400px;
-  cursor: pointer;
-  transition:all ease 0.2s;
-}
-.sign-in:hover {
-    background-color: rgb(25, 26, 27);
-}
-
-.FormButton{
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: white;
-  border: none;
-  border-radius: 50px;
-  color: #333;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  width: 100%;
-  margin-bottom:10px;
-  font-weight:bold;
-  cursor: pointer;
-  span{margin-right: 10px;}
-  transition:all ease 0.2s;
-}
-.FormButton:hover{
-  background-color: rgb(205, 205, 205);
-}
 
 .Sign-Pop-Up{
   display:flex;
   flex-direction:column;
   justify-content: center;
-  width:400px;
-  gap:15px;
+  width:500px;
+  padding:60px 50px;
+  gap:20px;
   margin-top:10px;
-}
-.SignInput{
-  border:none;
-  color:#ffffff;
-  padding: 16px 12px;
-  font-size:medium;
-  outline:none;
-  background: none;
-  position:relative;
-  top:8px;
-  width:90%;
-}
-.SignInput:disabled{
-  color:#434343;
-}
-
-.input-wrap{
-  border: 1px solid #434343;
-  border-radius:6px;
-  font-family: Arial, sans-serif;
-  position:relative;
-  width:auto;
-  height: auto;
-  label{
-    font-size:medium;
-    color:#434343;
-    padding:5px;
-    position:absolute;
-    top:11px;
-    left:5px;
-    pointer-events: none;
-    transition: 0.3s ease all;
+  box-sizing: border-box;
+  .title{
+    color:white;
+    font-size:30px;
+    font-weight:600;
+    margin:0;
   }
-}
-.disabled-input{
-  background-color:rgba(34, 34, 34,0.4);
-  border:none;
-}
-
-.SignInput:focus+label,
-.SignInput:disabled+label,
-.SignInput:valid+label{
-  font-size:small;
-  top:3px;
-  left:7px;
-  padding:0 5px 0 5px;
-}
-.p{
-  font-size: 13px;
-}
-.sign-link-button{
-  border:none;
-  background:none;
-  color:#1da1f2;
-  padding:0;
-  cursor:pointer;
-}
-.sign-link-button:hover{
-    color:#1589d2;
-    text-decoration-line: underline;
-}
-.Bold-text{
-  font-weight: bold;
-  color:white;
-}
-.DateofBirth{
-  margin-bottom:20px;
-}
-// ========================================================================================
-@media (max-width: 570px) {
-  .twitter-logo {
-    font-size: 100px;
+  .disabled-input{
+    background-color:rgba(34, 34, 34,0.4);
+    border:none;
   }
-  .login-text-1 {
-    font-size: 30px;
-  }
-  .login-text-2 {
-    font-size: 25px;
-  }
-  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
-    width: 90%;
-  }
-  .sign-up-btn {
-    img {
-      height: 23px;
+  .input-wrap{
+    border: none;
+    border-radius:6px;
+    font-family: Arial, sans-serif;
+    position:relative;
+    width:auto;
+    height: 60px;
+    box-sizing: border-box;
+    display:flex;
+    .SignInput{
+      box-sizing:border-box;
+      border: 1px solid #434343;
+      color:#ffffff;
+      padding: 20px 13px 5px 13px; 
+      outline:none;
+      background: none;
+      position:relative;
+      display:flex;
+      width:100%;
+      height:100%;
+      border-radius:6px;
+      font-size:18px;
+      transition: 0.3s all;
+      &:disabled{
+        color:#808080;
+      }
+      &:focus{
+        border:1px solid #1da1f2;
+      }
     }
-  }
-  .apple-logo {
-    font-size: 25px;
-  }
-  .sign-up-btn-apple, .sign-up-btn {
-    height: 40px;
-    font-size: 13px;
-    padding: 10px;
-  }
-  .create-account, .sign-in {
-    height: 35px;
-    font-size: 13px;
-    padding: 10px;
-  }
-  .text {
-    font-size: 13px;
-  }
-  .Sign-Pop-Up {
-    width: 100%;
-    margin: 0 auto;
-    padding: 10px;
-  }
-  .Bold-text {
-    font-size: 22px;
-  }
-  .SignInput {
-    font-size: 15px;
-    top: 4px;
-  }
-  .FormButton {
-    font-size: 14px;
-    height: 30px;
-  }
-  .input-wrap {
-    height: 44px;
-    label {
-      font-size: 16px;
+    label{
+      font-size:18px;
+      color:#434343;
       padding:5px;
       position:absolute;
-      top:7px;
+      top:15px;
       left:5px;
+      pointer-events: none;
+      transition: 0.3s all;
+    }
+    .SignInput:focus+label,
+    .SignInput:disabled+label,
+    .SignInput:valid+label{
+      font-size:16px;
+      top:5px;
+      left:7px;
+      padding:0 5px 0 5px;
+    }
+    .SignInput:focus+label{
+      color:#1da1f2;
     }
   }
-  .SignInput:focus+label,
-  .SignInput:disabled+label,
-  .SignInput:valid+label{
-    font-size:14px;
-    top:3px;
-    left:5px;
-    padding:0 5px 0 5px;
-  }
-  .sign-link-button {
-    font-size: 15px;
-  }
-  .p {
-    font-size: 14px;
-  }
-  .warning-1 {
-    font-size: 11px;
-    margin-top: 3px;
-  }
-}
-// =======================================================================================
-@media (max-width: 410px) {
-  .twitter-logo {
-    font-size: 90px;
-  }
-  .login-text-1 {
-    font-size: 28px;
-  }
-  .login-text-2 {
-    font-size: 23px;
-  }
-  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
-    width: 90%;
-  }
-  .sign-up-btn {
-    img {
-      height: 21px;
-    }
-  }
-  .apple-logo {
-    font-size: 23px;
-  }
-  .sign-up-btn-apple, .sign-up-btn {
-    height: 38px;
-    font-size: 12px;
-    padding: 9px;
-  }
-  .create-account, .sign-in {
-    height: 33px;
-    font-size: 12px;
-    padding: 9px;
-  }
-  .text {
-    font-size: 12px;
-  }
-  .Sign-Pop-Up {
+  .FormButton{
+    background-color: white;
+    border: none;
+    border-radius: 50px;
+    color: #333;
+    height:40px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    margin: 0 auto;
-    padding: 9px;
-  }
-  .Bold-text {
-    font-size: 21px;
-  }
-  .SignInput {
-    font-size: 14px;
-    top: 3px;
-  }
-  .FormButton {
-    font-size: 13px;
-    height: 28px;
-  }
-  .input-wrap {
-    height: 41px;
-    label {
-      font-size: 15px;
-      padding:5px;
-      position:absolute;
-      top:7px;
-      left:5px;
+    margin-bottom:10px;
+    font-size: 16px;
+    font-weight:bold;
+    transition:all 0.3s;
+    cursor: pointer;
+    &:hover{
+      background-color: rgb(205, 205, 205);
     }
   }
-  .SignInput:focus+label,
-  .SignInput:disabled+label,
-  .SignInput:valid+label{
+  .text{
     font-size:13px;
-    top:3px;
-    left:5px;
-    padding:0 5px 0 5px;
-  }
-  .sign-link-button {
-    font-size: 14px;
-  }
-  .p {
-    font-size: 13px;
-  }
-  .warning-1 {
-    font-size: 11px;
-    margin-top: 3px;
-  }
-}
-// ================================================================================================
-@media (max-width: 380px) {
-  .twitter-logo {
-    font-size: 80px;
-  }
-  .login-text-1 {
-    font-size: 26px;
-  }
-  .login-text-2 {
-    font-size: 21px;
-  }
-  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
-    width: 90%;
-  }
-  .sign-up-btn {
-    img {
-      height: 19px;
+    .sign-link-button{
+      border:none;
+      background:none;
+      color:#1da1f2;
+      padding:0;
+      font-size:13px;
+      transition: all 0.3s;
+      cursor:pointer;
+      &:hover{
+        color:#1589d2;
+        text-decoration-line: underline;
+      }
     }
-  }
-  .apple-logo {
-    font-size: 21px;
-  }
-  .sign-up-btn-apple, .sign-up-btn {
-    height: 36px;
-    font-size: 11px;
-    padding: 8px;
-  }
-  .create-account, .sign-in {
-    height: 31px;
-    font-size: 11px;
-    padding: 8px;
-  }
-  .text {
-    font-size: 11px;
-  }
-  .Sign-Pop-Up {
-    width: 100%;
-    margin: 0 auto;
-    padding: 8px;
-  }
-  .Bold-text {
-    font-size: 20px;
-  }
-  .SignInput {
-    font-size: 13px;
-    top: 2px;
-  }
-  .FormButton {
-    font-size: 12px;
-    height: 26px;
-  }
-  .input-wrap {
-    height: 38px;
-    label {
-      font-size: 14px;
-      padding:5px;
-      position:absolute;
-      top:7px;
-      left:5px;
-    }
-  }
-  .SignInput:focus+label,
-  .SignInput:disabled+label,
-  .SignInput:valid+label{
-    font-size:11px;
-    top:2px;
-    left:5px;
-    padding:0 5px 0 5px;
-  }
-  .sign-link-button {
-    font-size: 13px;
-  }
-  .p {
-    font-size: 12px;
-  }
-  .warning-1 {
-    font-size: 11px;
-    margin-top: 3px;
   }
 }
 // ========================================================================================
-@media (max-width: 350px) {
-  .twitter-logo {
-    font-size: 70px;
-  }
-  .login-text-1 {
-    font-size: 24px;
-  }
-  .login-text-2 {
-    font-size: 19px;
-  }
-  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
-    width: 90%;
-  }
-  .sign-up-btn {
-    img {
-      height: 17px;
-    }
-  }
-  .apple-logo {
-    font-size: 19px;
-  }
-  .sign-up-btn-apple, .sign-up-btn {
-    height: 34px;
-    font-size: 10px;
-    padding: 7px;
-  }
-  .create-account, .sign-in {
-    height: 29px;
-    font-size: 10px;
-    padding: 7px;
-  }
-  .text {
-    font-size: 10px;
-  }
-  .Sign-Pop-Up {
-    width: 100%;
-    margin: 0 auto;
-    padding: 7px;
-  }
-  .Bold-text {
-    font-size: 19px;
-  }
-  .SignInput {
-    font-size: 12px;
-    top: 1px;
-  }
-  .FormButton {
-    font-size: 11px;
-    height: 24px;
-  }
-  .input-wrap {
-    height: 35px;
-    label {
-      font-size: 13px;
-      padding:5px;
-      position:absolute;
-      top:4px;
-      left:5px;
-    }
-  }
-  .SignInput:focus+label,
-  .SignInput:disabled+label,
-  .SignInput:valid+label{
-    font-size:10px;
-    top:4px;
-    left:5px;
-    padding:0 5px 0 5px;
-  }
-  .sign-link-button {
-    font-size: 12px;
-  }
-  .p {
-    font-size: 11px;
-  }
-  .warning-1 {
-    font-size: 10px;
-    margin-top: 3px;
+@media (min-width: 1000px) {
+  .y-logo2{
+    display:none;
   }
 }
-// ==============================================================================================
-@media (max-width: 340px) {
-  .twitter-logo {
-    font-size: 65px;
-  }
-  .login-text-1 {
-    font-size: 22px;
-  }
-  .login-text-2 {
-    font-size: 17px;
-  }
-  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
-    width: 90%;
-  }
-  .sign-up-btn {
-    img {
-      height: 16px;
+@media (max-width: 1000px) {
+  .login-container{
+    .y-logo1{
+      display:none;
+    }
+    .y-logo2{
+      display:block;
+      font-size:50px;
+    }
+    .left-side{
+      display:none;
+    }
+    .right-side{
+      width:100%;
+      align-items:center;
     }
   }
-  .apple-logo {
-    font-size: 18px;
+}
+@media (max-width: 500px) {
+  .Sign-Pop-Up{
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    width:100%;
+    padding:60px 50px;
+    gap:20px;
+    margin-top:10px;
+    box-sizing: border-box;
   }
-  .sign-up-btn-apple, .sign-up-btn {
-    height: 33px;
-    font-size: 10px;
-    padding: 7px;
+}
+@media (max-width: 450px) {
+  .login-container{
+    padding:0px 10px;
+    .y-logo1{
+      display:none;
+    }
+    .y-logo2{
+      display:block;
+      font-size:50px;
+    }
+    .left-side{
+      display:none;
+    }
+    .right-side{
+      .sign-container{
+        width:100%;
+        .title-welcome{
+          font-size:40px;
+          font-weight:600;
+          margin:0;
+        }
+        .sign-up-container{
+          gap:5px;
+          padding:15px 0px;
+          .title-join{
+            font-size:30px;
+            font-weight:600;
+            margin:0px;
+            padding-bottom:10px;
+          }
+          .sign-up-button-container{
+            gap:10px;
+            .sign-up-btn-google, .sign-up-btn-apple{
+              width:100%;
+              height:30px;
+              border-radius: 50px;
+              gap:5px;
+              font-size:13px;
+              font-weight:bold;
+              span{
+                font-size:20px;
+              }
+            }
+            .sign-up-btn-google{
+              span{
+                padding-top:5px;
+              }
+            }
+            .sign-up-btn-apple{
+              span{
+                padding-top:2px;
+              }
+            }
+          }
+          .line{
+            .left, .right{
+              flex: 1;
+              height: 1px;
+            }
+            .text{
+              font-size: 12px;
+              padding:0 5px;
+            }
+          }
+          .create-account-btn{
+            width:100%;
+            height:30px;
+            border-radius: 50px;
+            gap:5px;
+            font-size:13px;
+            font-weight:bold;
+          }
+        }
+        .sign-in-container{
+          .title-already{
+            font-size:15px;
+            font-weight: 600;
+            margin:0;
+            padding:10px 0;
+          }
+          .sign-in-btn{
+            width:100%;
+            height:30px;
+            border-radius: 50px;
+            gap:5px;
+            font-size:13px;
+            font-weight:bold;
+          }
+        }
+      }
+    } 
   }
-  .create-account, .sign-in {
-    height: 28px;
-    font-size: 10px;
-    padding: 7px;
-  }
-  .text {
-    font-size: 10px;
-  }
-  .Sign-Pop-Up {
-    width: 100%;
-    margin: 0 auto;
-    padding: 7px;
-  }
-  .Bold-text {
-    font-size: 19px;
-  }
-  .SignInput {
-    font-size: 11px;
-    top: 0px;
-  }
-  .FormButton {
-    font-size: 11px;
-    height: 23px;
-  }
-  .input-wrap {
-    height: 32px;
-    label {
+.Sign-Pop-Up{
+  width:100%;
+  padding:40px 15px;
+  gap:10px;
+  .title{
+      font-size:20px;
+      font-weight:600;
+    }
+    .input-wrap{
+      border-radius:6px;
+      height: 35px;
+      .SignInput{
+        padding: 13px 13px 1px 7px; 
+        width:100%;
+        height:100%;
+        font-size:13px;
+      }
+      label{
+        font-size:13px;
+        padding:5px;
+        top:5px;
+        left:2px;
+      }
+      .SignInput:focus+label,
+      .SignInput:disabled+label,
+      .SignInput:valid+label{
+        font-size:10px;
+        top:4px;
+        left:2px;
+        padding:0 5px 0 5px;
+      }
+    }
+    .FormButton{
+      border-radius: 50px;
+      height:30px;
+      width: 100%;
+      margin-bottom:10px;
       font-size: 12px;
-      padding:5px;
-      position:absolute;
-      top:3px;
-      left:5px;
+      font-weight:bold;
     }
-  }
-  .SignInput:focus+label,
-  .SignInput:disabled+label,
-  .SignInput:valid+label{
-    font-size:10px;
-    top:3px;
-    left:5px;
-    padding:0 5px 0 5px;
-  }
-  .sign-link-button {
-    font-size: 11px;
-  }
-  .p {
-    font-size: 10px;
-  }
-  .warning-1 {
-    font-size: 10px;
-    margin-top: 3px;
-  }
-}
-// =================================================================================================
-@media (max-width: 325px) {
-  .twitter-logo {
-    font-size: 60px;
-  }
-  .login-text-1 {
-    font-size: 20px;
-  }
-  .login-text-2 {
-    font-size: 15px;
-  }
-  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
-    width: 90%;
-  }
-  .sign-up-btn {
-    img {
-      height: 15px;
+    .text{
+      font-size:10px;
+      .sign-link-button{
+        padding:0;
+        font-size:10px;
+      }
     }
-  }
-  .apple-logo {
-    font-size: 17px;
-  }
-  .sign-up-btn-apple, .sign-up-btn {
-    height: 32px;
-    font-size: 9px;
-    padding: 6px;
-  }
-  .create-account, .sign-in {
-    height: 27px;
-    font-size: 9px;
-    padding: 6px;
-  }
-  .text {
-    font-size: 9px;
-  }
-  .Sign-Pop-Up {
-    width: 100%;
-    margin: 0 auto;
-    padding: 6px;
-  }
-  .Bold-text {
-    font-size: 18px;
-  }
-  .SignInput {
-    font-size: 10px;
-    top: 0px;
-  }
-  .FormButton {
-    font-size: 10px;
-    height: 23px;
-  }
-  .input-wrap {
-    height: 30px;
-    label {
-      font-size: 12px;
-      padding:5px;
-      position:absolute;
-      top:3px;
-      left:5px;
-    }
-  }
-  .SignInput:focus+label,
-  .SignInput:disabled+label,
-  .SignInput:valid+label{
-    font-size:10px;
-    top:3px;
-    left:5px;
-    padding:0 5px 0 5px;
-  }
-  .sign-link-button {
-    font-size: 11px;
-  }
-  .p {
-    font-size: 10px;
-  }
-  .warning-1 {
-    font-size: 9px;
-    margin-top: 3px;
-  }
-}
-// =================================================================================================
-@media (max-width: 305px) {
-  .twitter-logo {
-    font-size: 55px;
-  }
-  .login-text-1 {
-    font-size: 19px;
-  }
-  .login-text-2 {
-    font-size: 14px;
-  }
-  .sign-up-btn-apple, .sign-up-btn, .create-account, .sign-in, .line {
-    width: 90%;
-  }
-  .sign-up-btn {
-    img {
-      height: 14px;
-    }
-  }
-  .apple-logo {
-    font-size: 16px;
-  }
-  .sign-up-btn-apple, .sign-up-btn {
-    height: 31px;
-    font-size: 9px;
-    padding: 6px;
-  }
-  .create-account, .sign-in {
-    height: 26px;
-    font-size: 9px;
-    padding: 6px;
-  }
-  .text {
-    font-size: 9px;
-  }
-  .Sign-Pop-Up {
-    width: 100%;
-    margin: 0 auto;
-    padding: 6px;
-  }
-  .Bold-text {
-    font-size: 16px;
-  }
-  .SignInput {
-    font-size: 9px;
-    top: 0px;
-  }
-  .FormButton {
-    font-size: 9px;
-    height: 22px;
-  }
-  .input-wrap {
-    height: 29px;
-    label {
-      font-size: 11px;
-      padding:5px;
-      position:absolute;
-      top:3px;
-      left:5px;
-    }
-  }
-  .SignInput:focus+label,
-  .SignInput:disabled+label,
-  .SignInput:valid+label{
-    font-size:9px;
-    top:3px;
-    left:5px;
-    padding:0 5px 0 5px;
-  }
-  .sign-link-button {
-    font-size: 10px;
-  }
-  .p {
-    font-size: 9px;
-  }
-  .warning-1 {
-    font-size: 9px;
-    margin-top: 3px;
-  }
-}
-// ========================================================================================
-@media (max-width: 291px) {
-  .Bold-text {
-    font-size: 15px;
-  }
-
-  .sign-link-button {
-    font-size: 9px;
-  }
-  .p {
-    font-size: 8px;
-  }
-}
-// ==========================================================================================
-@media (max-width: 280px) {
-  .Bold-text {
-    font-size: 14px;
   }
 }
 </style>

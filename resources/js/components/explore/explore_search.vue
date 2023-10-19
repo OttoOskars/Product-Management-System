@@ -6,7 +6,7 @@
                 <div class="person" v-for="i in people" :key="i">
                     <div class="user">
                             <div class="user-img">
-                                <img> 
+                                <img @click.stop="openProfile(i)"> 
                             </div>
                             <div class="user-info">
                                 <p class="username">username</p>
@@ -20,16 +20,18 @@
                 <!-- Add more people -->
             </div>
             <div class="show-more-container">
-                <button class="show-more-btn">Show more</button>
+                <button class="show-more-btn" @click="redirectTo('/people')">Show more</button>
             </div>
         </div>
     </div>
 </template>
 <script>
+import { ref } from 'vue';
 export default{
     name: 'Search',
     data() {
         return {
+            isInputFocused: false,
             people: 3,
             trends: 5,
         };
@@ -37,6 +39,15 @@ export default{
     setup () {
     },
     methods: {
+        redirectTo(where) {
+            this.$router.push(where);
+        },
+        openProfile(id){
+            console.log(id);
+        },
+        openTweet(id) {
+            console.log(id);
+        },
     },
 
 }
@@ -49,7 +60,6 @@ export default{
     flex-direction: column;
     gap:20px;
     position:fixed;
-
     box-sizing: border-box;
     padding-left:30px;
     padding-top:10px;
@@ -58,7 +68,6 @@ export default{
 
     color:white;
 }
-
 
 .title{
     width:100%;
@@ -79,6 +88,7 @@ export default{
     display:flex;
     flex-direction: column;
     box-sizing: border-box;
+    margin-top:15px;
     border-radius: 25px;
     .people-container{
         box-sizing: border-box;
@@ -193,5 +203,26 @@ export default{
         background-color: #1D1F23;
     }
 }
-
+@media (max-width: 1250px) {
+    .who-to-follow{
+        width:300px;
+    }
+    .search-input-container{
+        width:300px;
+    }
+    .trends{
+        width:300px;
+    }
+}
+@media (max-width: 1100px) {
+    .who-to-follow{
+        width:300px;
+    }
+    .search-input-container{
+        width:300px;
+    }
+    .trends{
+        width:300px;
+    }
+}
 </style>

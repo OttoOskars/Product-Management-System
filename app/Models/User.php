@@ -29,9 +29,17 @@ class User extends Authenticatable
         'Password',
     ];
 
-     public function tweets()
+    public function tweets()
     {
         return $this->hasMany(Tweet::class, 'UserID');
+    }
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'UserID');
+    }
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'CommentID');
     }
     public function tokens(): MorphMany
     {

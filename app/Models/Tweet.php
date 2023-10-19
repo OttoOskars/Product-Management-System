@@ -21,6 +21,14 @@ class Tweet extends Model
     {
         return $this->belongsTo(User::class, 'UserID'); // Define the relationship with the User model
     }
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'TweetID');
+    }
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'TweetID');
+    }
     protected static function boot()
     {
         parent::boot();
