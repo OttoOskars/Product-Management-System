@@ -253,6 +253,12 @@ export default {
         }
     }
 
+    @media (max-width: 850px) and (min-width: 501px) {
+        .user-img, .name, .user, .description, .joined, .follow, .topics{
+            margin-left: 20px !important;
+        }
+    }
+
     @media (max-width: 500px) {
         .top {
             height:270px;
