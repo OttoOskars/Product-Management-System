@@ -35,9 +35,9 @@ export default {
             { name: 'Juris', username: '@Juritarded', img: "https://ssir.org/images/blog/Joe_Lee-headshot.png", followed: false },
             { name: 'Lebron', username: '@KingJames', img: "https://cdn.sportsforecaster.com/players/l.nba.com/60900/head/no-background/web", followed: false },
             { name: 'Angus', username: '@Angasa', img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXUv6ZrOiS4QQaWCBlsw2zbj64_mcv8Bk-ZCLwDSWLznS_Iu2bxfnet_eaChBoikcPoCc&usqp=CAU", followed: false },
-            { name: 'Juris', username: '@Juritarded', img: "https://ssir.org/images/blog/Joe_Lee-headshot.png", followed: false },
-            { name: 'Juris', username: '@Juritarded', img: "https://ssir.org/images/blog/Joe_Lee-headshot.png", followed: false },
-            { name: 'Juris', username: '@Juritarded', img: "https://ssir.org/images/blog/Joe_Lee-headshot.png", followed: false },
+            { name: 'Diana', username: '@Diana', img: "https://pbs.twimg.com/profile_images/1317795886701969408/i9inMUiu_400x400.jpg", followed: false },
+            { name: 'Donald Trump', username: '@Donalt_J_T', img: "https://pbs.twimg.com/media/F4VbjODbMAIWiEA.jpg", followed: false },
+            { name: 'Obama', username: '@Barack', img: "https://pfps.gg/assets/pfps/6197-obama.png", followed: false },
         ]
     }),
     methods: {
