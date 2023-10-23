@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Tweet;
+use App\Models\Comment;
 
 class TweetController extends Controller
 {
@@ -71,6 +72,14 @@ class TweetController extends Controller
 
         if (!$tweet) {
             return response()->json(['message' => 'Tweet not found'], 404);
+        }
+
+        // Retrieve comments associated with the tweet
+        $comments = Comment::where('TweetID', $tweet->TweetID)->get();
+
+        // Delete each comment
+        foreach ($comments as $comment) {
+            $comment->delete();
         }
 
         // Trigger the deletion of the tweet (and associated image)
