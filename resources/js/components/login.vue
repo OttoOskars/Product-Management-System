@@ -66,12 +66,31 @@
           />
           <label for="sign-in-pass">Password</label>
         </div>
+        <button class="forgot-password" @click="openResetPasswordPopup">Forgot Password?</button>
         <div v-if ="errorLogin" class="warning-1">{{ errorLogin }}</div>
       </div>
       <button type="button" class="FormButton" @click="loginUser($event)">Log in</button>
       <p style="color:#434343" class="text">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
   </Popup>
+
+  <Popup v-if="popupTriggers.ResetPasswordTrigger" :TogglePopup="() => TogglePopup('ResetPasswordTrigger')">
+    <div class="Sign-Pop-Up">
+      <h1 class="title">Reset Password</h1>
+      <div class="input-wrap">
+        <input type="password" v-model="newPassword" class="SignInput" required>
+        <label for="sign-in-pass">New password</label>
+      </div>
+      <p v-if="newPasswordError" class="warning-1">Password must be at least 8 characters long.</p>
+      <div class="input-wrap">
+        <input type="password" v-model="confirmPassword" class="SignInput" required>
+        <label for="sign-in-pass">Confirm password</label>
+      </div>
+      <p v-if="passwordMismatch" class="warning-1">Passwords do not match.</p>
+      <button type="button" class="FormButton" @click="resetPassword" :disabled="isButtonDisabled">Reset Password</button>
+    </div>
+  </Popup>
+
   <create-account v-if="showCreateAccount" @close-page="toggleShowAccount" />
 </template>
 <script>
@@ -93,8 +112,12 @@ export default {
       passwords: '',
       errorLogin:null,
       emailError: null,
-
     }
+  },
+  computed: {
+    isButtonDisabled() {
+      return !(this.newPassword.length > 0 && this.confirmPassword.length > 0);
+    },
   },
   setup () {
     const router = useRouter();
@@ -103,10 +126,15 @@ export default {
     const emailError = ref(null);
     const password = ref('');
     const email = ref('');
+    const newPassword = ref('');
+    const confirmPassword = ref('');
     const isEmailValid = ref(true);
+    const newPasswordError = ref(false);
+    const passwordMismatch = ref(false);
     const popupTriggers = ref({
       SignInTrigger: false,
       SignIn2Trigger: false,
+      ResetPasswordTrigger: false,
     });
     
     if (store.state.isLoggedIn) {
@@ -149,6 +177,8 @@ export default {
       if (!popupTriggers.value[trigger]) {
         email.value='';
         password.value='';
+        newPassword.value = '';
+        confirmPassword.value = '';
         isEmailValid.value=true;
       }
 		}
@@ -174,17 +204,68 @@ export default {
         }
       }
     };
+
+    const openResetPasswordPopup = () => {
+      popupTriggers.value.SignIn2Trigger = false;
+      popupTriggers.value.ResetPasswordTrigger = true;
+    };
+
+    const resetPassword = async () => {
+      // client-side validation to check if the new password and confirm password match
+      if (newPassword.value.length >= 8) {
+        newPasswordError.value = false;
+
+        if (newPassword.value === confirmPassword.value) {
+          passwordMismatch.value = false;
+
+          // an API call to reset the password
+          try {
+            const response = await axios.post('/api/reset-password', {
+              email: email.value,
+              newPassword: newPassword.value,
+            });
+
+            const data = response.data;
+
+            if (data.success) {
+              //
+            } else {
+              // any other error conditions
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        } else {
+          passwordMismatch.value = true;
+          setTimeout(() => {
+            passwordMismatch.value = false;
+          }, 3000);
+        }
+      } else {
+        newPasswordError.value = true;
+        setTimeout(() => {
+          newPasswordError.value = false;
+        }, 3000);
+      }
+    };
+
 		return {
       Popup,
 			popupTriggers,
 			TogglePopup,
       email,
       password,
+      newPassword,
+      confirmPassword,
       isEmailValid,
       validateEmail,
       loginUser,
+      resetPassword,
       errorLogin,
       emailError,
+      newPasswordError,
+      passwordMismatch,
+      openResetPasswordPopup,
 		}
 	},
   data: () => ({
@@ -361,10 +442,8 @@ export default {
         }
       }
     }
-
   }
 }
-
 
 .Sign-Pop-Up{
   display:flex;
@@ -471,6 +550,19 @@ export default {
         color:#1589d2;
         text-decoration-line: underline;
       }
+    }
+  }
+  .forgot-password{
+    border:none;
+    background:none;
+    color:#1da1f2;
+    padding:0;
+    font-size:13px;
+    transition: all 0.3s;
+    cursor:pointer;
+    &:hover{
+      color:#1589d2;
+      text-decoration-line: underline;
     }
   }
 }
