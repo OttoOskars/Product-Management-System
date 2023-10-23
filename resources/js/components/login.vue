@@ -77,11 +77,14 @@
   <Popup v-if="popupTriggers.ResetPasswordTrigger" :TogglePopup="() => TogglePopup('ResetPasswordTrigger')">
     <div class="Sign-Pop-Up">
       <h1 class="title">Reset Password</h1>
-      <div class="input-wrap">
-        <input type="password" v-model="newPassword" class="SignInput" required>
-        <label for="sign-in-pass">New password</label>
+      <div>
+        <div class="input-wrap">
+          <input type="password" v-model="newPassword" class="SignInput" required>
+          <label for="sign-in-pass">New password</label>
+        </div>
+        <div v-if="newPasswordError" class="warning-1">Password must be at least 8 characters long.</div>
       </div>
-      <div v-if="newPasswordError" class="warning-1">Password must be at least 8 characters long.</div>
+
       <div class="input-wrap">
         <input type="password" v-model="confirmPassword" class="SignInput" required>
         <label for="sign-in-pass">Confirm password</label>
@@ -237,6 +240,9 @@ export default {
               //
             } else {
               // any other error conditions
+              popupTriggers.value.ResetPasswordTrigger = false;
+              popupTriggers.value.SignIn2Trigger = true;
+              password.value='';
             }
           } catch (error) {
             console.error(error);
