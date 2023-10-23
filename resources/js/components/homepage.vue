@@ -69,9 +69,9 @@
                     <form @submit.prevent="createTweet">
                         <textarea v-model="tweet" placeholder="What's on your mind?"></textarea>
                         <input type="file" @change="onImageChange" />
+                        <img :src="previewImage" alt="Image Preview" v-if="previewImage" />
                         <button type="submit">Create Tweet</button>
                     </form>
-                    <img alt="Image Description">
                     <button @click="logoutUser">Logout</button>
                 <a href="#" class="profile-btn">
                 <div class="profile-info">
@@ -87,165 +87,6 @@
             </a>
             </ul>
         </div>
-
-<!-- 
-        <div class="container__main-scroll">
-            <div class ="tweets">
-                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
-                <div class="tweets__main">
-                    <div class="tweets__header">
-                        <div class="tweets__name">
-                            Konstantīns
-                        </div>
-                        <div class="tweets__twname">
-                            @Ērglis_Konstantīns34
-                        </div>
-                        <div class="tweets__publish-time">
-                            80m
-                        </div>
-                    </div>
-                    <div class="tweets__content">
-                        Meklēju otro pusīti! Par mani - 75 gadus vecs, vairs nestrādāju - meklēju draudzeni 18-19 gados.
-                        VECĀKAS NĒ!!
-                    </div>
-                </div>
-            </div>
-
-            <div class ="tweets">
-                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
-                <div class="tweets__main">
-                    <div class="tweets__header">
-                        <div class="tweets__name">
-                            Juris
-                        </div>
-                        <div class="tweets__twname">
-                            @Juritarded
-                        </div>
-                        <div class="tweets__publish-time">
-                            10m
-                        </div>
-                    </div>
-                    <div class="tweets__content">
-                        Labdien!
-                    </div>
-                </div>
-            </div>
-            <div class ="tweets">
-                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
-                <div class="tweets__main">
-                    <div class="tweets__header">
-                        <div class="tweets__name">
-                            Arnis
-                        </div>
-                        <div class="tweets__twname">
-                            @Arno
-                        </div>
-                        <div class="tweets__publish-time">
-                            5m
-                        </div>
-                    </div>
-                    <div class="tweets__content">
-                        Šiš ira moja suns - PAratodu pa 5 Lati uj 2 liljiem Aldariem 4 litra Protjams!
-                        <img class="tweets__bilde" src="https://www.cesarsway.com/wp-content/uploads/2015/06/AdobeStock_222480718-1024x740.jpeg">
-                    </div>
-                </div>
-            </div>
-            <div class ="tweets">
-                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
-                <div class="tweets__main">
-                    <div class="tweets__header">
-                        <div class="tweets__name">
-                            Matīs
-                        </div>
-                        <div class="tweets__twname">
-                            @Mats
-                        </div>
-                        <div class="tweets__publish-time">
-                            35m
-                        </div>
-                    </div>
-                    <div class="tweets__content">
-                        Tavu suni neviens negrib @Arno!
-                    </div>
-                </div>
-            </div>
-            <div class ="tweets">
-                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
-                <div class="tweets__main">
-                    <div class="tweets__header">
-                        <div class="tweets__name">
-                            Pētris
-                        </div>
-                        <div class="tweets__twname">
-                            @Pečka445
-                        </div>
-                        <div class="tweets__publish-time">
-                            1d
-                        </div>
-                    </div>
-                    <div class="tweets__content">
-                        NGL Gustavs ir a real one!
-                    </div>
-                </div>
-            </div>
-            <div class ="tweets">
-                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
-                <div class="tweets__main">
-                    <div class="tweets__header">
-                        <div class="tweets__name">
-                            Kārlis
-                        </div>
-                        <div class="tweets__twname">
-                            @Vista
-                        </div>
-                        <div class="tweets__publish-time">
-                            7h
-                        </div>
-                    </div>
-                    <div class="tweets__content">
-                        Jā es piekrītu Pētera teiktajam
-                    </div>
-                </div>
-            </div>
-            <div class ="tweets">
-                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
-                <div class="tweets__main">
-                    <div class="tweets__header">
-                        <div class="tweets__name">
-                            Anonīms
-                        </div>
-                        <div class="tweets__twname">
-                            @Anonīms
-                        </div>
-                        <div class="tweets__publish-time">
-                            3h
-                        </div>
-                    </div>
-                    <div class="tweets__content">
-                        Sprcis ir lohs
-                    </div>
-                </div>
-            </div>
-            <div class ="tweets">
-                <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
-                <div class="tweets__main">
-                    <div class="tweets__header">
-                        <div class="tweets__name">
-                            Evija
-                        </div>
-                        <div class="tweets__twname">
-                            @EvijaMāte
-                        </div>
-                        <div class="tweets__publish-time">
-                            45m
-                        </div>
-                    </div>
-                    <div class="tweets__content">
-                        Ģimene ir number One! #MOMBOSS PS: Spricis = pajols
-                        <img class="tweets__bilde" src="https://www.mintarrow.com/wp-content/uploads/2021/12/RESIZED-Family-04344.jpg">
-                    </div>
-                </div>
-            </div> -->
         <div class="container__main-scroll">
             <div v-for="tweet in tweets" :key="tweet.TweetID" class ="tweets">
                 <img class="tweets__img" src="https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png">
@@ -290,85 +131,6 @@
             </div>
         </div>
     </div>
-<!--         </div> -->
-
-        <!--Labais-->
-<!--         <div class="container__foryou">
-            <div class="trends-for-you__container">
-                <div class="trends-for-you__header">
-                    Trends for you
-                </div>
-                <div class ="trends-for-you__information">
-                    Trending in Latvia
-                </div>
-                <div class ="trends-for-you__trend-name">
-                    #MOMBOSS
-                </div>
-                <div class="trends-for-you__tweets">
-                    5k Tweets
-                </div>
-
-                <div class="line"></div>
-
-                <div class ="trends-for-you__information">
-                    Trending in Germany
-                </div>
-                <div class ="trends-for-you__trend-name">
-                    #StopCrime
-                </div>
-                <div class="trends-for-you__tweets">
-                    154k Tweets
-                </div>
-
-                <div class="line"></div>
-
-                <div class ="trends-for-you__information">
-                    Trending in USA
-                </div>
-                <div class ="trends-for-you__trend-name">
-                    #Election2024
-                </div>
-                <div class="trends-for-you__tweets">
-                    3.4m Tweets
-                </div>
-
-                <div class="line"></div>
-
-                <div class ="trends-for-you__information">
-                    Trending in USA
-                </div>
-                <div class ="trends-for-you__trend-name">
-                    #Election2024
-                </div>
-                <div class="trends-for-you__tweets">
-                    3.4m Tweets
-                </div>
-            </div>
-
-            <div class="follow">
-                <div class="who-to-follow__header">
-                    Who to follow
-                </div>
-
-                    <div v-for="(people,index) in people" :key="index" class="who-to-follow__block">
-                        <div class="who-to-follow__content">
-                            <img :src ="people.img" alt="" class="who-img">
-                            <div>
-                                <div class="who-to-follow__author-name">
-                                    {{ people.name }}
-                                </div>
-                                <div class="who-to-follow__author-username">
-                                    {{ people.username }}
-                                </div>
-                            </div>
-                            <button class="who-to-follow__button" @click="handleFollow(index)" :class="{ 'followed-button': people.followed }">
-                                {{ people.followed ? 'Followed' : 'Follow' }}
-                            </button>
-                            <div class="line"></div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
 </template>
 
 <script>
@@ -383,6 +145,7 @@ export default {
         ...mapState(['user']),
     },
     data: () => ({
+        previewImage: null,
         tweets: [],
         tweet: '',
         commentText: '',
@@ -463,6 +226,7 @@ export default {
                 });
                 this.tweet = '';
                 this.tweetImage = null;
+                this.previewImage = null;
                 this.GetAllTweets();
             } catch (error) {
                 console.error(error);
@@ -528,7 +292,16 @@ export default {
             } catch (error) {
                 console.error(error);
             }
-        }
+        },
+        onImageChange(event) {
+            this.tweetImage = event.target.files[0];
+            if (this.tweetImage) {
+            // Create a URL for the selected image and set it as the preview
+            this.previewImage = URL.createObjectURL(this.tweetImage);
+            } else {
+            this.previewImage = null;
+            }
+        },
 
     },
     mounted() {
