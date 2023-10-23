@@ -142,9 +142,9 @@ export default {
       SignIn2Trigger: false,
       ResetPasswordTrigger: false,
     });
-    
+
     if (store.state.isLoggedIn) {
-      router.push('/home');
+      router.push('/home2');
     }
 
     const validateEmail = async () => {
@@ -164,7 +164,7 @@ export default {
             popupTriggers.value.SignInTrigger = false;
             popupTriggers.value.SignIn2Trigger = true;
             emailError.value = null;
-            
+
           } else {
             emailError.value = 'Email is not registered.';
             setTimeout(() => { emailError.value = null; }, 3000);
@@ -201,7 +201,7 @@ export default {
           console.log('Login success:', loginSuccess);
 
           if (loginSuccess) {
-            router.push('/home');
+            router.push('/home2');
           }
         } catch (error) {
           errorLogin.value = 'Invalid password.';
@@ -483,7 +483,7 @@ export default {
       box-sizing:border-box;
       border: 1px solid #434343;
       color:#ffffff;
-      padding: 20px 13px 5px 13px; 
+      padding: 20px 13px 5px 13px;
       outline:none;
       background: none;
       position:relative;
@@ -706,7 +706,7 @@ export default {
           }
         }
       }
-    } 
+    }
   }
 .Sign-Pop-Up{
   width:100%;
@@ -720,7 +720,7 @@ export default {
       border-radius:6px;
       height: 35px;
       .SignInput{
-        padding: 13px 13px 1px 7px; 
+        padding: 13px 13px 1px 7px;
         width:100%;
         height:100%;
         font-size:13px;

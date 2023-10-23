@@ -25,7 +25,7 @@
           </div>
           <p v-if="nameHasSpaces" class="warning">Name should not contain spaces.</p>
         </div>
-  
+
         <div class="username">
           <div class="input-container">
             <input
@@ -43,7 +43,7 @@
           <p v-if="usernameHasSpaces" class="warning">Username should not contain spaces.</p>
           <p v-if="usernameError" class="warning">{{ usernameError }}</p>
         </div>
-  
+
         <div class="email">
           <div class="input-container">
             <input
@@ -61,7 +61,7 @@
           <p v-if="invalidEmail" class="warning">Please enter a valid email address.</p>
           <p v-if="emailError" class="warning">{{ emailError }}</p>
         </div>
-  
+
         <div class="password">
           <div class="input-container">
               <input
@@ -78,7 +78,7 @@
           </div>
           <p v-if="passwordWarningVisible" class="warning">Password must be at least 8 characters long.</p>
         </div>
-  
+
         <div class="confirm_password">
           <div class="input-container">
               <input
@@ -95,7 +95,7 @@
           </div>
           <p v-if="passwordsDoNotMatch" class="warning">Passwords do not match.</p>
         </div>
-  
+
         <div class="birth_date">
           <h3 class="date">Date of birth</h3>
           <p class="p">This will not be shown publicly. Confirm your own age, even if this account is for a business, a pet, or something else.</p>
@@ -139,7 +139,7 @@
     </div>
   </div>
   </template>
-  
+
   <script>
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   export default {
@@ -224,25 +224,25 @@
         this.usernameHasSpaces = false;
         this.invalidEmail = false;
         this.passwordsDoNotMatch = false;
-  
+
         if (this.name.includes(' ')) {
           this.nameHasSpaces = true;
           setTimeout(() => { this.nameHasSpaces = false; }, 3000);
           return;
         }
-  
+
         if (this.username.includes(' ')) {
           this.usernameHasSpaces = true;
           setTimeout(() => { this.usernameHasSpaces = false; }, 3000);
           return;
         }
-  
+
         if (!emailRegex.test(this.email)) {
           this.invalidEmail = true;
           setTimeout(() => { this.invalidEmail = false; }, 3000);
           return;
         }
-  
+
         if (this.password.length < 8) {
           this.passwordWarningVisible = true;
           setTimeout(() => {
@@ -250,7 +250,7 @@
           }, 3000);
           return;
         }
-  
+
         if (this.password !== this.confirmPassword) {
           this.passwordsDoNotMatch = true;
           setTimeout(() => { this.passwordsDoNotMatch = false; }, 3000);
@@ -297,7 +297,7 @@
           const response = await this.$store.dispatch('register', registrationData);
 
           if (response.success) {
-            this.$router.push('/home');
+            this.$router.push('/home2');
           } else {
             if (response.message.includes('Email')) {
               this.emailError = response.message;
@@ -316,7 +316,7 @@
           console.error(error);
         }
     },
-  },  
+  },
 }
 
 </script>
@@ -439,7 +439,7 @@
   color: gray;
   width: 420px;
 }
-  
+
 input[type="text"], input[type="password"], input[type="email"] {
   box-sizing: border-box;
   height: 50px;
@@ -453,7 +453,7 @@ input[type="text"], input[type="password"], input[type="email"] {
   border: 2px solid gray;
   outline: none;
 }
-  
+
 .account-input:focus {
   border: 2px solid blue;
 }
