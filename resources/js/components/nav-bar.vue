@@ -66,15 +66,15 @@
             </button>
 
         </div>
-        <div class="profile" @click.stop="openProfile(i)"><!-- display-flex row align-items-center padding:???-->
-            <div class="user-img"><!-- +/- 20% -->
+        <div class="profile" @click.stop="openProfile(i)">
+            <div class="user-img">
                 <img>
-            </div><!-- +/- 60% -->
-            <div class="user-info"><!-- display-flex column -->
+            </div>
+            <div class="user-info">
                 <p class="username">username</p>
                 <p class="usertag">@usertag</p>
             </div>
-            <div class="more-icon"><!-- +/- 20% -->
+            <div class="more-icon">
                 <ion-icon name="ellipsis-horizontal"></ion-icon>
             </div>
         </div>
@@ -93,12 +93,15 @@
                     <div class="tweet-input-container">
                         <textarea id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
                     </div>
+                    <div class="tweet-image-preview">
+                        <img>
+                    </div>
                 </div>
             </div>
 
             <div class="bottom">
                 <div class="buttons">
-                    <button class="tweet-btn"><ion-icon name="images-outline" class="create-tweet-icon"></ion-icon></button>
+                    <button class="tweet-btn"><input type="file" id="tweet-img-input" hidden><label for="tweet-img-input" class="tweet-img-label"><ion-icon name="images-outline" class="create-tweet-icon"></ion-icon></label></button>
                     <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                     <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
                 </div>
@@ -382,6 +385,15 @@ export default{
                     justify-content: center;
                     align-items: center;
                     cursor:pointer;
+                    transition: all 0.3s;
+                    position:relative;
+                    .tweet-img-label{
+                        width:100%;
+                        height:100%;
+                        display:flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
                     .create-tweet-icon{
                         font-size:20px;
                         color:#1D9BF0;

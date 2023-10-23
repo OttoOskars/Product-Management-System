@@ -26,7 +26,7 @@
                     </div>
                     <div class="bottom">
                         <div class="buttons">
-                            <button class="tweet-btn"><ion-icon name="images-outline" class="create-tweet-icon"></ion-icon></button>
+                            <button class="tweet-btn"><input type="file" id="tweet-img-input" hidden><label for="tweet-img-input" class="tweet-img-label"><ion-icon name="images-outline" class="create-tweet-icon"></ion-icon></label></button>
                             <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                             <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
                         </div>
@@ -386,6 +386,13 @@ export default{
                 justify-content: center;
                 align-items: center;
                 cursor:pointer;
+                .tweet-img-label{
+                    width:100%;
+                    height:100%;
+                    display:flex;
+                    justify-content: center;
+                    align-items: center;
+                }
                 .create-tweet-icon{
                     font-size:20px;
                     color:#1D9BF0;

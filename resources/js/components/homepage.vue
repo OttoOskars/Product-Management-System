@@ -69,6 +69,13 @@
                     <form @submit.prevent="createTweet">
                         <textarea v-model="tweet" placeholder="What's on your mind?"></textarea>
                         <input type="file" @change="onImageChange" />
+                        <button @click="openFileInput">CHOOSE EPIC FILE</button>
+                        <input
+                        type="file"
+                        ref="fileInput"
+                        style="display: none"
+                        @change="handleFileChange"
+                        />
                         <img :src="previewImage" alt="Image Preview" v-if="previewImage" />
                         <button type="submit">Create Tweet</button>
                     </form>
@@ -183,6 +190,16 @@ export default {
         }
 	},
     methods: {
+        openFileInput() {
+            this.$refs.fileInput.click(); // Programmatically trigger the file input click event
+            },
+            handleFileChange(event) {
+            const selectedFile = event.target.files[0];
+            if (selectedFile) {
+                // Handle the selected file, e.g., upload or process it
+                console.log('Selected file:', selectedFile);
+            }
+            },
 
         handleFollow(index) {
             this.people[index].followed = !this.people[index].followed;
