@@ -9,49 +9,49 @@
                 </div>
             </div>
 
-            <button class="Home">
+            <button class="Home" @click="$router.push('/home2')">
                 <div class="button-content">
                     <ion-icon name="home-outline" style="font-size: 24px;"></ion-icon>
                     <span style="font-size: 18px; margin-left: 20px;">Home</span>
                 </div>
             </button>
 
-            <button class="Explore">
+            <button class="Explore" @click="$router.push('/explore')">
                 <div class="button-content">
                     <ion-icon name="search-outline" style="font-size: 24px;"></ion-icon>
                     <span style="font-size: 18px; margin-left: 20px;">Explore</span>
                 </div>
             </button>
 
-            <button class="Notifications">
+            <button class="Notifications" @click="$router.push('/notifications')">
                 <div class="button-content">
                     <ion-icon name="notifications-outline" style="font-size: 24px;"></ion-icon>
                     <span style="font-size: 18px; margin-left: 20px;">Notifications</span>
                 </div>
             </button>
 
-            <button class="Messages">
+            <button class="Messages" @click="$router.push('/messages')">
                 <div class="button-content">
                     <ion-icon name="mail-outline" style="font-size: 24px;"></ion-icon>
                     <span style="font-size: 18px; margin-left: 20px;">Messages</span>
                 </div>
             </button>
 
-            <button class="Bookmarks">
+            <button class="Bookmarks" @click="$router.push('/bookmarks')">
                 <div class="button-content">
                     <ion-icon name="bookmark-outline" style="font-size: 24px;"></ion-icon>
                     <span style="font-size: 18px; margin-left: 20px;">Bookmarks</span>
                 </div>
             </button>
 
-            <button class="Profile">
+            <button class="Profile" @click="$router.push('/profile')">
                 <div class="button-content">
                     <ion-icon name="person-outline" style="font-size: 24px;"></ion-icon>
                     <span style="font-size: 18px; margin-left: 20px;">Profile</span>
                 </div>
             </button>
 
-            <button class="More">
+            <button class="More" @click="$router.push('/more')">
                 <div class="button-content">
                     <ion-icon name="apps-outline" style="font-size: 24px;"></ion-icon>
                     <span style="font-size: 18px; margin-left: 20px;">More</span>
@@ -150,7 +150,7 @@ export default{
         openTweet(id) {
             console.log(id);
         },
-    },   
+    },
 }
 </script>
 <style lang="scss" scoped>
@@ -193,6 +193,7 @@ export default{
             justify-content: center;
             font-size: 30px;
             background-color:black;
+            cursor: pointer;
         }
 
         button{
