@@ -3,7 +3,7 @@
         <div class="top-bar">
             <div class="title">Home</div>
             <div class="title2">
-                <div class="user-img" @click="openProfile(i)"><img></div>
+                <div class="user-img" @click.stop="toggleProfilePopup"><img></div>
                 <div class="logo">
                     <ion-icon name="logo-yahoo"></ion-icon>
                 </div>
@@ -21,22 +21,25 @@
                 <div class="right-side">
                     <div class="top">
                         <div class="tweet-input-container">
-                            <textarea id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
+                            <textarea v-model="tweet_text_input" id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
                         </div>
+                    </div>
+                    <div class="tweet-image-preview">
+                        <img :src="previewImage" v-if="previewImage">
                     </div>
                     <div class="bottom">
                         <div class="buttons">
-                            <button class="tweet-btn"><input type="file" id="tweet-img-input" hidden><label for="tweet-img-input" class="tweet-img-label"><ion-icon name="images-outline" class="create-tweet-icon"></ion-icon></label></button>
+                            <button class="tweet-btn"><input type="file" id="tweet-img-input" @change="onImageChange" hidden><label for="tweet-img-input" class="tweet-img-label"><ion-icon name="images-outline" class="create-tweet-icon"></ion-icon></label></button>
                             <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                             <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
                         </div>
-                        <button class="post-button" >Post</button>
+                        <button class="post-button" @click="createTweet">Post</button>
                     </div>
                 </div>
             </div>
-            <div class="post" v-for="i in currentPosts" :key="i"  @click="openTweet(i)"> 
+            <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID"  @click="openTweet(i)"> 
                 <div class="left-side">
-                    <img  @click.stop="openProfile(i)">
+                    <img  @click.stop="openProfile(tweet.TweetID)">
                 </div>
                 <div class="right-side">
                     <!-- ############################################# -->
@@ -46,28 +49,28 @@
                         </div>
                         <div class="info-content">
                             <div class="userinfo">
-                                <p class="username">username</p>
-                                <p class="usertag">@usertag</p>
-                                <p class="time-posted">2h</p>
+                                <p class="username">{{tweet.user.Name}}</p>
+                                <p class="usertag">{{tweet.user.UserTag}}</p>
+                                <p class="time-posted">{{ tweet.created_ago }}</p>
                             </div>
                             <div class="content-text">
-                                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus animi omnis quisquam quam voluptates saepe. Exercitationem?</p>
+                                <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
                             </div>
                         </div>
                     </div>
                     <!-- ############################################# -->
                     <div class="post-top">
                         <div class="userinfo">
-                            <p class="username">username</p>
-                            <p class="usertag">@usertag</p>
-                            <p class="time-posted">2h</p>
+                            <p class="username">{{tweet.user.Name}}</p>
+                            <p class="usertag">{{tweet.user.UserTag}}</p>
+                            <p class="time-posted">{{ tweet.created_ago }}</p>
                         </div>
                         <div class="content-text">
-                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus animi omnis quisquam quam voluptates saepe. Exercitationem?</p>
+                            <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
                         </div>
                     </div>
                     <div class="content-img">
-                        <img>
+                        <img v-if="tweet.TweetImage" :src="'/storage/' + tweet.TweetImage"/>
                     </div>
                     <div class="bottom">
                         <button class="post-btn-container heart-btn">
@@ -96,11 +99,11 @@
                 </div>
                 <div class="right-side-popup">
                     <div class="userinfo-popup">
-                        <p class="username">username</p>
-                        <p class="usertag">@usertag</p>
+                        <p class="username">{{ user.Name }}</p>
+                        <p class="usertag">{{ user.UserTag }}</p>
                     </div>
                     <div class="tweet-input-container">
-                        <textarea id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
+                        <textarea v-model="comment_text_input" id="tweet-input-comment" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
                     </div>
                 </div>
             </div>
@@ -110,14 +113,24 @@
                     <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                     <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
                 </div>
-                <button class="popup-button" >Comment</button>
+                <button class="popup-button" @click="createComment(tweet.TweetID, commentText)">Comment</button><!-- Izdomā kā comment poga nodos tweetID. -->
             </div>
         </div>
     </Popup>
+    <div class="profile-popup" v-if="isPopupVisible">
+        <div class="popup-content">
+            <button class="logout-btn" @click="logoutUser">Logout</button>
+            <button class="profile-btn" @click="openProfile(i)">Profile</button>
+        </div>
+    </div>
 </template>
 <script>
 import { ref } from 'vue';
 import Popup from '../Popup.vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { mapState } from 'vuex';
 export default{
     name: 'Tweets',
     components: {
@@ -125,14 +138,37 @@ export default{
     },
     data(){
         return {
-            tweets: 5,
+            tweets: [],
+            tweet_text_input: '',
+            comment_text_input: '',
+            comments: [],
+            commentsByTweet: {},
             following_tweets: 1,
             postType: 'tweets',
+            previewImage: null,
+            tweetImage: null,
+            isPopupVisible: false,
         }
     },
     setup(){
+        const router = useRouter();
+        const store = useStore();
+
+        if (store.state.isLoggedIn) {
+            router.push('/home2');
+        }
+        const logoutUser = async () => {
+            try {
+                await store.dispatch('logout'); // Call the logout action from your store
+                router.push('/'); // Redirect to the login page or wherever you want after logging out
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
         const popupTriggers = ref({
             CommentTrigger: false,
+            ProfileTrigger: false,
         });
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger]
@@ -143,14 +179,121 @@ export default{
         return {
             popupTriggers,
             TogglePopup,
+            logoutUser,
         }
     },
     computed: {
+        ...mapState(['user']),
         currentPosts() {
             return this.postType === 'tweets' ? this.tweets : this.following_tweets;
         },
     },
     methods: {
+        toggleProfilePopup() {
+            this.isPopupVisible = !this.isPopupVisible;
+            setTimeout(() => { this.isPopupVisible = false; }, 10000);
+        },
+        GetAllTweets() {
+            axios.get('/api/all-tweets') // Update the URL as per your Laravel routes
+            .then(response => {
+                this.tweets = response.data.tweets;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        },
+        async GetAllComments(tweetId) {
+            try {
+                const response = await axios.get(`/api/comments/${tweetId}`);
+
+                if (!this.commentsByTweet[tweetId]) {
+                this.commentsByTweet[tweetId] = [];
+                }
+
+                this.commentsByTweet[tweetId] = response.data.comments;
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        onImageChange(event) {
+            this.tweetImage = event.target.files[0];
+            if (this.tweetImage) {
+            // Create a URL for the selected image and set it as the preview
+            this.previewImage = URL.createObjectURL(this.tweetImage);
+            } else {
+            this.previewImage = null;
+            }
+        },
+        async createTweet() {
+            const formData = new FormData();
+            formData.append('tweetText', this.tweet_text_input);
+            if (this.tweetImage) {
+                formData.append('tweetImage', this.tweetImage);
+            }
+
+            try {
+                const response = await this.$axios.post('/api/tweets', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                this.tweet_text_input = '';
+                this.tweetImage = null;
+                this.previewImage = null;
+                this.GetAllTweets();
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        deleteTweet(tweetId) {
+            if (!tweetId) {
+                console.log("Tweet ID not retrieved");
+            return;
+            }
+            axios.delete(`/api/tweets/${tweetId}`)
+            .then(response => {
+                this.GetAllTweets();
+                this.fetchTweets();
+            })
+            .catch(error => {
+            });
+        },
+        async createComment(tweetId, commentText) {
+            const formData = new FormData();
+            formData.append('tweetId', tweetId);
+            formData.append('commentText', commentText);
+
+            try {
+                const response = await this.$axios.post('/api/create-comments', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                });
+
+                if (!this.commentsByTweet[tweetId]) {
+                this.commentsByTweet[tweetId] = [];
+                }
+
+                this.commentsByTweet[tweetId].push(response.data.comment);
+                this.commentText = '';
+                this.popupTriggers.CommentTrigger = false;
+                this.GetAllComments(tweetId)
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async deleteComment(tweetId, commentId) {
+            if (!commentId) {
+                console.log("Comment ID not retrieved");
+                return;
+            }
+            try {
+                const response = await this.$axios.delete(`/api/delete-comments/${commentId}`);
+                this.GetAllComments(tweetId);
+            } catch (error) {
+                console.error(error);
+            }
+        },
         switchToTweets() {
             this.postType = 'tweets';
         },
@@ -176,6 +319,19 @@ export default{
         openTweet(id) {
             console.log(id);
         },
+    },
+    mounted() {
+        this.$axios.get('/api/all-tweets')
+        .then(response => {
+            this.tweets = response.data.tweets;
+
+            this.tweets.forEach(tweet => {
+                this.GetAllComments(tweet.TweetID);
+            });
+        })
+        .catch(error => {
+            console.error(error);
+        });
     },   
 }
 </script>
@@ -279,7 +435,48 @@ export default{
         }
     }
 }
+.profile-popup{
+    width:250px;
+    height:90px;
+    position:absolute;
+    top:50px;
+    left:50%;
+    transform: translateX(-50%);
+    z-index:99;
 
+    .popup-content{
+        height:100%;
+        width:100%;
+        border-radius:25px;
+        border:1px solid #2F3336;
+        box-shadow: 0 0 5px #1D9BF0;
+        background-color: #000000;
+        transition: all 0.3s;
+        display:flex;
+        flex-direction: column;
+        button{
+            width:100%;
+            height:50%;
+            border:none;
+            background: none;
+            color:#ffffff;
+            cursor:pointer;
+            font-size:14px;
+            transition: all 0.3s;
+            &:hover{
+                background-color: #1d1d1d;
+            }
+        }
+        .logout-btn{
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+        }
+        .profile-btn{
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+        }
+    }
+}
 .create-popup{
     width:500px;
     min-height: 300px;
@@ -386,12 +583,15 @@ export default{
                 justify-content: center;
                 align-items: center;
                 cursor:pointer;
+                transition: all 0.3s;
                 .tweet-img-label{
                     width:100%;
                     height:100%;
                     display:flex;
                     justify-content: center;
                     align-items: center;
+                    margin: 0;
+                    padding: 0;
                 }
                 .create-tweet-icon{
                     font-size:20px;
@@ -502,7 +702,17 @@ export default{
                     display:flex;
                     justify-content: center;
                     align-items: center;
+                    padding:0;
                     cursor:pointer;
+                    .tweet-img-label{
+                        width:100%;
+                        height:100%;
+                        display:flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin: 0;
+                        padding: 0;
+                    }
                     .create-tweet-icon{
                         font-size:20px;
                         color:#1D9BF0;
@@ -537,6 +747,12 @@ export default{
                 background-color: #0F4E78;
                 color:#808080;
             }
+        }
+    }
+    .tweet-image-preview{
+        img{
+            max-width:100%;
+            max-height:100%;
         }
     }
 
@@ -613,10 +829,10 @@ export default{
             box-sizing: border-box;
             img{
                 border-radius:15px;
-                width:100%;
-                height:300px;
+                max-width:100%;
+                max-height:100%;
                 border:solid 1px #2F3336;
-                background-color: white;
+                background:none;
             }
         }
         .bottom{
@@ -721,6 +937,9 @@ export default{
 }
 
 @media (min-width: 500px) {
+    .profile-popup{
+        display:none;
+    }
     .user-img, .logo{
         display:none !important;
     }

@@ -66,59 +66,85 @@
             </button>
 
         </div>
-        <div class="profile" @click.stop="openProfile(i)">
+        <div class="profile" @click.stop="toggleProfilePopup">
             <div class="user-img">
                 <img>
             </div>
-            <div class="user-info">
-                <p class="username">username</p>
-                <p class="usertag">@usertag</p>
+            <div class="user-info" v-if="user">
+                <p class="username">{{ user.Name }}</p>
+                <p class="usertag">{{ user.UserTag }}</p>
             </div>
             <div class="more-icon">
                 <ion-icon name="ellipsis-horizontal"></ion-icon>
             </div>
+            <div class="profile-popup" v-if="isPopupVisible">
+                <div class="popup-content">
+                    <button class="logout-btn" @click="logoutUser">Logout</button>
+                    <button class="profile-btn" @click="openProfile(i)">Profile</button>
+                </div>
+            </div>
         </div>
     </div>
     <Popup v-if="popupTriggers.TweetTrigger" :TogglePopup="() => TogglePopup('TweetTrigger')">
-        <div class="create-popup">
+        <div class="create-popup" v-if="user">
             <div class="top">
                 <div class="left-side-popup">
                     <img  @click.stop="openProfile(i)">
                 </div>
                 <div class="right-side-popup">
                     <div class="userinfo-popup">
-                        <p class="username">username</p>
-                        <p class="usertag">@usertag</p>
+                        <p class="username">{{ user.Name }}</p>
+                        <p class="usertag">{{ user.UserTag }}</p>
                     </div>
                     <div class="tweet-input-container">
-                        <textarea id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
+                        <textarea v-model="tweet_text_inputnav" id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInputnav" maxlength="255"></textarea>
                     </div>
                     <div class="tweet-image-preview">
-                        <img>
+                        <img :src="previewImagenav" v-if="previewImagenav">
                     </div>
                 </div>
             </div>
 
             <div class="bottom">
                 <div class="buttons">
-                    <button class="tweet-btn"><input type="file" id="tweet-img-input" hidden><label for="tweet-img-input" class="tweet-img-label"><ion-icon name="images-outline" class="create-tweet-icon"></ion-icon></label></button>
+                    <button class="tweet-btn"><input type="file" id="tweet-img-input-tweetnav" @change="onImageChangenav" hidden><label for="tweet-img-input-tweetnav" class="tweet-img-label"><ion-icon name="images-outline" class="create-tweet-icon"></ion-icon></label></button>
                     <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                     <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
                 </div>
-                <button class="popup-button" >Post</button>
+                <button class="popup-button"  @click="createTweetnav">Post</button>
             </div>
         </div>
     </Popup>
+
 </template>
 <script>
 import { ref } from 'vue';
 import Popup from './Popup.vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { mapState } from 'vuex';
 export default{
     name: 'NavBar',
     components: {
         Popup,
     },
+    computed:{
+        ...mapState(['user']),
+    },
+    data(){
+        return {
+            previewImagenav: null,
+            tweets: [],
+            tweet_text_inputnav: '',
+            tweetImagenav: null,
+            isPopupVisible: false,
+        }
+    },
     setup(){
+        const router = useRouter();
+        const store = useStore();
+
         const popupTriggers = ref({
             TweetTrigger: false,
         });
@@ -128,15 +154,30 @@ export default{
                 /* clear text area */
             }
 		}
+        const logoutUser = async () => {
+            try {
+                await store.dispatch('logout');
+                router.push('/');
+                this.isPopupVisible = false
+            } catch (error) {
+                console.error(error);
+            }
+        };
         return {
             popupTriggers,
             TogglePopup,
+            logoutUser,
         }
     },
     methods: {
+        toggleProfilePopup() {
+            this.isPopupVisible = !this.isPopupVisible;
+            setTimeout(() => { this.isPopupVisible = false; }, 10000);
+        },
+
         autoSize() {
             const maxRows = 10;
-            const textarea = this.$refs.tweetInput;
+            const textarea = this.$refs.tweetInputnav;
             textarea.style.height = 'auto';
             const customLineHeight = 1.5; // Match the line-height value from your CSS
             const maxHeight = maxRows * customLineHeight * parseFloat(getComputedStyle(textarea).fontSize);
@@ -149,9 +190,50 @@ export default{
         },
         openProfile(id){
             console.log(id);
+            this.isPopupVisible = false
         },
         openTweet(id) {
             console.log(id);
+        },
+        onImageChangenav(event) {
+            this.tweetImagenav = event.target.files[0];
+            if (this.tweetImagenav) {
+                // Create a URL for the selected image and set it as the preview
+                this.previewImagenav = URL.createObjectURL(this.tweetImagenav);
+            } else {
+                this.previewImagenav = null;
+            }
+        },
+        GetAllTweets() {
+            axios.get('/api/all-tweets') // Update the URL as per your Laravel routes
+            .then(response => {
+                this.tweets = response.data.tweets;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        },
+        async createTweetnav() {
+            const formData = new FormData();
+            formData.append('tweetText', this.tweet_text_inputnav);
+            if (this.tweetImagenav) {
+                formData.append('tweetImage', this.tweetImagenav);
+            }
+
+            try {
+                const response = await this.$axios.post('/api/tweets', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                this.tweet_text_inputnav = '';
+                this.tweetImagenav = null;
+                this.previewImagenav = null;
+                this.popupTriggers.TweetTrigger = false;
+                this.GetAllTweets();
+            } catch (error) {
+                console.error(error);
+            }
         },
     },
 }
@@ -212,9 +294,10 @@ export default{
             border:none;
             font-size: 20px;
             color:white;
+            transition: all 0.3s;
         }
         button:hover{
-            background-color: #6e767d;
+            background-color: #1d1d1d;
         }
     }
 
@@ -233,7 +316,8 @@ export default{
 
         border-radius: 50px;
         background:none;
-
+        position:relative;
+        transition: all 0.3s;
         .user-img{
             width: auto;
             height:100%;
@@ -278,7 +362,7 @@ export default{
     }
 
     .profile:hover{
-        background-color: #2F3336;
+        background-color: #1d1d1d;
     }
     .create-popup{
         width:500px;
@@ -359,6 +443,12 @@ export default{
                         outline:none;
                     }
                 }
+                .tweet-image-preview{
+                    img{
+                        max-width:100%;
+                        max-height:100%;
+                    }
+                }
             }
         }
 
@@ -387,7 +477,6 @@ export default{
                     align-items: center;
                     cursor:pointer;
                     transition: all 0.3s;
-                    position:relative;
                     .tweet-img-label{
                         width:100%;
                         height:100%;
@@ -428,6 +517,47 @@ export default{
             .comment-button:disabled{
                 background-color: #0F4E78;
                 color:#808080;
+            }
+        }
+    }
+    .profile-popup{
+        width:100%;
+        height:100px;
+        position:absolute;
+        top:-100px;
+        left:0px;
+        z-index:99;
+
+        .popup-content{
+            height:100%;
+            width:100%;
+            border-radius:25px;
+            border:1px solid #2F3336;
+            background-color: #000000;
+            box-shadow: 0 0 5px #1D9BF0;
+            transition: all 0.3s;
+            display:flex;
+            flex-direction: column;
+            button{
+                width:100%;
+                height:50%;
+                border:none;
+                background: none;
+                color:#ffffff;
+                cursor:pointer;
+                font-size:16px;
+                transition: all 0.3s;
+                &:hover{
+                    background-color: #1d1d1d;
+                }
+            }
+            .logout-btn{
+                border-top-left-radius: 25px;
+                border-top-right-radius: 25px;
+            }
+            .profile-btn{
+                border-bottom-left-radius: 25px;
+                border-bottom-right-radius: 25px;
             }
         }
     }
@@ -475,6 +605,21 @@ export default{
                 display:none;
             }
         }
+        .profile-popup{
+        width:250px;
+        height:100px;
+        position:absolute;
+        top:-100px;
+        left:10px;
+
+        .popup-content{
+            button{
+                width:100%;
+                height:50%;
+                font-size:16px;
+            }
+        }
+    }
     }
     @media (max-width: 500px) {
         .navbar-container {
