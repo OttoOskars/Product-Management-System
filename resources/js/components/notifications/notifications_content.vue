@@ -25,6 +25,7 @@ export default{
             isInputFocused: false,
             people: 3,
             trends: 5,
+            notiType: 'all',
         };
     },
     setup () {
