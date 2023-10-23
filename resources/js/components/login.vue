@@ -41,7 +41,7 @@
         </div>
         <div v-if ="emailError" class="warning-1">{{ emailError }}</div>
       </div>
-      <button class="FormButton" @click="() => validateEmail()">Next</button>
+      <button class="FormButton" @click="() => validateEmail()" :disabled="isButtonDisabled2">Next</button>
       <p style="color:#434343" class="text">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
   </Popup>
@@ -66,10 +66,10 @@
           />
           <label for="sign-in-pass">Password</label>
         </div>
-        <button class="forgot-password" @click="openResetPasswordPopup">Forgot Password?</button>
         <div v-if ="errorLogin" class="warning-1">{{ errorLogin }}</div>
+        <button class="forgot-password" @click="openResetPasswordPopup">Forgot Password?</button>
       </div>
-      <button type="button" class="FormButton" @click="loginUser($event)">Log in</button>
+      <button type="button" class="FormButton" @click="loginUser($event)" :disabled="isButtonDisabled3">Log in</button>
       <p style="color:#434343" class="text">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
   </Popup>
@@ -81,12 +81,12 @@
         <input type="password" v-model="newPassword" class="SignInput" required>
         <label for="sign-in-pass">New password</label>
       </div>
-      <p v-if="newPasswordError" class="warning-1">Password must be at least 8 characters long.</p>
+      <div v-if="newPasswordError" class="warning-1">Password must be at least 8 characters long.</div>
       <div class="input-wrap">
         <input type="password" v-model="confirmPassword" class="SignInput" required>
         <label for="sign-in-pass">Confirm password</label>
       </div>
-      <p v-if="passwordMismatch" class="warning-1">Passwords do not match.</p>
+      <div v-if="passwordMismatch" class="warning-1">Passwords do not match.</div>
       <button type="button" class="FormButton" @click="resetPassword" :disabled="isButtonDisabled">Reset Password</button>
     </div>
   </Popup>
@@ -117,6 +117,12 @@ export default {
   computed: {
     isButtonDisabled() {
       return !(this.newPassword.length > 0 && this.confirmPassword.length > 0);
+    },
+    isButtonDisabled2() {
+      return !(this.email.length > 0);
+    },
+    isButtonDisabled3() {
+      return !(this.password.length > 0);
     },
   },
   setup () {
@@ -535,6 +541,12 @@ export default {
     &:hover{
       background-color: rgb(205, 205, 205);
     }
+  }
+  .FormButton:disabled {
+    color: gray;
+  }
+  .FormButton:disabled:hover {
+    background-color: white;
   }
   .text{
     font-size:13px;
