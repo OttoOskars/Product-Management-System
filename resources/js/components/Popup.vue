@@ -72,6 +72,7 @@ export default {
 @media (max-width: 500px) {
     .pop-up-inner {
         width:100%;
+        margin:5px;
     }
 }
 @media (max-width: 450px) {

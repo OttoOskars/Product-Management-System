@@ -86,7 +86,7 @@ export default{
     position: fixed;
     top: 0;
     box-sizing: border-box;
-    z-index: 99;
+    z-index: 21;
     padding: 5px 0 2px 0;
     background-color: black;
     display: flex;
@@ -233,5 +233,26 @@ export default{
         }
     }
 }
-
+@media (max-width: 1250px) {
+    .who-to-follow{
+        width:300px;
+    }
+    .search-input-container{
+        width:300px;
+    }
+    .trends{
+        width:300px;
+    }
+}
+@media (max-width: 1100px) {
+    .who-to-follow{
+        width:300px;
+    }
+    .search-input-container{
+        width:300px;
+    }
+    .trends{
+        width:300px;
+    }
+}
 </style>

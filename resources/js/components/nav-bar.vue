@@ -478,6 +478,7 @@ export default{
             background-color: black;
             z-index: 10;
             border-top: 1px solid #2F3336;
+            border-right:none;
         }
 
         .buttons {

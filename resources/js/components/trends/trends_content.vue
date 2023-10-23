@@ -23,7 +23,6 @@
     </div>
 </template>
 <script>
-import { ref } from 'vue';
 export default{
     name: 'Tweets',
     data(){
@@ -51,7 +50,7 @@ export default{
     position:fixed;
     top:0;
     width:5/12*100%;
-    z-index:99;
+    z-index:20;
     box-sizing: border-box;
     backdrop-filter: blur(5px);
     display: flex;
@@ -91,10 +90,9 @@ export default{
             display:flex;
             align-items: center;
             justify-content: center;
-            width:40px;
-            height:40px;
+            padding:15px;
             border-radius: 50%;
-            background-color: black;
+            background:none;
             color:#6A6F74;
             cursor:pointer;
             transition: all 0.3s;
@@ -144,12 +142,128 @@ export default{
     border-radius: 50%;
     border:none;
     font-size:22px;
-    background-color: black;
+    background:none;
     color:white;
     cursor:pointer;
     transition: all 0.3s;
 }
 .back-icon:hover{
     background-color: rgba($color: #1a1a1a, $alpha: 1);
+}
+@media (max-width: 1250px) {
+    .top-bar{
+        width:7/12*100%;
+    }
+}
+@media (max-width: 1100px) {
+    .top-bar{
+        width:7/12*100%;
+    }
+}
+@media (max-width: 1000px) {
+    .top-bar{
+        width:11/12*100%;
+    }
+}
+
+@media (min-width: 500px) {
+    .user-img, .logo{
+        display:none !important;
+    }
+}
+@media (max-width: 500px) {
+    .top-bar{
+        height:35px;
+        width:100%;
+        .search-input {
+            width: 100%;
+            height: 80%;
+            border-radius: 50px;
+            padding-left:30px;
+            border:  1px solid transparent;
+            background-color: #202327;
+            position: relative;
+            color:white;
+            font-size: 13px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 30px;
+            top: 50%;
+            transform: translate(0, -50%);
+            color: #71767B;
+            font-size: 16px;
+        }
+    }
+
+    .title{
+        font-size:17px !important;
+    }
+    .title2{
+        width:100%;
+        box-sizing: border-box;
+        height:70%;
+    }
+    .trend-container{
+        width:100%;
+        height:auto;
+        display:flex;
+        flex-direction:column;
+        box-sizing: border-box;
+        border-bottom: 1px solid #2F3336;
+        padding-top:30px;
+        padding-bottom:100px;
+        .trend{
+            width:100%;
+            height:auto;
+            display:flex;
+            flex-direction:row;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            padding:10px 20px;
+            .more-icon{
+                display:flex;
+                align-items: center;
+                justify-content: center;
+                padding:10px;
+                border-radius: 50%;
+                background:none;
+                color:#6A6F74;
+                cursor:pointer;
+                transition: all 0.3s;
+            }
+            .more-icon:hover{
+                background-color: rgba($color: #1D9BF0, $alpha: 0.1);
+                color:#1D9BF0;
+            }
+        }
+        .trend-info{
+            width:100%;
+            height:auto;
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+            box-sizing: border-box;
+            cursor:pointer;
+            .trend-rank{
+                color: #6e767d;
+                font-size: 11px;
+                margin:0;
+            }
+            .trend-name{
+                color:white;
+                font-weight: bold;
+                font-size: 13px;
+                margin:0;
+            }
+            .trend-posts{
+                color: #6e767d;
+                font-size: 11px;
+                margin:0;
+            }
+        }
+    }
 }
 </style>
