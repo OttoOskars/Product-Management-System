@@ -77,6 +77,7 @@ export default{
     box-sizing: border-box;
     border-bottom: 1px solid #2F3336;
     padding-top:60px;
+    padding-bottom:100px;
     .trend{
         width:100%;
         height:auto;

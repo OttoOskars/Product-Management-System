@@ -259,7 +259,7 @@ export default{
 
 .post-container{
     padding-top:125px;
-    padding-bottom:45px;
+    padding-bottom:80px;
     width:100%;
     height:auto;
     display:flex;

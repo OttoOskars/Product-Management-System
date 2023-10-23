@@ -92,6 +92,7 @@ export default {
     flex-direction:column;
     box-sizing: border-box;
     padding-top: 60px;
+    padding-bottom:100px;
     .person{
         width:100%;
         height:70px;
