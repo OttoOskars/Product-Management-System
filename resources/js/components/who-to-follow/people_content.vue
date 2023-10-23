@@ -4,7 +4,7 @@
             <button class="back-icon" @click="goBack">
                 <ion-icon name="arrow-back-outline"></ion-icon>
             </button>
-            <div class="title">People who follow</div>
+            <div class="title">Who to follow</div>
         </div>
 
         <div class="people-container">
@@ -24,7 +24,6 @@
     </div>
 </template>
 <script>
-import { ref } from 'vue';
 export default {
     name: 'Tweets',
     data: () => ({
@@ -36,9 +35,9 @@ export default {
             { name: 'Juris', username: '@Juritarded', img: "https://ssir.org/images/blog/Joe_Lee-headshot.png", followed: false },
             { name: 'Lebron', username: '@KingJames', img: "https://cdn.sportsforecaster.com/players/l.nba.com/60900/head/no-background/web", followed: false },
             { name: 'Angus', username: '@Angasa', img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXUv6ZrOiS4QQaWCBlsw2zbj64_mcv8Bk-ZCLwDSWLznS_Iu2bxfnet_eaChBoikcPoCc&usqp=CAU", followed: false },
-            { name: 'Juris', username: '@Juritarded', img: "https://ssir.org/images/blog/Joe_Lee-headshot.png", followed: false },
-            { name: 'Juris', username: '@Juritarded', img: "https://ssir.org/images/blog/Joe_Lee-headshot.png", followed: false },
-            { name: 'Juris', username: '@Juritarded', img: "https://ssir.org/images/blog/Joe_Lee-headshot.png", followed: false },
+            { name: 'Diana', username: '@Diana', img: "https://pbs.twimg.com/profile_images/1317795886701969408/i9inMUiu_400x400.jpg", followed: false },
+            { name: 'Donald Trump', username: '@Donalt_J_T', img: "https://pbs.twimg.com/media/F4VbjODbMAIWiEA.jpg", followed: false },
+            { name: 'Obama', username: '@Barack', img: "https://pfps.gg/assets/pfps/6197-obama.png", followed: false },
         ]
     }),
     methods: {
@@ -65,7 +64,7 @@ export default {
     position: fixed;
     top: 0;
     width: 5/12*100%;
-    z-index: 99;
+    z-index: 20;
     box-sizing: border-box;
     backdrop-filter: blur(5px);
     display: flex;
@@ -93,6 +92,7 @@ export default {
     flex-direction:column;
     box-sizing: border-box;
     padding-top: 60px;
+    padding-bottom:100px;
     .person{
         width:100%;
         height:70px;
@@ -170,7 +170,7 @@ export default {
     border-radius: 50%;
     border: none;
     font-size: 22px;
-    background-color: black;
+    background:none;
     color: white;
     cursor: pointer;
     transition: all 0.3s;
@@ -179,5 +179,137 @@ export default {
 .back-icon:hover {
     background-color: rgba($color: #1a1a1a, $alpha: 0.9);
 
+}
+@media (max-width: 1250px) {
+    .top-bar{
+        width:7/12*100%;
+    }
+}
+@media (max-width: 1100px) {
+    .top-bar{
+        width:7/12*100%;
+    }
+}
+@media (max-width: 1000px) {
+    .top-bar{
+        width:11/12*100%;
+    }
+}
+
+@media (min-width: 500px) {
+    .user-img, .logo{
+        display:none !important;
+    }
+}
+@media (max-width: 500px) {
+    .top-bar{
+        height:35px;
+        width:100%;
+        .search-input {
+            width: 100%;
+            height: 80%;
+            border-radius: 50px;
+            padding-left:30px;
+            border:  1px solid transparent;
+            background-color: #202327;
+            position: relative;
+            color:white;
+            font-size: 13px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 30px;
+            top: 50%;
+            transform: translate(0, -50%);
+            color: #71767B;
+            font-size: 16px;
+        }
+    }
+
+    .title{
+        font-size:17px !important;
+    }
+    .title2{
+        width:100%;
+        box-sizing: border-box;
+        height:70%;
+    }
+    .people-container{
+        width:100%;
+        height:auto;
+        display:flex;
+        flex-direction:column;
+        box-sizing: border-box;
+        padding-top: 30px;
+        padding-bottom:100px;
+        .person{
+            width:100%;
+            height:40px;
+            display:flex;
+            flex-direction:row;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+            padding: 30px 20px;
+            cursor:pointer;
+            transition: all 0.3s;
+            &:hover{
+                background-color: #080808;
+            }
+
+            .user-info{
+                display:flex;
+                flex-direction:row;
+                align-items: center;
+                justify-content: flex-start;
+                box-sizing: border-box;
+                gap:10px;
+                img{
+                    width:40px;
+                    height:40px;
+                    border-radius:50%;
+                    background-color: rgb(255, 255, 255);
+                }
+                .person-info{
+                    display:flex;
+                    flex-direction:column;
+                    align-items: flex-start;
+                    justify-content: flex-start;
+                    gap:5px;
+                    .username{
+                        color: white;
+                        font-weight: bold;
+                        font-size: 11px;
+                        margin:0;
+                    }
+                    .usertag{
+                        color: #6e767d;
+                        font-size: 11px;
+                        margin: 0;
+                    }
+                }
+            }
+            .follow-btn {
+                background-color: #1e87f9;
+                color: #fff;
+                border: none;
+                border-radius: 20px;
+                display:flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                height: 30px;
+                width: 50px;
+                font-weight: bold;
+                font-size:11px;
+            }
+
+            .followed-btn {
+                background-color: white;
+                color:#1d9bf0
+            }
+        }
+    }
 }
 </style>
