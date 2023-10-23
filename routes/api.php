@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\TweetController;
 use App\Http\Controllers\API\CommentController;
+use App\Http\Controllers\API\AuthController;
 
 Route::post('check-email', [UserController::class, 'checkEmail']);
 Route::post('login', [UserController::class, 'login']);
@@ -25,3 +26,5 @@ Route::delete('/tweets/{id}',[TweetController::class, 'deleteTweet']);
 
 Route::get('/comments/{tweetId}', [CommentController::class, 'getCommentsByTweet']);
 Route::delete('/delete-comments/{id}',[CommentController::class, 'deleteComment']);
+
+Route::post('reset-password', [AuthController::class, 'resetPassword']);
