@@ -45,6 +45,26 @@ const router = createRouter({
       component: () => import('./components/homepage.vue'),
       meta: { requiresAuth: true }, // Protected route
     },
+    {
+        path: '/notifications',
+        component: () => import('./components/homepage.vue'),
+        meta: { requiresAuth: false }, // Protected route
+      },
+      {
+        path: '/messages',
+        component: () => import('./components/homepage.vue'),
+        meta: { requiresAuth: false }, // Protected route
+      },
+      {
+        path: '/bookmarks',
+        component: () => import('./components/homepage.vue'),
+        meta: { requiresAuth: false }, // Protected route
+      },
+      {
+        path: '/more',
+        component: () => import('./components/homepage.vue'),
+        meta: { requiresAuth: false }, // Protected route
+      },
     // ...other routes
   ],
 });
