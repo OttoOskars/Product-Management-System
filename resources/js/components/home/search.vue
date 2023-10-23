@@ -143,9 +143,6 @@ export default{
     .search-input:focus + .search-icon{
         color: #1D9BF0;
     }
-
-
-
     .search-input::-webkit-input-placeholder {
         color: #71767B;
     }
@@ -171,8 +168,8 @@ export default{
             display:block;
         }
         .close-icon{
-        color: #1D9BF0;
-        font-size:30px;
+            color: #1D9BF0;
+            font-size:30px;
         }
     }
 }
