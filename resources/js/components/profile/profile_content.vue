@@ -5,10 +5,10 @@
             <div class="tweet-count">0 tweets</div>
             <div class="image"></div>
             <div class="user-img">
-                <img> 
+                <img :src="mainProfileImgSrc">
             </div>
             <div class="edit-button">
-                <button class="edit-profile">Edit profile</button>
+                <button class="edit-profile" @click="() => TogglePopup('SignInTrigger')">Edit profile</button>
             </div>
         </div>
         <div class="profile-info">
@@ -35,13 +35,72 @@
             <div class="topics-3">Tweets about the Topics you follow show up in your home timeline</div>
         </div>
     </div>
+    <Popup v-if="popupTriggers.SignInTrigger" :TogglePopup="() => TogglePopup('SignInTrigger')">
+        <div class="Sign-Pop-Up">
+            <div class="head">
+                <h1 class="title">Edit profile</h1>
+                <div class="save-button">
+                    <button class="save">Save</button>
+                </div>
+            </div>
+            <div class="body">
+                <div class="image-2">
+            
+                </div>
+                <div class="user-img-2" @click="openFileChooser">
+                    <input type="file" ref="fileInput" style="display: none" @change="handleFileChange" accept="image/*">
+                    <img :src="popupImgSrc">
+                </div>
+                <div class="edit-name">
+                    <div class="edit-name-2">
+                        Name
+                    </div>
+                    <div class="edit-name-3">
+                        <textarea class="edit-name-4" placeholder="Name" maxlength="50"></textarea>
+                    </div>
+                </div>
+                <div class="line"></div>
+                <div class="edit-bio">
+                    <div class="edit-bio-2">
+                        Bio
+                    </div>
+                    <div class="edit-bio-3">
+                        <textarea class="edit-bio-4" placeholder="Description" maxlength="255"></textarea>
+                    </div>
+                </div>
+                <div class="line"></div>
+            </div>
+        </div>
+    </Popup>
 </template>
 <script>
+import Popup from '../Popup.vue';
+import { ref } from 'vue';
 export default {
     name: 'Profile',
+    components: {
+        Popup,
+    },
     data(){
         return {
             postType: 'tweets',
+        }
+    },
+    setup () {
+        const mainProfileImgSrc = ref(''); // Initialize main profile image source
+        const popupImgSrc = ref(''); // Initialize popup image source
+        const popupTriggers = ref({
+            SignInTrigger: false,
+        });
+        const TogglePopup = (trigger) => {
+			popupTriggers.value[trigger] = !popupTriggers.value[trigger]
+		}
+        return {
+            Popup,
+            TogglePopup,
+            popupTriggers,
+            mainProfileImgSrc,
+            popupImgSrc,
         }
     },
     methods: {
@@ -56,6 +115,22 @@ export default {
         },
         switchToLikes() {
             this.postType = 'likes';
+        },
+        openFileChooser() {
+            this.$refs.fileInput.click();
+        },
+        handleFileChange(event) {
+            const selectedFile = event.target.files[0];
+            if (selectedFile) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // Set the main profile image source
+                    this.mainProfileImgSrc = reader.result;
+                    // Set the popup image source
+                    this.popupImgSrc = reader.result;
+                };
+                reader.readAsDataURL(selectedFile);
+            }
         },
     },
 }
@@ -252,6 +327,129 @@ export default {
             margin-top: 5px;
         }
     }
+    .Sign-Pop-Up {
+        width: 600px;
+        height: 500px;
+        color: white;
+    }
+    .head {
+        margin-top: 50px;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        .save-button {
+            margin-top: 20px;
+            display: flex;
+        }
+        .save{
+            padding:20px;
+            height:40px;
+            display:flex;
+            align-items: center;
+            border-radius: 50px;
+            border:none;
+            background-color: #1D9BF0;
+            color:white;
+            font-size: medium;
+            font-weight: bold;
+            transition: all 0.3s;
+            cursor:pointer;
+        }
+        .save:hover{
+            background-color: #1d8dd7;
+        }
+        .save:disabled{
+            background-color: #0F4E78;
+            color:#808080;
+        }
+    }
+    .body {
+        display: flex;
+        flex-direction: column;
+        .image-2 {
+            height: 130px;
+            background-color: gray;
+            z-index: 9;
+        }
+        .user-img-2{
+            position: absolute;
+            margin-top: 80px;
+            margin-left: 20px;
+            width:auto;
+            height:auto;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            img{
+                width:100px;
+                height:100px;
+                border-radius:50%;
+                background-color: #ffffff;
+                cursor: pointer;
+            }
+        }
+        .edit-name{
+            margin-top: 70px;
+            margin-left: 30px;
+            .edit-name-2{
+                color: gray;
+            }
+            .edit-name-3{
+                width: 95%;
+            }
+            .edit-name-4{
+                width: 100%;
+                height: 30px;
+                font-family: Arial, sans-serif;
+                font-size: 22px;
+                resize: none;
+                border: none;
+                padding-left: 0px;
+                padding-top: 5px;
+                background-color: #000000;
+                color:#ffffff;
+                display:flex;
+            }
+            .edit-name-4:focus{
+                outline: none;
+            }
+        }
+        .edit-bio{
+            margin-top: 20px;
+            margin-left: 30px;
+            .edit-bio-2{
+                color: gray;
+            }
+            .edit-bio-3{
+                width: 95%;
+            }
+            .edit-bio-4{
+                width: 100%;
+                height: 30px;
+                font-family: Arial, sans-serif;
+                font-size: 22px;
+                resize: none;
+                border: none;
+                padding-left: 0px;
+                padding-top: 5px;
+                background-color: #000000;
+                color:#ffffff;
+                display:flex;
+            }
+            .edit-bio-4:focus{
+                outline: none;
+            }
+        }
+        .line{
+            height: 2px;
+            background-color: #4d4d4d;
+            margin-left: 30px;
+            width: 90%;
+            display: flex;
+        }
+    }
 
     @media (max-width: 850px) and (min-width: 501px) {
         .user-img, .name, .user, .description, .joined, .follow, .topics{
@@ -259,7 +457,16 @@ export default {
         }
     }
 
+    @media (max-width: 600px) {
+        .Sign-Pop-Up{
+            width: 500px;
+        }
+    }
+
     @media (max-width: 500px) {
+        .Sign-Pop-Up{
+            width: 400px;
+        }
         .profile-container{
             padding-bottom: 35px;
         }
