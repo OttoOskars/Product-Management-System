@@ -62,7 +62,7 @@ export default {
         width:4/12*100%
     }
     .content{
-        width:7/12*100%
+        flex-grow: 1;
     }
 }
 @media (max-width: 1000px) {
@@ -73,7 +73,7 @@ export default {
         display:none;
     }
     .content{
-        width:11/12*100%
+        flex-grow: 1;
     }
 }
 @media (max-width: 500px) {

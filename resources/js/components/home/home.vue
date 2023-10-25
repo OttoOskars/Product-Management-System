@@ -59,10 +59,10 @@ export default {
         width:100px;
     }
     .search{
-        width:4/12*100%
+        width:400px;
     }
     .tweets{
-        width:7/12*100%
+        flex-grow:1;
     }
 }
 @media (max-width: 1000px) {
@@ -73,7 +73,7 @@ export default {
         display:none;
     }
     .tweets{
-        width:11/12*100%
+        flex-grow:1;
     }
 }
 @media (max-width: 500px) {

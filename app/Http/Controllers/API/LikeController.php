@@ -5,16 +5,16 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\Comment;
+use App\Models\Like;
 use App\Models\Tweet;
+use Illuminate\Support\Facades\Auth;
 
-class CommentController extends Controller
+class LikeController extends Controller
 {
-    public function createComment(Request $request)
+    public function likeTweet(Request $request)
     {
-        $user = auth()->user();
-        $tweetId = $request->input('tweetId'); // Assuming the request contains the tweet_id
-        $commentText = $request->input('commentText');
+        $user = Auth::user();
+        $tweetId = $request->input('tweetId');
 
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
@@ -26,49 +26,49 @@ class CommentController extends Controller
             return response()->json(['message' => 'Tweet not found'], 404);
         }
 
-        // Create a new comment
-        $comment = new Comment();
-        $comment->CommentText = $commentText;
-        $comment->UserID = $user->UserID;
+        // Check if the user has already liked the tweet
+        $existingLike = Like::where('UserID', $user->UserID)
+            ->where('TweetID', $tweet->TweetID)
+            ->first();
 
-        $tweet->comments()->save($comment);
-
-        return response()->json(['message' => 'Comment created successfully', 'comment' => $comment], 201);
-    }
-
-    public function deleteComment($id)
-    {
-        $comment = Comment::find($id);
-
-        if (!$comment) {
-            return response()->json(['message' => 'Comment not found'], 404);
+        if ($existingLike) {
+            return response()->json(['message' => 'You have already liked this tweet'], 400);
         }
 
-        // Check if the authenticated user has the permission to delete the comment (e.g., it's their comment)
+        // Create a new like
+        $like = new Like();
+        $like->UserID = $user->UserID;
+        $like->TweetID = $tweet->TweetID;
+        $like->save();
 
-        $comment->delete();
-
-        return response()->json(['message' => 'Comment deleted successfully']);
+        return response()->json(['message' => 'Liked successfully', 'like' => $like], 201);
     }
 
-    public function getCommentsByTweet($tweetId)
+    public function unlikeTweet($tweetId)
     {
-        // First, find the tweet by its ID to ensure it exists
+        $user = Auth::user();
         $tweet = Tweet::find($tweetId);
-    
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         if (!$tweet) {
             return response()->json(['message' => 'Tweet not found'], 404);
         }
-    
-        // Retrieve all comments for the specific tweet with their associated users
-        $comments = Comment::with('user')->where('TweetID', $tweetId)->orderBy('created_at', 'desc')->get();
-    
-        // Iterate through comments and format the 'created_at' field
-        $now = Carbon::now();
-        foreach ($comments as $comment) {
-            $comment->created_ago = $this->formatTimeAgo($comment->created_at, $now);
+
+        // Check if the user has already liked the tweet
+        $existingLike = Like::where('UserID', $user->UserID)
+            ->where('TweetID', $tweet->TweetID)
+            ->first();
+
+        if (!$existingLike) {
+            return response()->json(['message' => 'You have not liked this tweet'], 400);
         }
-    
-        return response()->json(['comments' => $comments]);
+
+        // Delete the existing like
+        $existingLike->delete();
+
+        return response()->json(['message' => 'Unliked successfully']);
     }
 }

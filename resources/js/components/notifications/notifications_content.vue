@@ -1,6 +1,7 @@
 <template>
 <div class="notifications-container">
-    <div class="top">
+    <div class="black-line"></div>
+    <div class="top-bar">
         <div class="title">Notifications</div>
         <div class="noti-type">
             <button @click="switchToAll" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'all' }">All<div class="active-line" :class ="{ 'active': notiType == 'all' }"></div></button>
@@ -66,21 +67,27 @@ export default{
     width: 100%;
     height: auto;
 }
-.top {
+.black-line{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:2px;
+    z-index:8;
+    background-color: black;
+}
+.top-bar{
     width: 100%;
     height: 125px;
     display: flex;
     flex-direction: column;
     background-color:rgba($color: #000000, $alpha: 0.8);
-    position:fixed;
+    position:sticky;
     top:0;
-    width:5/12*100%;
     z-index:9;
     backdrop-filter: blur(5px);
     border-bottom:solid 1px #2F3336;
-
-
-.title{
+    .title{
         width:100%;
         box-sizing: border-box;
         height:50%;
@@ -104,7 +111,7 @@ export default{
 }
 
 .noti-type-btn{
-    width:50%;
+    width:1/3*100%;
     height:100%;
     position:relative;
     align-items: center;
@@ -147,7 +154,7 @@ export default{
 }
 
 .noti-main{
-    padding-top:125px;
+    padding-top:0px;
     padding-bottom:80px;
     width:100%;
     height:auto;
@@ -175,7 +182,49 @@ export default{
         margin-top: 15px;
 
     }
+}
 
+@media (max-width: 500px){
+    .top-bar{
+        height:90px;
+        .title{
+            width:100%;
+            height:50%;
+            color:white;
+            padding:10px;
+            padding-left:20px;
+            font-size: 17px;
+            font-weight:bold;
+        }
 
+        .noti-type{
+            width:100%;
+            height:50%;
+        }
+    }
+    .noti-type-btn{
+        height:100%;
+        padding:10px;
+        font-size: 15px;
+        font-weight:600;
+    }
+    .noti-main{
+        .main-text{
+            font-size: 25px;
+            margin-top: 10%;
+            margin-left:15%;
+            margin-right:15%;
+        }
+
+        .under-text{
+            color:gray;
+            display: flex;
+            font-size: 13px;
+            text-align: left;
+            padding-left: 15%;
+            margin-top: 15px;
+
+        }
+    }
 }
 </style>

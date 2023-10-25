@@ -111,7 +111,7 @@
                     <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                     <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
                 </div>
-                <button class="popup-button"  @click="createTweetnav">Post</button>
+                <button class="popup-button"  @click="createTweetnav" :disabled="buttonDisabled">Post</button>
             </div>
         </div>
     </Popup>
@@ -139,6 +139,7 @@ export default{
             tweet_text_inputnav: '',
             tweetImagenav: null,
             isPopupVisible: false,
+            buttonDisabled: false,
         }
     },
     setup(){
@@ -158,7 +159,6 @@ export default{
             try {
                 await store.dispatch('logout');
                 router.push('/');
-                this.isPopupVisible = false
             } catch (error) {
                 console.error(error);
             }
@@ -214,13 +214,17 @@ export default{
             });
         },
         async createTweetnav() {
+            if (this.buttonDisabled) {
+                return;
+            }
             const formData = new FormData();
             formData.append('tweetText', this.tweet_text_inputnav);
             if (this.tweetImagenav) {
                 formData.append('tweetImage', this.tweetImagenav);
             }
-
             try {
+                this.buttonDisabled = true;
+
                 const response = await this.$axios.post('/api/tweets', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -231,8 +235,12 @@ export default{
                 this.previewImagenav = null;
                 this.popupTriggers.TweetTrigger = false;
                 this.GetAllTweets();
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 2000);
             } catch (error) {
                 console.error(error);
+                this.buttonDisabled = false;
             }
         },
     },
@@ -511,10 +519,10 @@ export default{
                 transition: all 0.3s;
                 cursor:pointer;
             }
-            .comment-button:hover{
+            .popup-button:hover{
                 background-color: #1d8dd7;
             }
-            .comment-button:disabled{
+            .popup-button:disabled{
                 background-color: #0F4E78;
                 color:#808080;
             }
