@@ -3,7 +3,9 @@
         <div class="top">
             <div class="title"><button class="back-icon" @click="goBack"><ion-icon name="arrow-back-outline"></ion-icon></button><span style="margin-left: 10px;">Profile</span></div>
             <div class="tweet-count">0 tweets</div>
-            <div class="image"></div>
+            <div class="image">
+                <img :src="mainProfileBackgroundImage">
+            </div>
             <div class="user-img">
                 <img :src="mainProfileImgSrc">
             </div>
@@ -13,9 +15,9 @@
         </div>
         <div class="profile-info">
             <div class="user-info">
-                <div class="name">Name</div>
+                <div class="name">{{ displayName ? mainProfileName : profileChanges.name }}</div>
                 <div class="user">@user</div>
-                <div class="description">Description</div>
+                <div class="description" style="word-wrap: break-word; max-width: 65ch;">{{ displayBio ? mainProfileBio : profileChanges.bio }}</div>
                 <div class="joined"><ion-icon name="calendar-outline"></ion-icon><span style="margin-left: 10px;">Joined October 2023</span></div>
             </div>
             <div class="follow">
@@ -40,23 +42,24 @@
             <div class="head">
                 <h1 class="title">Edit profile</h1>
                 <div class="save-button">
-                    <button class="save">Save</button>
+                    <button class="save" @click="saveChanges">Save</button>
                 </div>
             </div>
             <div class="body">
                 <div class="image-2">
-            
+                    <input type="file" ref="backgroundInput" style="display: none" @change="handleFileChange2" accept="image/*">
+                    <img @click="openBackgroundChooser" :src="popupImgSrc2">
                 </div>
-                <div class="user-img-2" @click="openFileChooser">
+                <div class="user-img-2">
                     <input type="file" ref="fileInput" style="display: none" @change="handleFileChange" accept="image/*">
-                    <img :src="popupImgSrc">
+                    <img @click="openFileChooser" :src="popupImgSrc">
                 </div>
                 <div class="edit-name">
                     <div class="edit-name-2">
                         Name
                     </div>
                     <div class="edit-name-3">
-                        <textarea class="edit-name-4" placeholder="Name" maxlength="50"></textarea>
+                        <textarea class="edit-name-4" :placeholder="mainProfileName" maxlength="45" v-model="profileChanges.name"></textarea>
                     </div>
                 </div>
                 <div class="line"></div>
@@ -65,7 +68,7 @@
                         Bio
                     </div>
                     <div class="edit-bio-3">
-                        <textarea class="edit-bio-4" placeholder="Description" maxlength="255"></textarea>
+                        <textarea class="edit-bio-4" :placeholder="mainProfileBio" maxlength="255" v-model="profileChanges.bio"></textarea>
                     </div>
                 </div>
                 <div class="line"></div>
@@ -75,7 +78,7 @@
 </template>
 <script>
 import Popup from '../Popup.vue';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 export default {
     name: 'Profile',
     components: {
@@ -84,53 +87,166 @@ export default {
     data(){
         return {
             postType: 'tweets',
+            profileChanges: {
+                name: '',
+                bio: '',
+                profileImage: '',
+                backgroundImage: '',
+            },
         }
     },
     setup () {
-        const mainProfileImgSrc = ref(''); // Initialize main profile image source
-        const popupImgSrc = ref(''); // Initialize popup image source
+        const mainProfileImgSrc = ref('');
+        const mainProfileBackgroundImage = ref('');
+        const popupImgSrc = ref('');
+        const popupImgSrc2 = ref('');
+        const mainProfileName = ref('');
+        const mainProfileBio = ref('');
+        const editProfileName = ref('');
+        const editProfileBio = ref('');
+        const displayChangesImmediately = ref(false);
         const popupTriggers = ref({
             SignInTrigger: false,
         });
+
+        onMounted(async () => {
+            mainProfileName.value = '';
+            mainProfileBio.value = '';
+        });
+
+        const profileChanges = ref({
+            name: '',
+            bio: '',
+            profileImage: '',
+            backgroundImage: '',
+        });
+
+        const displayName = ref(false);
+        const displayBio = ref(false);
         const TogglePopup = (trigger) => {
-			popupTriggers.value[trigger] = !popupTriggers.value[trigger]
-		}
+            popupTriggers.value[trigger] = !popupTriggers.value[trigger];
+            if (popupTriggers.value[trigger]) {
+    
+                editProfileName.value = mainProfileName.value;
+                editProfileBio.value = mainProfileBio.value;
+
+                displayChangesImmediately.value = false;
+            }
+        };
+
+        const saveChanges = () => {
+            if (profileChanges.value.profileImage) {
+                mainProfileImgSrc.value = profileChanges.value.profileImage;
+            }
+
+            popupImgSrc.value = mainProfileImgSrc.value;
+
+            if (profileChanges.value.backgroundImage) {
+                mainProfileBackgroundImage.value = profileChanges.value.backgroundImage;
+            }
+
+            popupImgSrc2.value = mainProfileBackgroundImage.value;
+
+            if (profileChanges.value.name) {
+                mainProfileName.value = profileChanges.value.name;
+            }
+            if (profileChanges.value.bio) {
+                mainProfileBio.value = profileChanges.value.bio;
+            }
+
+            if (displayChangesImmediately.value) {
+                displayName.value = true;
+                displayBio.value = true;
+            }
+
+            displayName.value = true;
+            displayBio.value = true;
+
+            TogglePopup('SignInTrigger');
+        };
+
         return {
             Popup,
             TogglePopup,
             popupTriggers,
             mainProfileImgSrc,
+            mainProfileBackgroundImage,
             popupImgSrc,
+            popupImgSrc2,
+            mainProfileName,
+            mainProfileBio,
+            profileChanges,
+            displayName,
+            displayBio,
+            saveChanges,
         }
     },
+
     methods: {
         goBack() {
             this.$router.go(-1);
         },
+
         switchToTweets() {
             this.postType = 'tweets';
         },
+
         switchToReplies() {
             this.postType = 'replies';
         },
+
         switchToLikes() {
             this.postType = 'likes';
         },
+
         openFileChooser() {
             this.$refs.fileInput.click();
         },
+
+        openBackgroundChooser () {
+            this.$refs.backgroundInput.click();
+        },
+
         handleFileChange(event) {
             const selectedFile = event.target.files[0];
             if (selectedFile) {
                 const reader = new FileReader();
                 reader.onload = () => {
-                    // Set the main profile image source
-                    this.mainProfileImgSrc = reader.result;
-                    // Set the popup image source
                     this.popupImgSrc = reader.result;
+                    this.profileChanges.profileImage = reader.result;
                 };
                 reader.readAsDataURL(selectedFile);
+            } else {
+                this.popupImgSrc = this.mainProfileImgSrc;
             }
+        },
+
+        handleFileChange2(event) {
+            const selectedFile = event.target.files[0];
+            if (selectedFile) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    this.popupImgSrc2 = reader.result;
+                    this.profileChanges.backgroundImage = reader.result;
+                };
+                reader.readAsDataURL(selectedFile);
+            } else {
+                this.popupImgSrc2 = this.mainProfileBackgroundImage;
+            }
+        },
+
+        TogglePopup(trigger) {
+            if (!this.popupTriggers[trigger]) {
+                this.popupImgSrc = this.mainProfileImgSrc;
+                this.popupImgSrc2 = this.mainProfileBackgroundImage;
+                this.profileChanges = {
+                    name: '',
+                    bio: '',
+                    profileImage: '',
+                    backgroundImage: '',
+                };
+            }
+            this.popupTriggers[trigger] = !this.popupTriggers[trigger];
         },
     },
 }
@@ -188,10 +304,17 @@ export default {
         }
         .image {
             padding-left: 0px;
-            height: 100%;
+            height: 180px;
             width: 100%;
-            background-color: gray;
             z-index: 9;
+            display: flex;
+            img{
+                width: 100%;
+                height: 100%;
+                background-color: white;
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
         }
         .user-img{
             position: absolute;
@@ -369,8 +492,16 @@ export default {
         flex-direction: column;
         .image-2 {
             height: 130px;
-            background-color: gray;
             z-index: 9;
+            display: flex;
+            img{
+                background-color: white;
+                width: 100%;
+                height: 100%;
+                background-repeat: no-repeat;
+                background-size: cover;
+                cursor: pointer;
+            }
         }
         .user-img-2{
             position: absolute;
