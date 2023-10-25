@@ -3,19 +3,21 @@
         <div class="top">
             <div class="title"><button class="back-icon" @click="goBack"><ion-icon name="arrow-back-outline"></ion-icon></button><span style="margin-left: 10px;">Profile</span></div>
             <div class="tweet-count">0 tweets</div>
-            <div class="image"></div>
+            <div class="image">
+                <img :src="mainProfileBackgroundImage">
+            </div>
             <div class="user-img">
-                <img> 
+                <img :src="mainProfileImgSrc">
             </div>
             <div class="edit-button">
-                <button class="edit-profile">Edit profile</button>
+                <button class="edit-profile" @click="() => TogglePopup('SignInTrigger')">Edit profile</button>
             </div>
         </div>
         <div class="profile-info">
             <div class="user-info">
-                <div class="name">Name</div>
+                <div class="name">{{ displayName ? mainProfileName : profileChanges.name }}</div>
                 <div class="user">@user</div>
-                <div class="description">Description</div>
+                <div class="description" style="word-wrap: break-word; max-width: 65ch;">{{ displayBio ? mainProfileBio : profileChanges.bio }}</div>
                 <div class="joined"><ion-icon name="calendar-outline"></ion-icon><span style="margin-left: 10px;">Joined October 2023</span></div>
             </div>
             <div class="follow">
@@ -35,27 +37,216 @@
             <div class="topics-3">Tweets about the Topics you follow show up in your home timeline</div>
         </div>
     </div>
+    <Popup v-if="popupTriggers.SignInTrigger" :TogglePopup="() => TogglePopup('SignInTrigger')">
+        <div class="Sign-Pop-Up">
+            <div class="head">
+                <h1 class="title">Edit profile</h1>
+                <div class="save-button">
+                    <button class="save" @click="saveChanges">Save</button>
+                </div>
+            </div>
+            <div class="body">
+                <div class="image-2">
+                    <input type="file" ref="backgroundInput" style="display: none" @change="handleFileChange2" accept="image/*">
+                    <img @click="openBackgroundChooser" :src="popupImgSrc2">
+                </div>
+                <div class="user-img-2">
+                    <input type="file" ref="fileInput" style="display: none" @change="handleFileChange" accept="image/*">
+                    <img @click="openFileChooser" :src="popupImgSrc">
+                </div>
+                <div class="edit-name">
+                    <div class="edit-name-2">
+                        Name
+                    </div>
+                    <div class="edit-name-3">
+                        <textarea class="edit-name-4" :placeholder="mainProfileName" maxlength="45" v-model="profileChanges.name"></textarea>
+                    </div>
+                </div>
+                <div class="line"></div>
+                <div class="edit-bio">
+                    <div class="edit-bio-2">
+                        Bio
+                    </div>
+                    <div class="edit-bio-3">
+                        <textarea class="edit-bio-4" :placeholder="mainProfileBio" maxlength="255" v-model="profileChanges.bio"></textarea>
+                    </div>
+                </div>
+                <div class="line"></div>
+            </div>
+        </div>
+    </Popup>
 </template>
 <script>
+import Popup from '../Popup.vue';
+import { ref, onMounted } from 'vue';
 export default {
     name: 'Profile',
+    components: {
+        Popup,
+    },
     data(){
         return {
             postType: 'tweets',
+            profileChanges: {
+                name: '',
+                bio: '',
+                profileImage: '',
+                backgroundImage: '',
+            },
         }
     },
+    setup () {
+        const mainProfileImgSrc = ref('');
+        const mainProfileBackgroundImage = ref('');
+        const popupImgSrc = ref('');
+        const popupImgSrc2 = ref('');
+        const mainProfileName = ref('');
+        const mainProfileBio = ref('');
+        const editProfileName = ref('');
+        const editProfileBio = ref('');
+        const displayChangesImmediately = ref(false);
+        const popupTriggers = ref({
+            SignInTrigger: false,
+        });
+
+        onMounted(async () => {
+            mainProfileName.value = '';
+            mainProfileBio.value = '';
+        });
+
+        const profileChanges = ref({
+            name: '',
+            bio: '',
+            profileImage: '',
+            backgroundImage: '',
+        });
+
+        const displayName = ref(false);
+        const displayBio = ref(false);
+        const TogglePopup = (trigger) => {
+            popupTriggers.value[trigger] = !popupTriggers.value[trigger];
+            if (popupTriggers.value[trigger]) {
+    
+                editProfileName.value = mainProfileName.value;
+                editProfileBio.value = mainProfileBio.value;
+
+                displayChangesImmediately.value = false;
+            }
+        };
+
+        const saveChanges = () => {
+            if (profileChanges.value.profileImage) {
+                mainProfileImgSrc.value = profileChanges.value.profileImage;
+            }
+
+            popupImgSrc.value = mainProfileImgSrc.value;
+
+            if (profileChanges.value.backgroundImage) {
+                mainProfileBackgroundImage.value = profileChanges.value.backgroundImage;
+            }
+
+            popupImgSrc2.value = mainProfileBackgroundImage.value;
+
+            if (profileChanges.value.name) {
+                mainProfileName.value = profileChanges.value.name;
+            }
+            if (profileChanges.value.bio) {
+                mainProfileBio.value = profileChanges.value.bio;
+            }
+
+            if (displayChangesImmediately.value) {
+                displayName.value = true;
+                displayBio.value = true;
+            }
+
+            displayName.value = true;
+            displayBio.value = true;
+
+            TogglePopup('SignInTrigger');
+        };
+
+        return {
+            Popup,
+            TogglePopup,
+            popupTriggers,
+            mainProfileImgSrc,
+            mainProfileBackgroundImage,
+            popupImgSrc,
+            popupImgSrc2,
+            mainProfileName,
+            mainProfileBio,
+            profileChanges,
+            displayName,
+            displayBio,
+            saveChanges,
+        }
+    },
+
     methods: {
         goBack() {
             this.$router.go(-1);
         },
+
         switchToTweets() {
             this.postType = 'tweets';
         },
+
         switchToReplies() {
             this.postType = 'replies';
         },
+
         switchToLikes() {
             this.postType = 'likes';
+        },
+
+        openFileChooser() {
+            this.$refs.fileInput.click();
+        },
+
+        openBackgroundChooser () {
+            this.$refs.backgroundInput.click();
+        },
+
+        handleFileChange(event) {
+            const selectedFile = event.target.files[0];
+            if (selectedFile) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    this.popupImgSrc = reader.result;
+                    this.profileChanges.profileImage = reader.result;
+                };
+                reader.readAsDataURL(selectedFile);
+            } else {
+                this.popupImgSrc = this.mainProfileImgSrc;
+            }
+        },
+
+        handleFileChange2(event) {
+            const selectedFile = event.target.files[0];
+            if (selectedFile) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    this.popupImgSrc2 = reader.result;
+                    this.profileChanges.backgroundImage = reader.result;
+                };
+                reader.readAsDataURL(selectedFile);
+            } else {
+                this.popupImgSrc2 = this.mainProfileBackgroundImage;
+            }
+        },
+
+        TogglePopup(trigger) {
+            if (!this.popupTriggers[trigger]) {
+                this.popupImgSrc = this.mainProfileImgSrc;
+                this.popupImgSrc2 = this.mainProfileBackgroundImage;
+                this.profileChanges = {
+                    name: '',
+                    bio: '',
+                    profileImage: '',
+                    backgroundImage: '',
+                };
+            }
+            this.popupTriggers[trigger] = !this.popupTriggers[trigger];
         },
     },
 }
@@ -113,10 +304,17 @@ export default {
         }
         .image {
             padding-left: 0px;
-            height: 100%;
+            height: 180px;
             width: 100%;
-            background-color: gray;
             z-index: 9;
+            display: flex;
+            img{
+                width: 100%;
+                height: 100%;
+                background-color: white;
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
         }
         .user-img{
             position: absolute;
@@ -252,6 +450,137 @@ export default {
             margin-top: 5px;
         }
     }
+    .Sign-Pop-Up {
+        width: 600px;
+        height: 500px;
+        color: white;
+    }
+    .head {
+        margin-top: 50px;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        .save-button {
+            margin-top: 20px;
+            display: flex;
+        }
+        .save{
+            padding:20px;
+            height:40px;
+            display:flex;
+            align-items: center;
+            border-radius: 50px;
+            border:none;
+            background-color: #1D9BF0;
+            color:white;
+            font-size: medium;
+            font-weight: bold;
+            transition: all 0.3s;
+            cursor:pointer;
+        }
+        .save:hover{
+            background-color: #1d8dd7;
+        }
+        .save:disabled{
+            background-color: #0F4E78;
+            color:#808080;
+        }
+    }
+    .body {
+        display: flex;
+        flex-direction: column;
+        .image-2 {
+            height: 130px;
+            z-index: 9;
+            display: flex;
+            img{
+                background-color: white;
+                width: 100%;
+                height: 100%;
+                background-repeat: no-repeat;
+                background-size: cover;
+                cursor: pointer;
+            }
+        }
+        .user-img-2{
+            position: absolute;
+            margin-top: 80px;
+            margin-left: 20px;
+            width:auto;
+            height:auto;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            img{
+                width:100px;
+                height:100px;
+                border-radius:50%;
+                background-color: #ffffff;
+                cursor: pointer;
+            }
+        }
+        .edit-name{
+            margin-top: 70px;
+            margin-left: 30px;
+            .edit-name-2{
+                color: gray;
+            }
+            .edit-name-3{
+                width: 95%;
+            }
+            .edit-name-4{
+                width: 100%;
+                height: 30px;
+                font-family: Arial, sans-serif;
+                font-size: 22px;
+                resize: none;
+                border: none;
+                padding-left: 0px;
+                padding-top: 5px;
+                background-color: #000000;
+                color:#ffffff;
+                display:flex;
+            }
+            .edit-name-4:focus{
+                outline: none;
+            }
+        }
+        .edit-bio{
+            margin-top: 20px;
+            margin-left: 30px;
+            .edit-bio-2{
+                color: gray;
+            }
+            .edit-bio-3{
+                width: 95%;
+            }
+            .edit-bio-4{
+                width: 100%;
+                height: 30px;
+                font-family: Arial, sans-serif;
+                font-size: 22px;
+                resize: none;
+                border: none;
+                padding-left: 0px;
+                padding-top: 5px;
+                background-color: #000000;
+                color:#ffffff;
+                display:flex;
+            }
+            .edit-bio-4:focus{
+                outline: none;
+            }
+        }
+        .line{
+            height: 2px;
+            background-color: #4d4d4d;
+            margin-left: 30px;
+            width: 90%;
+            display: flex;
+        }
+    }
 
     @media (max-width: 850px) and (min-width: 501px) {
         .user-img, .name, .user, .description, .joined, .follow, .topics{
@@ -259,7 +588,16 @@ export default {
         }
     }
 
+    @media (max-width: 600px) {
+        .Sign-Pop-Up{
+            width: 500px;
+        }
+    }
+
     @media (max-width: 500px) {
+        .Sign-Pop-Up{
+            width: 400px;
+        }
         .profile-container{
             padding-bottom: 35px;
         }
