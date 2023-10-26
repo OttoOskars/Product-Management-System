@@ -37,13 +37,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(Tweet::class, 'UserID');
     }
+    public function retweets()
+    {
+        return $this->hasMany(Retweet::class, 'UserID');
+    }
     public function likes()
     {
         return $this->hasMany(Like::class, 'UserID');
     }
     public function comments()
     {
-        return $this->hasMany(Comment::class, 'CommentID');
+        return $this->hasMany(Comment::class, 'UserID');
     }
     public function tokens(): MorphMany
     {
