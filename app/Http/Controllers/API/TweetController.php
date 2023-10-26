@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Tweet;
 use App\Models\Comment;
 use App\Models\Like;
+use App\Models\Retweet;
 use Illuminate\Support\Facades\Auth;
 
 class TweetController extends Controller

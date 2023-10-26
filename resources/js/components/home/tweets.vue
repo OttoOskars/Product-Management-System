@@ -82,9 +82,9 @@
                             <div class="icon-container"><ion-icon name="chatbox-outline" class="post-icon"></ion-icon></div>
                             <p class="post-btn-nr">{{ tweet.comment_count }}</p>
                         </button>
-                        <button class="post-btn-container retweet-btn">
-                            <div class="icon-container"><ion-icon name="arrow-redo-outline" class="post-icon"></ion-icon></div>
-                            <p class="post-btn-nr">{{ tweet.retweet_count }}</p>
+                        <button class="post-btn-container retweet-btn" @click.stop="toggleRetweet(tweet.TweetID)">
+                            <div class="icon-container"><ion-icon :name="tweet.isRetweeted ? 'arrow-redo' : 'arrow-redo-outline'" class="post-icon" :class ="{ 'retweeted': tweet.isRetweeted }"></ion-icon></div>
+                            <p class="post-btn-nr" :class ="{ 'retweeted': tweet.isRetweeted }">{{ tweet.retweet_count }}</p>
                         </button>
                     </div>
                 </div>
@@ -176,7 +176,6 @@ export default{
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger];
             if (!popupTriggers.value[trigger]) {
-                this.tweet_text_input = '';
             }
         };
         return {
@@ -275,7 +274,6 @@ export default{
                 this.main_comment_text_input = '';
                 this.popup_comment_text_input = '';
                 if (response.status === 201) {
-                    // Update the tweet's like status and count
                     const tweet = this.tweets.find((t) => t.TweetID === tweetID);
                     if (tweet) {
                         tweet.comment_count += 1;
@@ -319,26 +317,32 @@ export default{
             console.log(id);
         },
         toggleLike(tweetID) {
+            if (this.buttonDisabled) {
+                return;
+            }
             const tweet = this.tweets.find((t) => t.TweetID === tweetID);
             if (!tweet) {
                 return;
             }
-            
             if (tweet.isLiked) {
+                this.buttonDisabled = true;
                 this.unlikeTweet(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
             } else {
+                this.buttonDisabled = true;
                 this.likeTweet(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
             }
         },
         async likeTweet(tweetID) {
             try {
-                // Send an API request to like the tweet by sending the tweetId
                 const response = await this.$axios.post(`/api/tweets/like`, { tweetId: tweetID });
-
                 console.log('Like Response:', response);
-
                 if (response.status === 201) {
-                    // Update the tweet's like status and count
                     const tweet = this.tweets.find((t) => t.TweetID === tweetID);
                     if (tweet) {
                         tweet.isLiked = true;
@@ -352,13 +356,9 @@ export default{
 
         async unlikeTweet(tweetId) {
             try {
-                // Send an API request to unlike the tweet by sending the tweetId
                 const response = await this.$axios.delete(`/api/tweets/unlike/${tweetId}`);
-
                 console.log('Unlike Response:', response);
-
                 if (response.status === 200) {
-                    // Update the tweet's like status and count
                     const tweet = this.tweets.find((t) => t.TweetID === tweetId);
                     if (tweet) {
                         tweet.isLiked = false;
@@ -367,6 +367,64 @@ export default{
                 }
             } catch (error) {
                 console.error('Error unliking the tweet:', error);
+            }
+        },
+        toggleRetweet(tweetID) {
+            if (this.buttonDisabled) {
+                return;
+            }
+            const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+            if (!tweet) {
+                return;
+            }
+            
+            if (tweet.isRetweeted) {
+                this.buttonDisabled = true;
+                this.unretweetTweet(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
+            } else {
+                this.buttonDisabled = true;
+                this.retweetTweet(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
+            }
+        },
+        async retweetTweet(tweetID) {
+            try {
+                const response = await this.$axios.post(`/api/tweets/retweet`, { tweetId: tweetID });
+
+                console.log('Retweet Response:', response);
+
+                if (response.status === 201) {
+                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    if (tweet) {
+                        tweet.isRetweeted = true;
+                        tweet.retweet_count += 1;
+                    }
+                }
+            } catch (error) {
+                console.error('Error retweeting the tweet:', error);
+            }
+        },
+
+        async unretweetTweet(tweetId) {
+            try {
+                const response = await this.$axios.delete(`/api/tweets/unretweet/${tweetId}`);
+
+                console.log('Unretweet Response:', response);
+
+                if (response.status === 200) {
+                    const tweet = this.tweets.find((t) => t.TweetID === tweetId);
+                    if (tweet) {
+                        tweet.isRetweeted = false;
+                        tweet.retweet_count -= 1;
+                    }
+                }
+            } catch (error) {
+                console.error('Error unretweetin the tweet:', error);
             }
         },
     },
@@ -973,6 +1031,9 @@ export default{
 .liked{
     color:#F31C80 !important;
 }
+.retweeted{
+    color:#00BA7C !important;
+}
 .post-icon{
     visibility: visible !important;
 }
@@ -1274,6 +1335,9 @@ export default{
     }
     .liked{
         color:#F31C80 !important;
+    }
+    .retweeted{
+        color:#00BA7C !important;
     }
 }
 </style>

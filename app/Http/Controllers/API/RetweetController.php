@@ -26,7 +26,7 @@ class RetweetController extends Controller
             return response()->json(['message' => 'Tweet not found'], 404);
         }
 
-        $existingRetweet = Like::where('UserID', $user->UserID)
+        $existingRetweet = Retweet::where('UserID', $user->UserID)
             ->where('TweetID', $tweet->TweetID)
             ->first();
 
@@ -55,7 +55,7 @@ class RetweetController extends Controller
             return response()->json(['message' => 'Tweet not found'], 404);
         }
 
-        $existingRetweet = Like::where('UserID', $user->UserID)
+        $existingRetweet = Retweet::where('UserID', $user->UserID)
             ->where('TweetID', $tweet->TweetID)
             ->first();
 

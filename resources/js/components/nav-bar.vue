@@ -152,7 +152,6 @@ export default{
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger]
             if (!popupTriggers.value[trigger]) {
-                this.tweet_text_inputnav = '';
             }
 		}
         const logoutUser = async () => {

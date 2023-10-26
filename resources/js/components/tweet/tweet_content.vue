@@ -42,17 +42,17 @@
                         <img v-if="tweet.TweetImage" :src="'/storage/' + tweet.TweetImage"/>
                     </div>
                     <div class="bottom">
-                        <button class="post-btn-container heart-btn" @click.stop="toggleLike(tweet.TweetID)">
+                        <button class="post-btn-container heart-btn" @click.stop="toggleLike(tweet.TweetID)" :disabled="buttonDisabled">
                             <div class="icon-container"><ion-icon :name="tweet.isLiked ? 'heart' : 'heart-outline'" class="post-icon" :class ="{ 'liked': tweet.isLiked }"></ion-icon></div>
                             <p class="post-btn-nr" :class ="{ 'liked': tweet.isLiked }">{{ tweet.like_count }}</p>
                         </button>
-                        <button class="post-btn-container comment-btn" @click.stop="() => TogglePopup('CommentTrigger')">
+                        <button class="post-btn-container comment-btn" @click.stop="() => TogglePopup('CommentTrigger')" :disabled="buttonDisabled">
                             <div class="icon-container"><ion-icon name="chatbox-outline" class="post-icon"></ion-icon></div>
                             <p class="post-btn-nr">{{ tweet.comment_count }}</p>
                         </button>
-                        <button class="post-btn-container retweet-btn">
-                            <div class="icon-container"><ion-icon name="arrow-redo-outline" class="post-icon"></ion-icon></div>
-                            <p class="post-btn-nr">{{ tweet.retweet_count }}</p>
+                        <button class="post-btn-container retweet-btn" @click.stop="toggleRetweet(tweet.TweetID)" :disabled="buttonDisabled">
+                            <div class="icon-container"><ion-icon :name="tweet.isRetweeted ? 'arrow-redo' : 'arrow-redo-outline'" class="post-icon" :class ="{ 'retweeted': tweet.isRetweeted }"></ion-icon></div>
+                            <p class="post-btn-nr" :class ="{ 'retweeted': tweet.isRetweeted }">{{ tweet.retweet_count }}</p>
                         </button>
                     </div>
                 </div>
@@ -151,10 +151,6 @@ export default {
         };
     },
     created() {
-/* 
-        const tweetID = this.$route.params.tweetID;
-        this.fetchTweetData(tweetID);
-        this.fetchCommentsByTweet(tweetID); */
     },
     setup() {
         const store = useStore();
@@ -165,7 +161,6 @@ export default {
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger]
             if (!popupTriggers.value[trigger]) {
-                /* clear text area */
             }
 		}
         return {
@@ -177,26 +172,6 @@ export default {
         ...mapState(['user']),
     },
     methods: {
-/*         fetchTweetData(tweetID) {
-            fetch(`api/tweet/${tweetID}`)
-            .then((response) => response.json())
-            .then((data) => {
-                this.tweet = data.tweet;
-            })
-            .catch((error) => {
-                console.error('Error fetching tweet data:', error);
-            });
-        }, */
-
-        fetchTweetData(tweetID) {
-            axios.get(`/api/tweet/${tweetID}`) // Use template literals to insert tweetID
-            .then(response => {
-                this.tweet = response.data.tweet;
-            })
-            .catch(error => {
-                console.error(error);
-            });
-        },
         fetchCommentsByTweet(tweetID) {
             fetch(`api/comments/${tweetID}`)
             .then((response) => response.json())
@@ -263,14 +238,25 @@ export default {
         },
         toggleLike(tweetID) {
             const tweet = this.tweet;
+            if (this.buttonDisabled) {
+                return;
+            }
             if (!tweet) {
                 return;
             }
             
             if (tweet.isLiked) {
+                this.buttonDisabled = true;
                 this.unlikeTweet(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
             } else {
+                this.buttonDisabled = true;
                 this.likeTweet(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
             }
         },
         async likeTweet(tweetID) {
@@ -295,13 +281,11 @@ export default {
 
         async unlikeTweet(tweetId) {
             try {
-                // Send an API request to unlike the tweet by sending the tweetId
                 const response = await this.$axios.delete(`/api/tweets/unlike/${tweetId}`);
 
                 console.log('Unlike Response:', response);
 
                 if (response.status === 200) {
-                    // Update the tweet's like status and count
                     const tweet = this.tweet;
                     if (tweet) {
                         tweet.isLiked = false;
@@ -310,6 +294,64 @@ export default {
                 }
             } catch (error) {
                 console.error('Error unliking the tweet:', error);
+            }
+        },
+        toggleRetweet(tweetID) {
+            const tweet = this.tweet
+            if (this.buttonDisabled) {
+                return;
+            }
+            if (!tweet) {
+                return;
+            }
+            
+            if (tweet.isRetweeted) {
+                this.buttonDisabled = true;
+                this.unretweetTweet(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
+            } else {
+                this.buttonDisabled = true;
+                this.retweetTweet(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
+            }
+        },
+        async retweetTweet(tweetID) {
+            try {
+                const response = await this.$axios.post(`/api/tweets/retweet`, { tweetId: tweetID });
+
+                console.log('Retweet Response:', response);
+
+                if (response.status === 201) {
+                    const tweet = this.tweet
+                    if (tweet) {
+                        tweet.isRetweeted = true;
+                        tweet.retweet_count += 1;
+                    }
+                }
+            } catch (error) {
+                console.error('Error retweeting the tweet:', error);
+            }
+        },
+
+        async unretweetTweet(tweetId) {
+            try {
+                const response = await this.$axios.delete(`/api/tweets/unretweet/${tweetId}`);
+
+                console.log('Unretweet Response:', response);
+
+                if (response.status === 200) {
+                    const tweet = this.tweet
+                    if (tweet) {
+                        tweet.isRetweeted = false;
+                        tweet.retweet_count -= 1;
+                    }
+                }
+            } catch (error) {
+                console.error('Error unretweetin the tweet:', error);
             }
         },
     },
@@ -973,6 +1015,9 @@ export default {
 
 .liked{
     color:#F31C80 !important;
+}
+.retweeted{
+    color:#00BA7C !important;
 }
 .post-icon{
     visibility: visible !important;

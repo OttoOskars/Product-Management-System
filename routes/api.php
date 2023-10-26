@@ -5,6 +5,7 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\TweetController;
 use App\Http\Controllers\API\CommentController;
 use App\Http\Controllers\API\LikeController;
+use App\Http\Controllers\API\RetweetController;
 use App\Http\Controllers\API\AuthController;
 
 Route::post('check-email', [UserController::class, 'checkEmail']);
@@ -33,6 +34,9 @@ Route::delete('/delete-comments/{id}',[CommentController::class, 'deleteComment'
 
 Route::middleware('auth:sanctum')->post('tweets/like', [LikeController::class, 'likeTweet']);
 Route::middleware('auth:sanctum')->delete('tweets/unlike/{tweetId}', [LikeController::class, 'unlikeTweet']);
+
+Route::middleware('auth:sanctum')->post('tweets/retweet', [RetweetController::class, 'retweetTweet']);
+Route::middleware('auth:sanctum')->delete('tweets/unretweet/{tweetId}', [RetweetController::class, 'unretweetTweet']);
 
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
