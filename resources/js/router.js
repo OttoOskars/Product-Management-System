@@ -52,6 +52,14 @@ const router = createRouter({
      meta: { requiresAuth: false }, // Public route
     },
 
+    {
+        path: '/bookmarks',
+        component: () => import('./components/bookmarks/bookmarks.vue'),
+        meta: { requiresAuth: false }, // Public route
+       },
+
+
+
 
 
     // ...other routes
