@@ -18,7 +18,7 @@
                 <div class="name">{{ user.Name }}</div>
                 <div class="user">{{ user.UserTag }}</div>
                 <div class="description" style="word-wrap: break-word; max-width: 65ch;">{{ displayBio ? mainProfileBio : profileChanges.bio }}</div>
-                <div class="joined"><ion-icon name="calendar-outline"></ion-icon><span style="margin-left: 10px;">Joined October 2023</span></div>
+                <div class="joined"><ion-icon name="calendar-outline"></ion-icon><span style="margin-left: 10px;">Joined {{ getFormattedJoinDate(user.created_at) }}</span></div>
             </div>
             <div class="follow">
                 <div class="amount">0</div>
@@ -251,6 +251,11 @@ export default {
                 };
             }
             this.popupTriggers[trigger] = !this.popupTriggers[trigger];
+        },
+
+        getFormattedJoinDate(joinDate) {
+            const options = { year: 'numeric', month: 'long' };
+            return new Date(joinDate).toLocaleDateString(undefined, options);
         },
     },
 }
