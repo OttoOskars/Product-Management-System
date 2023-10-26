@@ -653,7 +653,7 @@ export default{
             justify-content: space-evenly;
         }
 
-        .Home, .Explore, .Notifications, .Messages{
+        .Home, .Explore, .Notifications, .Bookmarks, .Messages{
             display:flex;
             align-items: center;
             justify-content: center;

@@ -64,6 +64,11 @@ const router = createRouter({
       name: 'profile',
       meta: { requiresAuth: false }, // Protected route (if required)
     },
+    {
+        path: '/bookmarks',
+        component: () => import('./components/bookmarks/bookmarks.vue'),
+        meta: { requiresAuth: false }, // Public route
+       },
 
     // ...other routes
   ],
