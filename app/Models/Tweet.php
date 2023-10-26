@@ -25,6 +25,10 @@ class Tweet extends Model
     {
         return $this->hasMany(Comment::class, 'TweetID');
     }
+    public function retweets()
+    {
+        return $this->hasMany(Retweet::class, 'TweetID');
+    }
     public function likes()
     {
         return $this->hasMany(Like::class, 'TweetID');

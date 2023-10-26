@@ -84,7 +84,7 @@
                         </button>
                         <button class="post-btn-container retweet-btn">
                             <div class="icon-container"><ion-icon name="arrow-redo-outline" class="post-icon"></ion-icon></div>
-                            <p class="post-btn-nr">53</p>
+                            <p class="post-btn-nr">{{ tweet.retweet_count }}</p>
                         </button>
                     </div>
                 </div>
