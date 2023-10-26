@@ -123,6 +123,31 @@ class UserController extends Controller
         ];
         return response()->json($response);
     }
+    public function getUserById($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        $userData = [
+            'UserID' => $user->UserID,
+            'Name' => $user->Name,
+            'UserTag' => $user->UserTag,
+        ];
+
+        return response()->json(['user' => $userData]);
+    }
+
+    public function getUserByTag($tag)
+    {
+        $tag = '@' . ltrim($tag, '@');
+        $user = User::where('UserTag', $tag)->first();
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        return response()->json(['user' => $user]);
+    }
 
     public function getUser()
     {

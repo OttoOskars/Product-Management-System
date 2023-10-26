@@ -44,7 +44,7 @@
                 </div>
             </button>
 
-            <button class="Profile" @click="$router.push('/profile')">
+            <button class="Profile" @click="openProfile(user.UserTag)">
                 <div class="button-content">
                     <ion-icon name="person-outline" style="font-size: 24px;"></ion-icon>
                     <span style="font-size: 18px; margin-left: 20px;">Profile</span>
@@ -80,7 +80,7 @@
             <div class="profile-popup" v-if="isPopupVisible">
                 <div class="popup-content">
                     <button class="logout-btn" @click="logoutUser">Logout</button>
-                    <button class="profile-btn" @click="openProfile(i)">Profile</button>
+                    <button class="profile-btn" @click="openProfile(user.UserTag)">Profile</button>
                 </div>
             </div>
         </div>
@@ -89,7 +89,7 @@
         <div class="create-popup" v-if="user">
             <div class="top">
                 <div class="left-side-popup">
-                    <img  @click.stop="openProfile(i)">
+                    <img  @click.stop="openProfile(user.UserTag)">
                 </div>
                 <div class="right-side-popup">
                     <div class="userinfo-popup">
@@ -111,7 +111,7 @@
                     <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                     <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
                 </div>
-                <button class="popup-button"  @click="createTweetnav">Post</button>
+                <button class="popup-button"  @click="createTweetnav" :disabled="buttonDisabled">Post</button>
             </div>
         </div>
     </Popup>
@@ -139,6 +139,7 @@ export default{
             tweet_text_inputnav: '',
             tweetImagenav: null,
             isPopupVisible: false,
+            buttonDisabled: false,
         }
     },
     setup(){
@@ -151,14 +152,13 @@ export default{
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger]
             if (!popupTriggers.value[trigger]) {
-                /* clear text area */
+                this.tweet_text_inputnav = '';
             }
 		}
         const logoutUser = async () => {
             try {
                 await store.dispatch('logout');
                 router.push('/');
-                this.isPopupVisible = false
             } catch (error) {
                 console.error(error);
             }
@@ -188,12 +188,11 @@ export default{
                 textarea.style.height = maxHeight + 'px';
             }
         },
-        openProfile(id){
-            console.log(id);
-            this.isPopupVisible = false
-        },
-        openTweet(id) {
-            console.log(id);
+        openProfile(tag){
+            const NoSymbolTag = tag.replace(/^@/, '');
+            this.$router.push({ name: 'profile', params: { UserTag : NoSymbolTag } });
+            console.log(tag);
+            this.isPopupVisible = false;
         },
         onImageChangenav(event) {
             this.tweetImagenav = event.target.files[0];
@@ -214,13 +213,17 @@ export default{
             });
         },
         async createTweetnav() {
+            if (this.buttonDisabled) {
+                return;
+            }
             const formData = new FormData();
             formData.append('tweetText', this.tweet_text_inputnav);
             if (this.tweetImagenav) {
                 formData.append('tweetImage', this.tweetImagenav);
             }
-
             try {
+                this.buttonDisabled = true;
+
                 const response = await this.$axios.post('/api/tweets', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -231,8 +234,12 @@ export default{
                 this.previewImagenav = null;
                 this.popupTriggers.TweetTrigger = false;
                 this.GetAllTweets();
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 2000);
             } catch (error) {
                 console.error(error);
+                this.buttonDisabled = false;
             }
         },
     },
@@ -511,10 +518,10 @@ export default{
                 transition: all 0.3s;
                 cursor:pointer;
             }
-            .comment-button:hover{
+            .popup-button:hover{
                 background-color: #1d8dd7;
             }
-            .comment-button:disabled{
+            .popup-button:disabled{
                 background-color: #0F4E78;
                 color:#808080;
             }

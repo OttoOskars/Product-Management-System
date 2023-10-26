@@ -59,7 +59,7 @@ export default {
         width:100px;
     }
     .notifications-info{
-        width:7/12*100%
+        flex-grow: 1;
     }
     .search{
         width:4/12*100%
@@ -70,7 +70,7 @@ export default {
         width:100px;
     }
     .notifications-info{
-        width:11/12*100%
+        flex-grow: 1;
     }
     .search{
         display:none;

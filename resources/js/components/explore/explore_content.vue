@@ -1,5 +1,6 @@
 <template>
     <div class="tweets-container">
+        <div class="black-line"></div>
         <div class="top-bar"> 
             <input 
                 type="text"
@@ -186,19 +187,28 @@ export default{
     height:auto;
     color:white;
 }
+.black-line{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:2px;
+    z-index:8;
+    background-color: black;
+}
 
 .top-bar{
     height:60px;
-    background-color:rgba($color: #000000, $alpha: 0.8);
-    position:fixed;
-    top:0;
-    width:5/12*100%;
-    z-index:99;
-    box-sizing: border-box;
-    backdrop-filter: blur(5px);
-    display: flex;
+    width:100%;
+    display:flex;
     align-items: center;
+    background-color:rgba($color: #000000, $alpha: 0.8);
+    backdrop-filter: blur(5px);
+    position:sticky;
+    top:0;
+    z-index:99;
     padding:0 20px;
+    box-sizing: border-box;
     .search-input {
         width: 100%;
         height: 80%;
@@ -334,7 +344,7 @@ export default{
 }
 
 .post-container{
-    padding-top:70px;
+    padding-top:0px;
     padding-bottom:45px;
     width:100%;
     height:auto;
@@ -663,21 +673,6 @@ export default{
 .post:hover{
     background-color: #080808;
 }
-@media (max-width: 1250px) {
-    .top-bar{
-        width:7/12*100%;
-    }
-}
-@media (max-width: 1100px) {
-    .top-bar{
-        width:7/12*100%;
-    }
-}
-@media (max-width: 1000px) {
-    .top-bar{
-        width:11/12*100%;
-    }
-}
 
 @media (min-width: 500px) {
     .user-img, .logo{
@@ -928,7 +923,6 @@ export default{
             }
     }
     .post-container{
-        padding-top:40px;
         width:100%;
         height:auto;
         display:flex;

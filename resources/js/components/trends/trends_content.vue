@@ -1,5 +1,6 @@
 <template>
     <div class="tweets-container">
+        <div class="black-line"></div>
         <div class="top-bar">
             <button class="back-icon" @click="goBack">
                 <ion-icon name="arrow-back-outline"></ion-icon>
@@ -44,13 +45,24 @@ export default{
     color:white;
 }
 
-.top-bar{
-    height:60px;
-    background-color:rgba($color: #000000, $alpha: 0.8);
+.black-line{
     position:fixed;
     top:0;
-    width:5/12*100%;
-    z-index:20;
+    left:0;
+    right:0;
+    height:2px;
+    z-index:8;
+    background-color: black;
+}
+
+.top-bar{
+    height:60px;
+    width:100%;
+    background-color:rgba($color: #000000, $alpha: 0.8);
+    border-bottom:solid 1px #2F3336;
+    position:sticky;
+    top:0;
+    z-index:9;
     box-sizing: border-box;
     backdrop-filter: blur(5px);
     display: flex;
@@ -76,7 +88,7 @@ export default{
     flex-direction:column;
     box-sizing: border-box;
     border-bottom: 1px solid #2F3336;
-    padding-top:60px;
+    padding-top:0px;
     padding-bottom:100px;
     .trend{
         width:100%;
@@ -151,21 +163,6 @@ export default{
 .back-icon:hover{
     background-color: rgba($color: #1a1a1a, $alpha: 1);
 }
-@media (max-width: 1250px) {
-    .top-bar{
-        width:7/12*100%;
-    }
-}
-@media (max-width: 1100px) {
-    .top-bar{
-        width:7/12*100%;
-    }
-}
-@media (max-width: 1000px) {
-    .top-bar{
-        width:11/12*100%;
-    }
-}
 
 @media (min-width: 500px) {
     .user-img, .logo{
@@ -213,7 +210,6 @@ export default{
         flex-direction:column;
         box-sizing: border-box;
         border-bottom: 1px solid #2F3336;
-        padding-top:30px;
         padding-bottom:100px;
         .trend{
             width:100%;

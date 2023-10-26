@@ -7,7 +7,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      component: () => import('./components/Login.vue'),
+      component: () => import('./components/login.vue'),
       meta: { requiresAuth: false }, // Public route
     },
     {
@@ -53,14 +53,22 @@ const router = createRouter({
     },
 
     {
+      path: '/tweet/:tweetID',
+      component: () => import('./components/tweet/tweet.vue'),
+      name: 'tweet',
+      meta: { requiresAuth: false }, // Protected route (if required)
+    },
+    {
+      path: '/profile/:UserTag',
+      component: () => import('./components/profile/profile.vue'),
+      name: 'profile',
+      meta: { requiresAuth: false }, // Protected route (if required)
+    },
+    {
         path: '/bookmarks',
         component: () => import('./components/bookmarks/bookmarks.vue'),
         meta: { requiresAuth: false }, // Public route
        },
-
-
-
-
 
     // ...other routes
   ],

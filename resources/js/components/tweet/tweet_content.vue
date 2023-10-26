@@ -1,57 +1,26 @@
 <template>
-    <div class="tweets-container">
+    <div class="tweet-container">
         <div class="black-line"></div>
         <div class="top-bar">
-            <div class="title">Home</div>
-            <div class="title2">
-                <div class="user-img" @click.stop="toggleProfilePopup"><img></div>
-                <div class="logo">
-                    <ion-icon name="logo-yahoo"></ion-icon>
-                </div>
-            </div>
-            <div class="post-type">
-                <button @click="switchToTweets" class="post-type-btn" :class ="{ 'active-post-type': postType == 'tweets' }">For you<div class="active-line" :class ="{ 'active': postType == 'tweets' }"></div></button>
-                <button @click="switchToFollowing" class="post-type-btn" :class ="{ 'active-post-type': postType == 'following_tweets' }">Following<div class="active-line" :class ="{ 'active': postType == 'following_tweets' }"></div></button>
-            </div>
+            <button class="back-btn" @click="goBack">
+                <ion-icon name="arrow-back-outline"></ion-icon>
+            </button>
+            <div class="title">Tweet</div>
         </div>
         <div class="post-container">
-            <div class="create-tweet">
+            <div class="post" v-if="tweet && tweet.user"> 
                 <div class="left-side">
-                    <img  @click="openProfile(user.UserTag)">
+                    <img @click.stop="openProfile(tweet.user.UserID)">
                 </div>
                 <div class="right-side">
-                    <div class="top">
-                        <div class="tweet-input-container">
-                            <textarea v-model="tweet_text_input" id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
-                        </div>
-                    </div>
-                    <div class="tweet-image-preview">
-                        <img :src="previewImage" v-if="previewImage">
-                    </div>
-                    <div class="bottom">
-                        <div class="buttons">
-                            <button class="tweet-btn"><input type="file" id="tweet-img-input" @change="onImageChange" hidden><label for="tweet-img-input" class="tweet-img-label"><ion-icon name="images-outline" class="create-tweet-icon"></ion-icon></label></button>
-                            <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
-                            <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
-                        </div>
-                        <button class="post-button" @click="createTweet" :disabled="buttonDisabled">Post</button>
-                    </div>
-                </div>
-            </div>
-            <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID"  @click="openTweet(tweet.TweetID)"> 
-                <div class="left-side">
-                    <img  @click.stop="openProfile(tweet.user.UserTag)">
-                </div>
-                <div class="right-side">
-                    <!-- ############################################# -->
                     <div class="top2">
                         <div class="person-image">
-                            <img @click.stop="openProfile(tweet.user.UserTag)">
+                            <img @click.stop="openProfile(tweet.user.UserID)">
                         </div>
                         <div class="info-content">
                             <div class="userinfo">
-                                <p class="username">{{tweet.user.Name}}</p>
-                                <p class="usertag">{{tweet.user.UserTag}}</p>
+                                <p class="username">{{ tweet.user.Name }}</p>
+                                <p class="usertag">{{ tweet.user.UserTag }}</p>
                                 <p class="time-posted">{{ tweet.created_ago }}</p>
                             </div>
                             <div class="content-text">
@@ -59,15 +28,14 @@
                             </div>
                         </div>
                     </div>
-                    <!-- ############################################# -->
                     <div class="post-top">
                         <div class="userinfo">
-                            <p class="username">{{tweet.user.Name}}</p>
-                            <p class="usertag">{{tweet.user.UserTag}}</p>
-                            <p class="time-posted">{{ tweet.created_ago }}</p>
+                            <p class="username">{{ tweet.user ? tweet.user.Name : 'Unknown User' }}</p>
+                            <p class="usertag">{{ tweet.user ? tweet.user.UserTag : 'Unknown User' }}</p>
+                            <p class="time-posted">{{tweet.created_ago}}</p>
                         </div>
                         <div class="content-text">
-                            <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
+                            <p v-if="tweet.TweetText">{{tweet.TweetText}}</p>
                         </div>
                     </div>
                     <div class="content-img">
@@ -78,7 +46,7 @@
                             <div class="icon-container"><ion-icon :name="tweet.isLiked ? 'heart' : 'heart-outline'" class="post-icon" :class ="{ 'liked': tweet.isLiked }"></ion-icon></div>
                             <p class="post-btn-nr" :class ="{ 'liked': tweet.isLiked }">{{ tweet.like_count }}</p>
                         </button>
-                        <button class="post-btn-container comment-btn" @click.stop="tweetIdInPopup = tweet.TweetID; TogglePopup('CommentTrigger')">
+                        <button class="post-btn-container comment-btn" @click.stop="() => TogglePopup('CommentTrigger')">
                             <div class="icon-container"><ion-icon name="chatbox-outline" class="post-icon"></ion-icon></div>
                             <p class="post-btn-nr">{{ tweet.comment_count }}</p>
                         </button>
@@ -89,14 +57,56 @@
                     </div>
                 </div>
             </div>
-            <!-- More posts -->
+            <div class="create-tweet" v-if="user">
+                <div class="left-side">
+                    <img  @click="openProfile(user.UserID)">
+                </div>
+                <div class="right-side">
+                    <div class="replyinginfo">                   
+                        <p class="replying-to">Replying to </p>
+                        <p class="profiletag" v-if="tweet && tweet.user">{{ tweet.user.UserTag }}</p>
+                    </div>
+                    <div class="top">
+                        <div class="tweet-input-container">
+                            <textarea v-model="main_comment_text_input" id="tweet-input" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
+                        </div>
+                    </div>
+                    <div class="bottom">
+                        <div class="buttons">
+                            <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
+                            <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
+                        </div>
+                        <button class="post-button" @click="createComment(tweet.TweetID, main_comment_text_input)" :disabled="buttonDisabled">Reply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="comment-container">
+            <div class="comment" v-for="comment in comments" :key="comment.CommentID">
+                <div class="left">
+                    <img @click.stop="openProfile(comment.user.UserID)">
+                    <div class="content">
+                        <div class="userinfo">
+                            <p class="username">{{ comment.user.Name }}</p>
+                            <p class="usertag">{{ comment.user.UserTag }}</p>
+                            <p class="time-posted">{{ comment.created_ago }}</p>
+                        </div>
+                        <div class="content-text">
+                            <p>{{ comment.CommentText }}</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="delete-btn" @click="deleteComment(comment.TweetID, comment.CommentID)" v-if="comment.user && comment.user.UserID === user.UserID">
+                        <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
+                </button>
+            </div>
         </div>
     </div>
     <Popup v-if="popupTriggers.CommentTrigger" :TogglePopup="() => TogglePopup('CommentTrigger')">
         <div class="create-popup">
             <div class="top">
                 <div class="left-side-popup">
-                    <img  @click="openProfile(user.UserTag)">
+                    <img  @click="openProfile(user.UserID)">
                 </div>
                 <div class="right-side-popup">
                     <div class="userinfo-popup">
@@ -104,7 +114,7 @@
                         <p class="usertag">{{ user.UserTag }}</p>
                     </div>
                     <div class="tweet-input-container">
-                        <textarea v-model="comment_text_input" id="tweet-input-comment" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
+                        <textarea v-model="popup_comment_text_input" id="tweet-input-comment" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
                     </div>
                 </div>
             </div>
@@ -114,16 +124,10 @@
                     <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                     <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
                 </div>
-                <button class="popup-button" @click="createComment(tweetIdInPopup, comment_text_input)" :disabled="buttonDisabled">Comment</button><!-- Izdomā kā comment poga nodos tweetID. -->
+                <button class="popup-button" @click="createComment(tweet.TweetID, popup_comment_text_input)" :disabled="buttonDisabled">Comment</button><!-- Izdomā kā comment poga nodos tweetID. -->
             </div>
         </div>
     </Popup>
-    <div class="profile-popup" v-if="isPopupVisible">
-        <div class="popup-content">
-            <button class="logout-btn" @click="logoutUser">Logout</button>
-            <button class="profile-btn" @click="openProfile(user.UserTag)">Profile</button>
-        </div>
-    </div>
 </template>
 <script>
 import { ref } from 'vue';
@@ -132,127 +136,75 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { mapState } from 'vuex';
-export default{
-    name: 'Tweets',
+export default {
+    name: 'Tweet',
     components: {
         Popup,
     },
-    data(){
+    data() {
         return {
-            tweets: [],
-            tweet_text_input: '',
-            comment_text_input: '',
+            tweet: null,
             comments: [],
-            commentsByTweet: {},
-            following_tweets: 1,
-            postType: 'tweets',
-            previewImage: null,
-            tweetImage: null,
-            isPopupVisible: false,
-            buttonDisabled:false,
-            tweetIdInPopup: null,
-        }
-    },
-    setup(){
-        const router = useRouter();
-        const store = useStore();
-
-        if (store.state.isLoggedIn) {
-            router.push('/home2');
-        }
-        const logoutUser = async () => {
-            try {
-                await store.dispatch('logout');
-                router.push('/');
-            } catch (error) {
-                console.error(error);
-            }
+            main_comment_text_input: '',
+            popup_comment_text_input: '',
+            buttonDisabled: false,
         };
-
+    },
+    created() {
+/* 
+        const tweetID = this.$route.params.tweetID;
+        this.fetchTweetData(tweetID);
+        this.fetchCommentsByTweet(tweetID); */
+    },
+    setup() {
+        const store = useStore();
+        const router = useRouter();
         const popupTriggers = ref({
             CommentTrigger: false,
-            ProfileTrigger: false,
         });
         const TogglePopup = (trigger) => {
-            popupTriggers.value[trigger] = !popupTriggers.value[trigger];
+            popupTriggers.value[trigger] = !popupTriggers.value[trigger]
             if (!popupTriggers.value[trigger]) {
-                this.tweet_text_input = '';
+                /* clear text area */
             }
-        };
+		}
         return {
             popupTriggers,
-            TogglePopup,
-            logoutUser,
+            TogglePopup
         }
     },
     computed: {
         ...mapState(['user']),
-        currentPosts() {
-            return this.postType === 'tweets' ? this.tweets : this.following_tweets;
-        },
     },
     methods: {
-        toggleProfilePopup() {
-            this.isPopupVisible = !this.isPopupVisible;
-            setTimeout(() => { this.isPopupVisible = false; }, 10000);
-        },
-        GetAllTweets() {
-            axios.get('/api/all-tweets') // Update the URL as per your Laravel routes
+/*         fetchTweetData(tweetID) {
+            fetch(`api/tweet/${tweetID}`)
+            .then((response) => response.json())
+            .then((data) => {
+                this.tweet = data.tweet;
+            })
+            .catch((error) => {
+                console.error('Error fetching tweet data:', error);
+            });
+        }, */
+
+        fetchTweetData(tweetID) {
+            axios.get(`/api/tweet/${tweetID}`) // Use template literals to insert tweetID
             .then(response => {
-                this.tweets = response.data.tweets;
+                this.tweet = response.data.tweet;
             })
             .catch(error => {
                 console.error(error);
             });
         },
-        onImageChange(event) {
-            this.tweetImage = event.target.files[0];
-            if (this.tweetImage) {
-                this.previewImage = URL.createObjectURL(this.tweetImage);
-            } else {
-                this.previewImage = null;
-            }
-        },
-        async createTweet() {
-            if (this.buttonDisabled) {
-                return;
-            }
-            const formData = new FormData();
-            formData.append('tweetText', this.tweet_text_input);
-            if (this.tweetImage) {
-                formData.append('tweetImage', this.tweetImage);
-            }
-            try {
-                this.buttonDisabled = true;
-
-                const response = await this.$axios.post('/api/tweets', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
-                this.tweet_text_input = '';
-                this.tweetImage = null;
-                this.previewImage = null;
-                this.GetAllTweets();
-                setTimeout(() => {
-                    this.buttonDisabled = false;
-                }, 2000);
-            } catch (error) {
-                console.error(error);
-                this.buttonDisabled = false;
-            }
-        },
-        deleteTweet(tweetId) {
-            if (!tweetId) {
-                console.log("Tweet ID not retrieved");
-            return;
-            }
-            axios.delete(`/api/tweets/${tweetId}`)
-            .then(response => {
-                this.GetAllTweets();
-                this.fetchTweets();
+        fetchCommentsByTweet(tweetID) {
+            fetch(`api/comments/${tweetID}`)
+            .then((response) => response.json())
+            .then((data) => {
+                this.comments = data.comments;
             })
-            .catch(error => {
+            .catch((error) => {
+                console.error('Error fetching comments:', error);
             });
         },
         async createComment(tweetID, commentText) {
@@ -274,13 +226,7 @@ export default{
                 this.comments.push(newComment);
                 this.main_comment_text_input = '';
                 this.popup_comment_text_input = '';
-                if (response.status === 201) {
-                    // Update the tweet's like status and count
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
-                    if (tweet) {
-                        tweet.comment_count += 1;
-                    }
-                }
+                this.tweet.comment_count++;
                 this.popupTriggers.CommentTrigger = false;
                 setTimeout(() => {
                     this.buttonDisabled = false;
@@ -290,36 +236,33 @@ export default{
                 this.buttonDisabled = false;
             }
         },
-        switchToTweets() {
-            this.postType = 'tweets';
-        },
-        switchToFollowing() {
-            this.postType = 'following_tweets';
-        },
-        autoSize() {
-            const maxRows = 10;
-            const textarea = this.$refs.tweetInput;
-            textarea.style.height = 'auto';
-            const customLineHeight = 1.5; // Match the line-height value from your CSS
-            const maxHeight = maxRows * customLineHeight * parseFloat(getComputedStyle(textarea).fontSize);
-
-            if (textarea.scrollHeight <= maxHeight) {
-                textarea.style.height = textarea.scrollHeight + 'px';
-            } else {
-                textarea.style.height = maxHeight + 'px';
+        deleteComment(tweetID, commentID) {
+            if (confirm('Are you sure you want to delete this comment?')) {
+                this.performDeleteComment(tweetID, commentID);
             }
         },
-        openProfile(tag){
-            const NoSymbolTag = tag.replace(/^@/, '');
-            this.$router.push({ name: 'profile', params: { UserTag : NoSymbolTag } });
-            console.log(tag);
+        async performDeleteComment(tweetID, commentID) {
+            if (!commentID) {
+                console.error('Comment ID not provided');
+                return;
+            }
+            try {
+                await this.$axios.delete(`/api/delete-comments/${commentID}`);
+                this.comments = this.comments.filter((comment) => comment.CommentID !== commentID);
+                this.tweet.comment_count--;
+                this.fetchCommentsByTweet(tweetID);
+                console.log(`Comment with ID ${commentID} deleted successfully.`);
+            } catch (error) {
+                console.error('Error deleting comment:', error);
+            }
         },
-        openTweet(id) {
-            this.$router.push({ name: 'tweet', params: { tweetID: id } });
-            console.log(id);
+        openProfile(userID) {
+        },
+        goBack() {
+            this.$router.go(-1);
         },
         toggleLike(tweetID) {
-            const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+            const tweet = this.tweet;
             if (!tweet) {
                 return;
             }
@@ -339,7 +282,7 @@ export default{
 
                 if (response.status === 201) {
                     // Update the tweet's like status and count
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    const tweet = this.tweet;
                     if (tweet) {
                         tweet.isLiked = true;
                         tweet.like_count += 1;
@@ -359,7 +302,7 @@ export default{
 
                 if (response.status === 200) {
                     // Update the tweet's like status and count
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetId);
+                    const tweet = this.tweet;
                     if (tweet) {
                         tweet.isLiked = false;
                         tweet.like_count -= 1;
@@ -371,24 +314,27 @@ export default{
         },
     },
     async mounted() {
+        this.tweet = this.$route.params.tweet;
         await this.$store.dispatch('initializeApp');
-        this.$axios.get('/api/all-tweets')
+        this.$axios.get('/api/tweetdata/' + this.$route.params.tweetID)
         .then(response => {
-            this.tweets = response.data.tweets;
+            this.tweet = response.data.tweet;
         })
         .catch(error => {
             console.error(error);
         });
-    },   
-}
+        this.fetchCommentsByTweet(this.$route.params.tweetID);
+    }
+};
 </script>
+
 <style lang="scss" scoped>
-.tweets-container{
+.tweet-container{
     width:100%;
     height:auto;
-    position: relative;
+    position:relative;
+    color:white;
 }
-
 .black-line{
     position:fixed;
     top:0;
@@ -398,79 +344,50 @@ export default{
     z-index:8;
     background-color: black;
 }
-
 .top-bar{
-    height:125px;
-    display:flex;
-    flex-direction:column;
+    height:60px;
+    width:100%;
     background-color:rgba($color: #000000, $alpha: 0.8);
+    border-bottom:solid 1px #2F3336;
     position:sticky;
     top:0;
     z-index:9;
+    box-sizing: border-box;
     backdrop-filter: blur(5px);
-    border-bottom:solid 1px #2F3336;
+    display: flex;
+    align-items: center;
+    padding:0 10px;
     .title{
         width:100%;
-        box-sizing: border-box;
-        height:50%;
         display:flex;
         align-items: center;
         justify-content: flex-start;
-        color:white;
-        padding:10px;
+        box-sizing: border-box;
         padding-left:20px;
-        font-size: 23px;
-        font-weight:bold;
+        font-weight: bold;
+        font-size: 22px;
     }
-    .post-type{
-        width:100%;
-        height:50%;
+    .back-btn{
         display:flex;
-        flex-direction:row;
-        justify-content: space-between;
-
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        width:40px;
+        height:40px;
+        border-radius: 50%;
+        border:none;
+        font-size:22px;
+        background:none;
+        color:white;
+        cursor:pointer;
+        transition: all 0.3s;
+        &:hover{
+            background-color: rgba($color: #1a1a1a, $alpha: 1);
+        }
     }
 }
-.post-type-btn{
-    width:50%;
-    height:100%;
-    position:relative;
-    align-items: center;
-    justify-content: center;
-    color:#71767B;
-    padding:10px;
-    border:none;
-    background:none;
-    transition:all 0.3s;
-    font-size: 16px;
-    font-weight:600;
-}
-.post-type-btn:hover{
-    background-color:rgba($color: #202223, $alpha: 0.8);
-}
-.active-post-type{
-    color:white;
-    font-size: 16px;
-    font-weight: 700;
-}
-.active-line{
-    height:4px;
-    width:75px;
-    background-color: #1D9BF0;
-    border-radius:5px;
-    position:absolute;
-    bottom:1px;
-    display:none;
-    left: 50%;
-    transform: translateX(-50%);
-}
-.active-line.active{
-    display:block;
-}
-
 .post-container{
     padding-top:0px;
-    padding-bottom:80px;
     width:100%;
     height:auto;
     display:flex;
@@ -489,328 +406,6 @@ export default{
             background-color: white;
         }
     }
-}
-.profile-popup{
-    width:250px;
-    height:90px;
-    position:absolute;
-    top:50px;
-    left:50%;
-    transform: translateX(-50%);
-    z-index:99;
-
-    .popup-content{
-        height:100%;
-        width:100%;
-        border-radius:25px;
-        border:1px solid #2F3336;
-        box-shadow: 0 0 5px #1D9BF0;
-        background-color: #000000;
-        transition: all 0.3s;
-        display:flex;
-        flex-direction: column;
-        button{
-            width:100%;
-            height:50%;
-            border:none;
-            background: none;
-            color:#ffffff;
-            cursor:pointer;
-            font-size:14px;
-            transition: all 0.3s;
-            &:hover{
-                background-color: #1d1d1d;
-            }
-        }
-        .logout-btn{
-            border-top-left-radius: 25px;
-            border-top-right-radius: 25px;
-        }
-        .profile-btn{
-            border-bottom-left-radius: 25px;
-            border-bottom-right-radius: 25px;
-        }
-    }
-}
-.create-popup{
-    width:500px;
-    min-height: 300px;
-    display:flex;
-    flex-direction:column;
-    box-sizing: border-box;
-    justify-content: space-between;
-    padding:30px 0px 0px 0px;
-    box-sizing: border-box;
-    .top{
-        width:100%;
-        display:flex;
-        flex-direction: row;
-        box-sizing: border-box;
-        gap:15px;
-        padding:30px 35px 20px 20px;
-
-        .left-side-popup{
-            width:50px;
-            height:100%;
-            display:flex;
-            flex-direction:column;
-            box-sizing: border-box;
-            img{
-                width:50px;
-                height:50px;
-                border-radius: 50%;
-                background-color: white;
-            }
-        }
-        .right-side-popup{
-            width:90%;
-            height:100%;
-            display:flex;
-            flex-direction:column;
-            box-sizing: border-box;
-            .userinfo-popup{
-                width:100%;
-                height:20px;
-                display:flex;
-                flex-direction: row;
-                gap:5px;
-                .username{
-                    margin:0;
-                    font-weight: bold;
-                    font-size: 17px;
-                    color:white;
-                }
-                .usertag{
-                    margin:0;
-                    font-size: 17px;
-                    color:#6A6F74;
-                }
-            }
-            .tweet-input-container{
-                width:100%;
-                height:100%;
-                display:flex;
-                align-items: center;
-                justify-content: center;
-                padding-top: 10px;
-                padding-right:10px;
-                .tweet-input{
-                    width:100%;
-                    height:100%;
-                    background-color: #000000;
-                    color:#ffffff;
-                    resize: none;
-                    transition: height 0.2s;
-                    font-family: Arial, sans-serif;
-                    font-size: 22px;
-                    border:none;
-                    display:flex;
-                    align-items: center;
-                }
-                .tweet-input:focus{
-                    outline:none;
-                }
-            }
-        }
-    }
-
-    .bottom{
-        width:100%;
-        height:60px;
-        display:flex;
-        flex-direction: row;
-        justify-content: space-between;
-        border-top:1px solid #2F3336;
-        padding: 10px;
-        box-sizing: border-box;
-        .buttons{
-            display:flex;
-            flex-direction: row;
-            align-items: center;
-            gap:5px;
-            .tweet-btn{
-                height:40px;
-                width:40px;
-                background:none;
-                border-radius:50%;
-                border:none;
-                display:flex;
-                justify-content: center;
-                align-items: center;
-                cursor:pointer;
-                transition: all 0.3s;
-                .tweet-img-label{
-                    width:100%;
-                    height:100%;
-                    display:flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin: 0;
-                    padding: 0;
-                }
-                .create-tweet-icon{
-                    font-size:20px;
-                    color:#1D9BF0;
-                    --ionicon-stroke-width: 40px;
-                }
-            }
-            .tweet-btn:hover{
-                background-color: rgba($color: #1D9BF0, $alpha: 0.1);
-            }
-        }
-        .popup-button{
-            width:auto;
-            padding:20px;
-            height:auto;
-            display:flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            border-radius: 50px;
-            border:none;
-            background-color: #1D9BF0;
-            color:white;
-            font-size: medium;
-            font-weight: bold;
-            transition: all 0.3s;
-            cursor:pointer;
-        }
-        .popup-button:hover{
-            background-color: #1d8dd7;
-        }
-        .popup-button:disabled{
-            background-color: #0F4E78;
-            color:#808080;
-        }
-    }
-}
-.create-tweet{
-    width:100%;
-    min-height:fit-content;
-    display:flex;
-    flex-direction:row;
-    box-sizing: border-box;
-    gap:10px;
-    padding:15px;
-    border-bottom: 1px solid #2F3336;
-
-    .right-side{
-        width:90%;
-        height:100%;
-        display:flex;
-        gap:10px;
-        flex-direction:column;
-        .top{
-            width:100%;
-            height:80%;
-            display:flex;
-            align-items: center;
-            justify-content: flex-start;
-            box-sizing: border-box;
-            padding:0px;
-            .tweet-input-container{
-                width:100%;
-                height:100%;
-                display:flex;
-                align-items: center;
-                justify-content: center;
-                padding-top: 10px;
-                padding-right:10px;
-                .tweet-input{
-                    width:100%;
-                    height:100%;
-                    background-color: #000000;
-                    color:#ffffff;
-                    resize: none;
-                    transition: height 0.2s;
-                    font-family: Arial, sans-serif;
-                    font-size: 22px;
-                    border:none;
-                    display:flex;
-                    align-items: center;
-                    padding:5px 5px;
-                }
-                .tweet-input:focus{
-                    outline:none;
-                    border-bottom:1px solid #2F3336;
-                    padding: 5px 5px 15px 5px;
-                }
-            }
-        }
-        .bottom{
-            width:100%;
-            height:40px;
-            display:flex;
-            flex-direction: row;
-            justify-content: space-between;
-            .buttons{
-                display:flex;
-                flex-direction: row;
-                align-items: center;
-                gap:5px;
-                .tweet-btn{
-                    height:40px;
-                    width:40px;
-                    background:none;
-                    border-radius:50%;
-                    border:none;
-                    display:flex;
-                    justify-content: center;
-                    align-items: center;
-                    padding:0;
-                    cursor:pointer;
-                    .tweet-img-label{
-                        width:100%;
-                        height:100%;
-                        display:flex;
-                        justify-content: center;
-                        align-items: center;
-                        margin: 0;
-                        padding: 0;
-                    }
-                    .create-tweet-icon{
-                        font-size:20px;
-                        color:#1D9BF0;
-                        --ionicon-stroke-width: 40px;
-                    }
-                }
-                .tweet-btn:hover{
-                    background-color: rgba($color: #1D9BF0, $alpha: 0.1);
-                }
-            }
-            .post-button{
-                width:auto;
-                padding:20px;
-                height:auto;
-                display:flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                border-radius: 50px;
-                border:none;
-                background-color: #1D9BF0;
-                color:white;
-                font-size: medium;
-                font-weight: bold;
-                transition: all 0.3s;
-                cursor:pointer;
-            }
-            .post-button:hover{
-                background-color: #1d8dd7;
-            }
-            .post-button:disabled{
-                background-color: #0F4E78;
-                color:#808080;
-            }
-        }
-    }
-    .tweet-image-preview{
-        img{
-            max-width:100%;
-            max-height:100%;
-        }
-    }
-
 }
 .post{
     width:100%;
@@ -969,96 +564,428 @@ export default{
             }
         }
     }
+    &:hover{
+        background-color: #080808;
+    }
 }
+.top2{
+    display:none;
+}
+
+.create-tweet{
+    width:100%;
+    min-height:fit-content;
+    display:flex;
+    flex-direction:row;
+    box-sizing: border-box;
+    gap:10px;
+    padding:15px;
+    border-bottom: 1px solid #2F3336;
+
+    .right-side{
+        width:90%;
+        height:100%;
+        display:flex;
+        gap:10px;
+        flex-direction:column;
+        .replyinginfo{
+            width:100%;
+            height:auto;
+            display:flex;
+            flex-direction:row;
+            justify-content: flex-start;
+            align-items: center;
+            gap:5px;
+            color:white;
+            padding-top:2px;
+            padding-left:5px;
+            .replying-to{
+                margin:0;
+                font-size: 17px;
+                color:#6A6F74;
+            }
+            .profiletag{
+                margin:0;
+                font-size: 17px;
+                color:#1d8dd7;
+            }
+        }
+        .top{
+            width:100%;
+            height:80%;
+            display:flex;
+            align-items: center;
+            justify-content: flex-start;
+            box-sizing: border-box;
+            padding:0px;
+
+            .tweet-input-container{
+                width:100%;
+                height:100%;
+                display:flex;
+                align-items: center;
+                justify-content: center;
+                padding-top: 10px;
+                padding-right:10px;
+                .tweet-input{
+                    width:100%;
+                    height:100%;
+                    background-color: #000000;
+                    color:#ffffff;
+                    resize: none;
+                    transition: height 0.2s;
+                    font-family: Arial, sans-serif;
+                    font-size: 22px;
+                    border:none;
+                    display:flex;
+                    align-items: center;
+                    padding:5px 5px;
+                }
+                .tweet-input:focus{
+                    outline:none;
+                    border-bottom:1px solid #2F3336;
+                    padding: 5px 5px 15px 5px;
+                }
+            }
+        }
+        .bottom{
+            width:100%;
+            height:40px;
+            display:flex;
+            flex-direction: row;
+            justify-content: space-between;
+            .buttons{
+                display:flex;
+                flex-direction: row;
+                align-items: center;
+                gap:5px;
+                .tweet-btn{
+                    height:40px;
+                    width:40px;
+                    background:none;
+                    border-radius:50%;
+                    border:none;
+                    display:flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding:0;
+                    cursor:pointer;
+                    .tweet-img-label{
+                        width:100%;
+                        height:100%;
+                        display:flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .create-tweet-icon{
+                        font-size:20px;
+                        color:#1D9BF0;
+                        --ionicon-stroke-width: 40px;
+                    }
+                }
+                .tweet-btn:hover{
+                    background-color: rgba($color: #1D9BF0, $alpha: 0.1);
+                }
+            }
+            .post-button{
+                width:auto;
+                padding:20px;
+                height:auto;
+                display:flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                border-radius: 50px;
+                border:none;
+                background-color: #1D9BF0;
+                color:white;
+                font-size: medium;
+                font-weight: bold;
+                transition: all 0.3s;
+                cursor:pointer;
+            }
+            .post-button:hover{
+                background-color: #1d8dd7;
+            }
+            .post-button:disabled{
+                background-color: #0F4E78;
+                color:#808080;
+            }
+        }
+    }
+}
+.comment-container{
+    padding-bottom:80px;
+    width:100%;
+    height:auto;
+    display:flex;
+    flex-direction:column;
+    box-sizing: border-box;
+}
+.comment{
+    width:100%;
+    min-height:auto;
+    display:flex;
+    flex-direction:row;
+    gap:10px;
+    box-sizing: border-box;
+    padding:15px 10px 5px 15px;
+    border-bottom: 1px solid #2F3336;
+    justify-content: space-between;
+    position: relative;
+    cursor:pointer;
+    .left{
+        width:auto;
+        height:100%;
+        display:flex;
+        flex-direction:row;
+        gap:15px;
+        box-sizing: border-box;
+        img{
+            width:50px;
+            height:50px;
+            border-radius: 50%;
+            background-color: white;
+        }
+        .content{
+            flex-grow: 1;
+            height:100%;
+            display:flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            .userinfo{
+                width:100%;
+                height:10px;
+                display:flex;
+                flex-direction:row;
+                justify-content: flex-start;
+                align-items: center;
+                gap:7px;
+                color:white;
+                padding-top:2px;
+                .username{
+                    margin:0;
+                    font-weight: bold;
+                    font-size: 17px;
+                    color:white;
+                }
+                .usertag{
+                    margin:0;
+                    font-size: 17px;
+                    color:#6A6F74;
+                }
+                .time-posted{
+                    margin:0;
+                    font-size: 17px;
+                    color:#6A6F74;
+                }
+            }
+            .content-text{
+                height:auto;
+                width:100%;
+                text-align: left;
+                color:white;
+                padding:0px;
+                font-size:17px;
+                overflow-wrap: break-word;
+            }
+        }
+    }
+    .delete-btn{
+        height:25px;
+        width:25px;
+        background:none;
+        border-radius:50%;
+        border:none;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        padding:0;
+        cursor:pointer;
+        position:absolute;
+        right:5px;
+        top:5px;
+        .delete-icon{
+            font-size:16px;
+            color:#f11515;
+            --ionicon-stroke-width: 30px;
+            visibility: visible;
+        }
+        &:hover{
+            background-color: rgba($color: #f11515, $alpha: 0.1);
+        }
+    }
+}
+.create-popup{
+    width:500px;
+    min-height: 300px;
+    display:flex;
+    flex-direction:column;
+    box-sizing: border-box;
+    justify-content: space-between;
+    padding:30px 0px 0px 0px;
+    box-sizing: border-box;
+    .top{
+        width:100%;
+        display:flex;
+        flex-direction: row;
+        box-sizing: border-box;
+        gap:15px;
+        padding:30px 35px 20px 20px;
+
+        .left-side-popup{
+            width:50px;
+            height:100%;
+            display:flex;
+            flex-direction:column;
+            box-sizing: border-box;
+            img{
+                width:50px;
+                height:50px;
+                border-radius: 50%;
+                background-color: white;
+            }
+        }
+        .right-side-popup{
+            width:90%;
+            height:100%;
+            display:flex;
+            flex-direction:column;
+            box-sizing: border-box;
+            .userinfo-popup{
+                width:100%;
+                height:20px;
+                display:flex;
+                flex-direction: row;
+                gap:5px;
+                .username{
+                    margin:0;
+                    font-weight: bold;
+                    font-size: 17px;
+                    color:white;
+                }
+                .usertag{
+                    margin:0;
+                    font-size: 17px;
+                    color:#6A6F74;
+                }
+            }
+            .tweet-input-container{
+                width:100%;
+                height:100%;
+                display:flex;
+                align-items: center;
+                justify-content: center;
+                padding-top: 10px;
+                padding-right:10px;
+                .tweet-input{
+                    width:100%;
+                    height:100%;
+                    background-color: #000000;
+                    color:#ffffff;
+                    resize: none;
+                    transition: height 0.2s;
+                    font-family: Arial, sans-serif;
+                    font-size: 22px;
+                    border:none;
+                    display:flex;
+                    align-items: center;
+                }
+                .tweet-input:focus{
+                    outline:none;
+                }
+            }
+        }
+    }
+
+    .bottom{
+        width:100%;
+        height:60px;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border-top:1px solid #2F3336;
+        padding: 10px;
+        box-sizing: border-box;
+        .buttons{
+            display:flex;
+            flex-direction: row;
+            align-items: center;
+            gap:5px;
+            .tweet-btn{
+                height:40px;
+                width:40px;
+                background:none;
+                border-radius:50%;
+                border:none;
+                display:flex;
+                justify-content: center;
+                align-items: center;
+                cursor:pointer;
+                transition: all 0.3s;
+                .tweet-img-label{
+                    width:100%;
+                    height:100%;
+                    display:flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin: 0;
+                    padding: 0;
+                }
+                .create-tweet-icon{
+                    font-size:20px;
+                    color:#1D9BF0;
+                    --ionicon-stroke-width: 40px;
+                }
+            }
+            .tweet-btn:hover{
+                background-color: rgba($color: #1D9BF0, $alpha: 0.1);
+            }
+        }
+        .popup-button{
+            width:auto;
+            padding:20px;
+            height:auto;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 50px;
+            border:none;
+            background-color: #1D9BF0;
+            color:white;
+            font-size: medium;
+            font-weight: bold;
+            transition: all 0.3s;
+            cursor:pointer;
+        }
+        .popup-button:hover{
+            background-color: #1d8dd7;
+        }
+        .popup-button:disabled{
+            background-color: #0F4E78;
+            color:#808080;
+        }
+    }
+}
+
 .liked{
     color:#F31C80 !important;
 }
 .post-icon{
     visibility: visible !important;
 }
-.top2{
-    display:none;
-}
-.post:hover{
-    background-color: #080808;
-}
-@media (min-width: 500px) {
-    .profile-popup{
-        display:none;
-    }
-    .user-img, .logo{
-        display:none !important;
-    }
-}
+
 @media (max-width: 500px) {
     .top-bar{
         width:100%;
-        height:90px;
-    } 
-    .title{
-        display:none !important;
-    }
-    .title2{
-        width:100%;
-        box-sizing: border-box;
-        height:70%;
-    }
-    .user-img{
-        position:fixed;
-        top:5px;
-        left:10px;
-        width: auto;
-        height:auto;
-        display:flex;
-        align-items: center;
-        justify-content: center;
-        img{
-            width:40px;
-            height:40px;
-
-            border-radius:50%;
-            background-color: rgb(255, 255, 255);
+        height:35px;
+        .title{
+            font-size:17px !important;
         }
-    }
-    .logo{
-        display:flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        color:white;
-        position:absolute;
-        font-size:25px;
-        top:5px;
-        left:50%;
-        transform: translate(-50%);
-    }
-    .post-type{
-        width:100%;
-        height:30%;
-        display:flex;
-        flex-direction:row;
-        justify-content: space-between;
-
-    }
-    .post-type-btn{
-        width:50%;
-        height:100%;
-        position:relative;
-        align-items: center;
-        justify-content: center;
-        color:#71767B;
-        padding:10px;
-        border:none;
-        background:none;
-        transition:all 0.3s;
-        font-size: 15px;
-        font-weight:500;
-    }
-    .active-post-type{
-        color:white;
-        font-weight: 600;
-    }
-
+    } 
     .left-side, .post-top{
         display:none !important;
     }
@@ -1212,12 +1139,43 @@ export default{
                 background-color: white;
             }
     }
-    .post-container{
+    .comment{
         width:100%;
-        height:auto;
-        display:flex;
-        flex-direction:column;
-        box-sizing: border-box;
+        min-height:auto;
+        gap:5px !important;
+        .left{
+            width:auto;
+            height:100%;
+            gap:5px;
+            img{
+                width:40px;
+                height:40px;
+                border-radius: 50%;
+                background-color: white;
+            }
+            .content{
+                max-width: 80%;
+                height:100%;
+                .userinfo{
+                    width:100%;
+                    height:10px;
+                    gap:7px;
+                    padding-top:2px;
+                    .username{
+                        font-size: 15px;
+                    }
+                    .usertag{
+                        font-size: 15px;
+                    }
+                    .time-posted{
+                        font-size: 15px;
+                    }
+                }
+                .content-text{
+                    font-size:15px;
+                }
+            }
+        }
     }
     .create-popup{
         width:100% !important;
@@ -1272,8 +1230,7 @@ export default{
             }
         }
     }
-    .liked{
-        color:#F31C80 !important;
-    }
+    
 }
+
 </style>
