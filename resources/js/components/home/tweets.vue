@@ -17,7 +17,7 @@
         <div class="post-container">
             <div class="create-tweet">
                 <div class="left-side">
-                    <img  @click="openProfile(i)">
+                    <img  @click="openProfile(user.UserTag)">
                 </div>
                 <div class="right-side">
                     <div class="top">
@@ -40,13 +40,13 @@
             </div>
             <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID"  @click="openTweet(tweet.TweetID)"> 
                 <div class="left-side">
-                    <img  @click.stop="openProfile(tweet.user.UserID)">
+                    <img  @click.stop="openProfile(tweet.user.UserTag)">
                 </div>
                 <div class="right-side">
                     <!-- ############################################# -->
                     <div class="top2">
                         <div class="person-image">
-                            <img @click.stop="openProfile(tweet.user.UserID)">
+                            <img @click.stop="openProfile(tweet.user.UserTag)">
                         </div>
                         <div class="info-content">
                             <div class="userinfo">
@@ -96,7 +96,7 @@
         <div class="create-popup">
             <div class="top">
                 <div class="left-side-popup">
-                    <img  @click="openProfile(user.UserID)">
+                    <img  @click="openProfile(user.UserTag)">
                 </div>
                 <div class="right-side-popup">
                     <div class="userinfo-popup">
@@ -121,7 +121,7 @@
     <div class="profile-popup" v-if="isPopupVisible">
         <div class="popup-content">
             <button class="logout-btn" @click="logoutUser">Logout</button>
-            <button class="profile-btn" @click="openProfile(user.UserID)">Profile</button>
+            <button class="profile-btn" @click="openProfile(user.UserTag)">Profile</button>
         </div>
     </div>
 </template>
@@ -173,9 +173,10 @@ export default{
             CommentTrigger: false,
             ProfileTrigger: false,
         });
-        const TogglePopup = (trigger, tweetID = null) => {
+        const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger];
             if (!popupTriggers.value[trigger]) {
+                this.tweet_text_input = '';
             }
         };
         return {
@@ -308,8 +309,10 @@ export default{
                 textarea.style.height = maxHeight + 'px';
             }
         },
-        openProfile(id){
-            console.log(id);
+        openProfile(tag){
+            const NoSymbolTag = tag.replace(/^@/, '');
+            this.$router.push({ name: 'profile', params: { UserTag : NoSymbolTag } });
+            console.log(tag);
         },
         openTweet(id) {
             this.$router.push({ name: 'tweet', params: { tweetID: id } });

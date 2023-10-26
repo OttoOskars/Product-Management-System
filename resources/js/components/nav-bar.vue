@@ -44,7 +44,7 @@
                 </div>
             </button>
 
-            <button class="Profile" @click="$router.push('/profile')">
+            <button class="Profile" @click="openProfile(user.UserTag)">
                 <div class="button-content">
                     <ion-icon name="person-outline" style="font-size: 24px;"></ion-icon>
                     <span style="font-size: 18px; margin-left: 20px;">Profile</span>
@@ -80,7 +80,7 @@
             <div class="profile-popup" v-if="isPopupVisible">
                 <div class="popup-content">
                     <button class="logout-btn" @click="logoutUser">Logout</button>
-                    <button class="profile-btn" @click="openProfile(i)">Profile</button>
+                    <button class="profile-btn" @click="openProfile(user.UserTag)">Profile</button>
                 </div>
             </div>
         </div>
@@ -89,7 +89,7 @@
         <div class="create-popup" v-if="user">
             <div class="top">
                 <div class="left-side-popup">
-                    <img  @click.stop="openProfile(i)">
+                    <img  @click.stop="openProfile(user.UserTag)">
                 </div>
                 <div class="right-side-popup">
                     <div class="userinfo-popup">
@@ -152,7 +152,7 @@ export default{
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger]
             if (!popupTriggers.value[trigger]) {
-                /* clear text area */
+                this.tweet_text_inputnav = '';
             }
 		}
         const logoutUser = async () => {
@@ -188,12 +188,11 @@ export default{
                 textarea.style.height = maxHeight + 'px';
             }
         },
-        openProfile(id){
-            console.log(id);
-            this.isPopupVisible = false
-        },
-        openTweet(id) {
-            console.log(id);
+        openProfile(tag){
+            const NoSymbolTag = tag.replace(/^@/, '');
+            this.$router.push({ name: 'profile', params: { UserTag : NoSymbolTag } });
+            console.log(tag);
+            this.isPopupVisible = false;
         },
         onImageChangenav(event) {
             this.tweetImagenav = event.target.files[0];

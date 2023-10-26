@@ -139,6 +139,16 @@ class UserController extends Controller
         return response()->json(['user' => $userData]);
     }
 
+    public function getUserByTag($tag)
+    {
+        $tag = '@' . ltrim($tag, '@');
+        $user = User::where('UserTag', $tag)->first();
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        return response()->json(['user' => $user]);
+    }
+
     public function getUser()
     {
        /*  return auth()->user(); */

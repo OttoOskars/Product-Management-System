@@ -58,6 +58,12 @@ const router = createRouter({
       name: 'tweet',
       meta: { requiresAuth: false }, // Protected route (if required)
     },
+    {
+      path: '/profile/:UserTag',
+      component: () => import('./components/profile/profile.vue'),
+      name: 'profile',
+      meta: { requiresAuth: false }, // Protected route (if required)
+    },
 
     // ...other routes
   ],
