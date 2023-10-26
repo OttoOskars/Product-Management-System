@@ -6,6 +6,7 @@ use App\Http\Controllers\API\TweetController;
 use App\Http\Controllers\API\CommentController;
 use App\Http\Controllers\API\LikeController;
 use App\Http\Controllers\API\RetweetController;
+use App\Http\Controllers\API\FollowController;
 use App\Http\Controllers\API\AuthController;
 
 Route::post('check-email', [UserController::class, 'checkEmail']);
@@ -40,3 +41,8 @@ Route::middleware('auth:sanctum')->delete('tweets/unretweet/{tweetId}', [Retweet
 
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
+Route::middleware('auth:sanctum')->post('/follow/{userId}', [FollowController::class, 'follow']);
+Route::middleware('auth:sanctum')->post('/unfollow/{userId}', [FollowController::class, 'unfollow']);
+Route::middleware('auth:sanctum')->get('/topFollowedUsers', [FollowController::class, 'topFollowedUsers']);
+Route::middleware('auth:sanctum')->get('/allusers', [FollowController::class, 'getAllUsers']);
+Route::get('/countFollowersAndFollowing/{userID}', [FollowController::class, 'countFollowersAndFollowing']);

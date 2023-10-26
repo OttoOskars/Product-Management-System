@@ -33,6 +33,7 @@ class User extends Authenticatable
         'Password',
     ];
 
+
     public function tweets()
     {
         return $this->hasMany(Tweet::class, 'UserID');
@@ -49,6 +50,21 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class, 'UserID');
     }
+
+    public function follows()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'FollowerID', 'FollowingID');
+    }
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'FollowingID', 'FollowerID');
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'FollowerID', 'FollowingID');
+    }
+
     public function tokens(): MorphMany
     {
         return $this->morphMany(PersonalAccessToken::class, 'tokenable');

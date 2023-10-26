@@ -18,18 +18,20 @@
         <div class="who-to-follow">
             <div class="title">Who to follow</div>
             <div class="people-container">
-                <div class="person" v-for="i in people" :key="i">
+                <div class="person" v-for="user in users" :key="user.UserID">
                     <div class="user">
-                            <div class="user-img">
-                                <img @click.stop="openProfile(i)"> 
-                            </div>
-                            <div class="user-info">
-                                <p class="username">username</p>
-                                <p class="usertag">@usertag</p>
-                            </div>
+                        <div class="user-img">
+                            <img :src="user.ProfilePicture" alt="" class="person-img"> 
                         </div>
+                        <div class="user-info">
+                            <p class="username">{{ user.Name }}</p>
+                            <p class="usertag">{{ user.UserTag }}</p>
+                        </div>
+                    </div>
                     <div class="button-container">
-                        <button class="follow-button">Follow</button>
+                        <button class="follow-button" @click="toggleFollowUnfollow(user.UserID)">
+                            {{ user.isFollowedByMe ? 'Unfollow' : 'Follow' }}
+                        </button>
                     </div>
                 </div>
                 <!-- Add more people -->
@@ -47,8 +49,7 @@ export default{
     data() {
         return {
             isInputFocused: false,
-            people: 3,
-            trends: 5,
+            users: [],
         };
     },
     setup () {
@@ -74,10 +75,50 @@ export default{
         openProfile(id){
             console.log(id);
         },
-        openTweet(id) {
-            console.log(id);
+        toggleFollowUnfollow(userID) {
+            const user = this.users.find((t) => t.UserID === userID);
+            if (user.isFollowedByMe) {
+                this.handleUnfollow(userID);
+            } else {
+                this.handleFollow(userID);
+            }
+        },
+        async handleFollow(userID) {
+            try {
+                const response = await this.$axios.post(`/api/follow/${userID}`);
+                console.log('Follow Response:', response);
+                if (response.status === 200) {
+                    const user = this.users.find((t) => t.UserID === userID);
+                    user.isFollowedByMe = true;
+                }
+            } catch (error) {
+                console.error('Error following the user:', error);
+            }
+        },
+
+        async handleUnfollow(userID) {
+            try {
+                const response = await this.$axios.post(`/api/unfollow/${userID}`);
+                console.log('Unfollow Response:', response);
+                if (response.status === 200) {
+                    const user = this.users.find((t) => t.UserID === userID);
+                    user.isFollowedByMe = false;
+                }
+            } catch (error) {
+                console.error('Error unfollowing the user:', error);
+            }
         },
     },
+    async mounted() {
+        await this.$store.dispatch('initializeApp');
+        this.$axios.get('/api/topFollowedUsers')
+        .then(response => {
+            this.users = response.data;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }, 
 
 }
 </script>
