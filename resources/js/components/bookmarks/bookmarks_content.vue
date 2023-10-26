@@ -46,7 +46,7 @@ export default{
 <style lang="scss" scoped>
 
     .bookmarks-container{
-    width: 100vh;
+    width: 100%;
     height: auto;
 }
 
@@ -56,9 +56,8 @@ export default{
     display: flex;
     flex-direction: column;
     background-color:rgba($color: #000000, $alpha: 0.8);
-    position:fixed;
+    position:sticky;
     top:0;
-    width:5/12*100%;
     z-index:9;
     backdrop-filter: blur(5px);
     border-bottom:solid 1px #2F3336;
@@ -92,7 +91,7 @@ export default{
 }
 
 .bookmarks-main{
-    padding-top:125px;
+    padding-top:0px;
     padding-bottom:80px;
     width:100%;
     height:auto;
@@ -121,8 +120,43 @@ export default{
 
     }
 
+}
+
+@media (max-width: 500px){
+    .top-bar{
+        height:90px;
+        .title{
+            width:100%;
+            height:50%;
+            color:white;
+            padding:10px;
+            padding-left:20px;
+            font-size: 17px;
+            font-weight:bold;
+        }
 
 }
+
+    .bookmarks-main{
+        .main-text{
+            font-size: 25px;
+            margin-top: 10%;
+            margin-left:15%;
+            margin-right:15%;
+        }
+
+        .under-text{
+            color:gray;
+            display: flex;
+            font-size: 13px;
+            text-align: left;
+            padding-left: 15%;
+            margin-top: 15px;
+
+        }
+    }
+}
+
 </style>
 
 
