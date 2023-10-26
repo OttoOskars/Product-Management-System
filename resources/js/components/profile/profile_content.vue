@@ -14,9 +14,9 @@
             </div>
         </div>
         <div class="profile-info">
-            <div class="user-info">
-                <div class="name">{{ displayName ? mainProfileName : profileChanges.name }}</div>
-                <div class="user">@user</div>
+            <div class="user-info" v-if="user">
+                <div class="name">{{ user.Name }}</div>
+                <div class="user">{{ user.UserTag }}</div>
                 <div class="description" style="word-wrap: break-word; max-width: 65ch;">{{ displayBio ? mainProfileBio : profileChanges.bio }}</div>
                 <div class="joined"><ion-icon name="calendar-outline"></ion-icon><span style="margin-left: 10px;">Joined October 2023</span></div>
             </div>
@@ -79,10 +79,14 @@
 <script>
 import Popup from '../Popup.vue';
 import { ref, onMounted } from 'vue';
+import { mapState } from 'vuex';
 export default {
     name: 'Profile',
     components: {
         Popup,
+    },
+    computed:{
+        ...mapState(['user']),
     },
     data(){
         return {
