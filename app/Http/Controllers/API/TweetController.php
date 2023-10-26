@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Tweet;
 use App\Models\Comment;
 use App\Models\Like;
+use App\Models\Retweet;
 use Illuminate\Support\Facades\Auth;
 
 class TweetController extends Controller
@@ -52,6 +53,11 @@ class TweetController extends Controller
                     ->selectRaw('COUNT(*)')
                     ->whereColumn('likes.TweetID', 'tweets.TweetID');
             }, 'like_count')
+            ->selectSub(function ($query) {
+                $query->from('retweets')
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('retweets.TweetID', 'tweets.TweetID');
+            }, 'retweet_count')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -61,6 +67,7 @@ class TweetController extends Controller
             
             // Assuming you have a function to check if the user has liked a tweet
             $tweet->isLiked = $this->checkIfLikedByUser($tweet, Auth::user());
+            $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, Auth::user());
         }
 
         return response()->json(['tweets' => $tweets]);
@@ -112,6 +119,11 @@ class TweetController extends Controller
                     ->selectRaw('COUNT(*)')
                     ->whereColumn('likes.TweetID', 'tweets.TweetID');
             }, 'like_count')
+            ->selectSub(function ($query) {
+                $query->from('retweets')
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('retweets.TweetID', 'tweets.TweetID');
+            }, 'retweet_count')
             ->find($id);
     
         if (!$tweet) {
@@ -123,6 +135,7 @@ class TweetController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         } else {
             $tweet->isLiked = $this->checkIfLikedByUser($tweet, $user);
+            $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
         }
         return response()->json(['tweet' => $tweet]);
     }
@@ -131,5 +144,9 @@ class TweetController extends Controller
     private function checkIfLikedByUser($tweet, $user)
     {
         return $tweet->likes->contains('UserID', $user->UserID);
+    }
+    private function checkIfRetweetedByUser($tweet, $user)
+    {
+        return $tweet->retweets->contains('UserID', $user->UserID);
     }
 }
