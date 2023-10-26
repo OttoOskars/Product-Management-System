@@ -151,9 +151,10 @@ export default {
         };
     },
     created() {
+/* 
         const tweetID = this.$route.params.tweetID;
         this.fetchTweetData(tweetID);
-        this.fetchCommentsByTweet(tweetID);
+        this.fetchCommentsByTweet(tweetID); */
     },
     setup() {
         const store = useStore();
@@ -176,7 +177,7 @@ export default {
         ...mapState(['user']),
     },
     methods: {
-        fetchTweetData(tweetID) {
+/*         fetchTweetData(tweetID) {
             fetch(`api/tweet/${tweetID}`)
             .then((response) => response.json())
             .then((data) => {
@@ -184,6 +185,16 @@ export default {
             })
             .catch((error) => {
                 console.error('Error fetching tweet data:', error);
+            });
+        }, */
+
+        fetchTweetData(tweetID) {
+            axios.get(`/api/tweet/${tweetID}`) // Use template literals to insert tweetID
+            .then(response => {
+                this.tweet = response.data.tweet;
+            })
+            .catch(error => {
+                console.error(error);
             });
         },
         fetchCommentsByTweet(tweetID) {
@@ -215,6 +226,7 @@ export default {
                 this.comments.push(newComment);
                 this.main_comment_text_input = '';
                 this.popup_comment_text_input = '';
+                this.tweet.comment_count++;
                 this.popupTriggers.CommentTrigger = false;
                 setTimeout(() => {
                     this.buttonDisabled = false;
@@ -237,6 +249,7 @@ export default {
             try {
                 await this.$axios.delete(`/api/delete-comments/${commentID}`);
                 this.comments = this.comments.filter((comment) => comment.CommentID !== commentID);
+                this.tweet.comment_count--;
                 this.fetchCommentsByTweet(tweetID);
                 console.log(`Comment with ID ${commentID} deleted successfully.`);
             } catch (error) {
@@ -300,6 +313,18 @@ export default {
             }
         },
     },
+    async mounted() {
+        this.tweet = this.$route.params.tweet;
+        await this.$store.dispatch('initializeApp');
+        this.$axios.get('/api/tweetdata/' + this.$route.params.tweetID)
+        .then(response => {
+            this.tweet = response.data.tweet;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+        this.fetchCommentsByTweet(this.$route.params.tweetID);
+    }
 };
 </script>
 

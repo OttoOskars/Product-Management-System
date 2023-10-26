@@ -119,13 +119,10 @@ class TweetController extends Controller
         }
             // Check if the user is authenticated
         $user = auth()->user();
-
-        if ($user) {
-            // If the user is authenticated, determine if they have liked the tweet
-            $tweet->isLiked = $this->checkIfLikedByUser($tweet, $user);
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
         } else {
-            // If the user is not authenticated, set isLiked to false
-            $tweet->isLiked = false;
+            $tweet->isLiked = $this->checkIfLikedByUser($tweet, $user);
         }
         return response()->json(['tweet' => $tweet]);
     }

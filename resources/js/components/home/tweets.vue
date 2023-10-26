@@ -273,6 +273,13 @@ export default{
                 this.comments.push(newComment);
                 this.main_comment_text_input = '';
                 this.popup_comment_text_input = '';
+                if (response.status === 201) {
+                    // Update the tweet's like status and count
+                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    if (tweet) {
+                        tweet.comment_count += 1;
+                    }
+                }
                 this.popupTriggers.CommentTrigger = false;
                 setTimeout(() => {
                     this.buttonDisabled = false;
