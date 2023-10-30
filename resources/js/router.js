@@ -36,11 +36,6 @@ const router = createRouter({
       meta: { requiresAuth: false }, // Public route
     },
     {
-      path: '/profile',
-      component: () => import('./components/profile/profile.vue'),
-      meta: { requiresAuth: false }, // Public route
-    },
-    {
       path: '/home',
       component: () => import('./components/homepage.vue'),
       meta: { requiresAuth: true }, // Protected route
@@ -63,12 +58,22 @@ const router = createRouter({
       component: () => import('./components/profile/profile.vue'),
       name: 'profile',
       meta: { requiresAuth: false }, // Protected route (if required)
+      beforeRouteUpdate(to, from, next) {
+        // This hook will be called when the route parameters change
+        location.reload(); // This triggers a hard page refresh
+      },
     },
     {
       path: '/bookmarks',
       component: () => import('./components/bookmarks/bookmarks.vue'),
       meta: { requiresAuth: false }, // Public route
     },
+    {
+        path: '/messages',
+        component: () => import('./components/messages/messages.vue'),
+        meta: { requiresAuth: false }, // Public route
+      },
+
 
     // ...other routes
   ],

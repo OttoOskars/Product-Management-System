@@ -146,7 +146,16 @@ class UserController extends Controller
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
+        $user->follower_count = $user->followers()->count();
+        $user->following_count = $user->following()->count();
+
+        $user->isFollowedByMe = $this->checkIfFollowedByUser(auth()->user(), $user);
+
         return response()->json(['user' => $user]);
+    }
+    private function checkIfFollowedByUser($user1, $user2)
+    {
+        return $user2->followers->contains('UserID', $user1->UserID);
     }
 
     public function getUser()

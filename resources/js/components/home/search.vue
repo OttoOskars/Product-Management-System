@@ -39,7 +39,7 @@
                 <!-- Add more users -->
             </div>
             <div class="show-more-container">
-                <button class="show-more-btn" @click="top3FollowedUsers">Show more</button>
+                <button class="show-more-btn" @click="redirectTo('/people')">Show more</button>
             </div>
         </div>
         <div class="trends">
@@ -136,18 +136,18 @@ export default {
 </script>
 <style lang="scss" scoped>
 .search-container{
-    width:100%;
+    width: 100%;
     height: 100%;
-    display:flex;
+    display: flex;
     flex-direction: column;
-    gap:20px;
+    gap: 20px;
+    position: fixed;
     box-sizing: border-box;
-    padding-left:30px;
-    padding-top:10px;
-    border-left:solid 1px #2F3336;
-    background:black;
-    z-index:10;
-    color:white;
+    padding-left: 30px;
+    padding-top: 10px;
+    border-left: solid 1px #2F3336;
+    background: none;
+    color: white;
 }
 .search-input-container {
     width: 400px;

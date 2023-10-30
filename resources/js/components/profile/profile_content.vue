@@ -13,17 +13,17 @@
                 <button class="edit-profile" @click="() => TogglePopup('SignInTrigger')">Edit profile</button>
             </div>
         </div>
-        <div class="profile-info">
-            <div class="user-info" v-if="user">
-                <div class="name">{{ user.Name }}</div>
-                <div class="user">{{ user.UserTag }}</div>
+        <div class="profile-info" v-if="userinfo">
+            <div class="user-info">
+                <div class="name">{{ userinfo.Name }}</div>
+                <div class="user">{{ userinfo.UserTag }}</div>
                 <div class="description" style="word-wrap: break-word; max-width: 65ch;">{{ displayBio ? mainProfileBio : profileChanges.bio }}</div>
                 <div class="joined"><ion-icon name="calendar-outline"></ion-icon><span style="margin-left: 10px;">Joined {{ getFormattedJoinDate(user.created_at) }}</span></div>
             </div>
             <div class="follow">
-                <div class="amount">0</div>
+                <div class="amount">{{ userinfo.following_count }}</div>
                 <div class="following">Following</div>
-                <div class="amount">0</div>
+                <div class="amount">{{ userinfo.follower_count }}</div>
                 <div class="following">Followers</div>
             </div>
         </div>
@@ -90,6 +90,7 @@ export default {
     },
     data(){
         return {
+            userinfo: null,
             postType: 'tweets',
             profileChanges: {
                 name: '',
@@ -258,6 +259,16 @@ export default {
             return new Date(joinDate).toLocaleDateString(undefined, options);
         },
     },
+    async mounted() {
+        await this.$store.dispatch('initializeApp');
+        this.$axios.get('/api/get-user-tag/' + this.$route.params.UserTag)
+        .then(response => {
+            this.userinfo = response.data.user;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
 }
 </script>
 <style lang="scss" scoped>

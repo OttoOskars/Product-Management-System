@@ -20,7 +20,6 @@ Route::middleware('auth:sanctum')->post('tweets', [TweetController::class, 'crea
 Route::middleware('auth:sanctum')->post('/create-comments', [CommentController::class, 'createComment']);
 
 Route::get('/get-user/{id}', [UserController::class, 'getUserById']);
-Route::get('/get-user-tag/{tag}', [UserController::class, 'getUserByTag']);
 Route::post('updateName', [UserController::class, 'updateName']);
 Route::post('updateDesc', [UserController::class, 'updateDescription']);
 Route::post('updatePFP', [UserController::class, 'updateProfilePicture']);
@@ -46,3 +45,5 @@ Route::middleware('auth:sanctum')->post('/unfollow/{userId}', [FollowController:
 Route::middleware('auth:sanctum')->get('/topFollowedUsers', [FollowController::class, 'topFollowedUsers']);
 Route::middleware('auth:sanctum')->get('/allusers', [FollowController::class, 'getAllUsers']);
 Route::get('/countFollowersAndFollowing/{userID}', [FollowController::class, 'countFollowersAndFollowing']);
+
+Route::middleware('auth:sanctum')->get('/get-user-tag/{tag}', [UserController::class, 'getUserByTag']);
