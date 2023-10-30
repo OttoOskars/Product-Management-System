@@ -36,12 +36,12 @@
       <h1 class="title">Sign in to Twitter</h1>
       <div>
         <div class="input-wrap">
-          <input autocomplete="off" type="text" id="sign-in-email" class="SignInput" v-model="email" required :class="{ 'invalid-email': !isEmailValid.value }">
+          <input autocomplete="off" type="text" id="sign-in-email" class="SignInput" v-model="email" required :class="{ 'invalid-email': !isEmailValid.value }" @keyup.enter="validateEmail">
           <label for="sign-in-email">Email</label>
         </div>
         <div v-if ="emailError" class="warning-1">{{ emailError }}</div>
       </div>
-      <button class="FormButton" @click="() => validateEmail()" :disabled="isButtonDisabled2">Next</button>
+      <button class="FormButton" @click="() => validateEmail()" :disabled="isButtonDisabled2" @keyup.enter="validateEmail">Next</button>
       <p style="color:#434343" class="text">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
   </Popup>
@@ -63,13 +63,14 @@
             v-model="password"
             class="SignInput"
             required
+            @keyup.enter="loginUser"
           />
           <label for="sign-in-pass">Password</label>
         </div>
         <div v-if ="errorLogin" class="warning-1">{{ errorLogin }}</div>
         <button class="forgot-password" @click="openResetPasswordPopup">Forgot Password?</button>
       </div>
-      <button type="button" class="FormButton" @click="loginUser($event)" :disabled="isButtonDisabled3">Log in</button>
+      <button type="button" class="FormButton" @click="loginUser($event)" :disabled="isButtonDisabled3" @keyup.enter="loginUser">Log in</button>
       <p style="color:#434343" class="text">Don't have an account? <button class="sign-link-button" @click="toggleShowAccount">Sign up</button></p>
     </div>
   </Popup>
@@ -85,11 +86,13 @@
         <div v-if="newPasswordError" class="warning-1">Password must be at least 8 characters long.</div>
       </div>
 
-      <div class="input-wrap">
-        <input type="password" v-model="confirmPassword" class="SignInput" required>
-        <label for="sign-in-pass">Confirm password</label>
+      <div>
+        <div class="input-wrap">
+          <input type="password" v-model="confirmPassword" class="SignInput" required>
+          <label for="sign-in-pass">Confirm password</label>
+        </div>
+        <div v-if="passwordMismatch" class="warning-1">Passwords do not match.</div>
       </div>
-      <div v-if="passwordMismatch" class="warning-1">Passwords do not match.</div>
       <button type="button" class="FormButton" @click="resetPassword" :disabled="isButtonDisabled">Reset Password</button>
     </div>
   </Popup>
