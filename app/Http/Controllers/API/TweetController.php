@@ -75,6 +75,12 @@ class TweetController extends Controller
                         ->from('likes')
                         ->where('UserID', $user->UserID);
                 });
+            } elseif ($type === 'bookmark') {
+                $query->whereIn('tweets.TweetID', function ($subquery) use ($user) {
+                    $subquery->select('TweetID')
+                        ->from('bookmarks')
+                        ->where('UserID', $user->UserID);
+                });
             }
 
             $tweets = $query->get();
