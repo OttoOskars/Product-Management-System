@@ -9,6 +9,7 @@ use App\Models\Tweet;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Retweet;
+use App\Models\Bookmark;
 use Illuminate\Support\Facades\Auth;
 
 class TweetController extends Controller
@@ -58,6 +59,11 @@ class TweetController extends Controller
                     ->selectRaw('COUNT(*)')
                     ->whereColumn('retweets.TweetID', 'tweets.TweetID');
             }, 'retweet_count')
+            ->selectSub(function ($query) {
+                $query->from('bookmarks')
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('bookmarks.TweetID', 'tweets.TweetID');
+            }, 'bookmark_count')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -68,6 +74,7 @@ class TweetController extends Controller
             // Assuming you have a function to check if the user has liked a tweet
             $tweet->isLiked = $this->checkIfLikedByUser($tweet, Auth::user());
             $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, Auth::user());
+            $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, Auth::user());
         }
 
         return response()->json(['tweets' => $tweets]);
@@ -124,6 +131,11 @@ class TweetController extends Controller
                     ->selectRaw('COUNT(*)')
                     ->whereColumn('retweets.TweetID', 'tweets.TweetID');
             }, 'retweet_count')
+            ->selectSub(function ($query) {
+                $query->from('bookmarks')
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('bookmarks.TweetID', 'tweets.TweetID');
+            }, 'bookmark_count')
             ->find($id);
     
         if (!$tweet) {
@@ -136,6 +148,7 @@ class TweetController extends Controller
         } else {
             $tweet->isLiked = $this->checkIfLikedByUser($tweet, $user);
             $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
+            $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
         }
         return response()->json(['tweet' => $tweet]);
     }
@@ -148,5 +161,9 @@ class TweetController extends Controller
     private function checkIfRetweetedByUser($tweet, $user)
     {
         return $tweet->retweets->contains('UserID', $user->UserID);
+    }
+    private function checkIfBookmarkedByUser($tweet, $user)
+    {
+        return $tweet->bookmarks->contains('UserID', $user->UserID);
     }
 }

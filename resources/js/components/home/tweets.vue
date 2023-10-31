@@ -86,6 +86,12 @@
                             <div class="icon-container"><ion-icon :name="tweet.isRetweeted ? 'arrow-redo' : 'arrow-redo-outline'" class="post-icon" :class ="{ 'retweeted': tweet.isRetweeted }"></ion-icon></div>
                             <p class="post-btn-nr" :class ="{ 'retweeted': tweet.isRetweeted }">{{ tweet.retweet_count }}</p>
                         </button>
+                        <button class="post-btn-container bookmark-btn" @click.stop="toggleBookmark(tweet.TweetID)">
+                            <div class="icon-container">
+                                <ion-icon :name="tweet.isBookmarked ? 'bookmark' : 'bookmark-outline'" class="post-icon" :class="{ 'bookmarked': tweet.isBookmarked }"></ion-icon>
+                            </div>
+                            <p class="post-btn-nr" :class="{ 'bookmarked': tweet.isBookmarked }">{{ tweet.isBookmarked ? 'Bookmarked' : 'Bookmark' }}</p>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -191,6 +197,27 @@ export default{
         },
     },
     methods: {
+        // toggleBookmark(tweetID) {
+        //     const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+
+        //     if (!tweet) {
+        //         return;
+        //     }
+
+        //     if (this.$store.state.bookmarkedTweets.includes(tweetID)) {
+        //         // Unbookmark the tweet
+        //         this.$store.commit('removeBookmark', tweetID);
+        //         tweet.isBookmarked = false;
+        //     } else {
+        //         // Check if the tweet is not already bookmarked
+        //         if (!tweet.isBookmarked) {
+        //             // Bookmark the tweet
+        //             this.$store.commit('addBookmark', tweet);
+        //             tweet.isBookmarked = true;
+        //         }
+        //     }
+        // },
+
         toggleProfilePopup() {
             this.isPopupVisible = !this.isPopupVisible;
             setTimeout(() => { this.isPopupVisible = false; }, 10000);
@@ -427,6 +454,64 @@ export default{
                 console.error('Error unretweetin the tweet:', error);
             }
         },
+
+
+        toggleBookmark(tweetID) {
+            if (this.buttonDisabled) {
+                return;
+            }
+            const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+            if (!tweet) {
+                return;
+            }
+            if (tweet.isBookmarked) {
+                this.buttonDisabled = true;
+                this.removeBookmark(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
+            } else {
+                this.buttonDisabled = true;
+                this.createBookmark(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
+            }
+        },
+        async createBookmark(tweetID) {
+            try {
+                const response = await this.$axios.post(`/api/tweets/bookmark`, { tweetId: tweetID });
+                console.log('Bookmark Response:', response);
+                if (response.status === 201) {
+                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    if (tweet) {
+                        tweet.isBookmarked = true;
+                        // tweet.like_count += 1;
+                    }
+                }
+            } catch (error) {
+                console.error('Error bookmarking the tweet:', error);
+            }
+        },
+
+        async removeBookmark(tweetId) {
+            try {
+                const response = await this.$axios.delete(`/api/tweets/unbookmark/${tweetId}`);
+                console.log('Unbookmark Response:', response);
+                if (response.status === 200) {
+                    const tweet = this.tweets.find((t) => t.TweetID === tweetId);
+                    if (tweet) {
+                        tweet.isBookmarked = false;
+                        // tweet.like_count -= 1;
+                    }
+                }
+            } catch (error) {
+                console.error('Error unbookmarking the tweet:', error);
+            }
+        },
+
+
+
     },
     async mounted() {
         await this.$store.dispatch('initializeApp');

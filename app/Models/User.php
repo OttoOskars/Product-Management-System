@@ -50,6 +50,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class, 'UserID');
     }
+    public function bookmarks()
+    {
+        return $this->hasMany(Bookmark::class, 'UserID');
+    }
 
     public function follows()
     {

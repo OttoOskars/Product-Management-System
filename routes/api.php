@@ -8,6 +8,7 @@ use App\Http\Controllers\API\LikeController;
 use App\Http\Controllers\API\RetweetController;
 use App\Http\Controllers\API\FollowController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\BookmarkController;
 
 Route::post('check-email', [UserController::class, 'checkEmail']);
 Route::post('login', [UserController::class, 'login']);
@@ -47,3 +48,6 @@ Route::middleware('auth:sanctum')->get('/allusers', [FollowController::class, 'g
 Route::get('/countFollowersAndFollowing/{userID}', [FollowController::class, 'countFollowersAndFollowing']);
 
 Route::middleware('auth:sanctum')->get('/get-user-tag/{tag}', [UserController::class, 'getUserByTag']);
+
+Route::middleware('auth:sanctum')->post('tweets/bookmark', [BookmarkController::class, 'createBookmark']);
+Route::middleware('auth:sanctum')->delete('tweets/unbookmark/{tweetId}', [BookmarkController::class, 'removeBookmark']);
