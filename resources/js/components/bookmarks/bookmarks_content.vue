@@ -781,6 +781,17 @@ export default{
                     color:#00BA7C;
                 }
             }
+            .bookmark-btn:hover{
+                .icon-container{
+                    background-color: rgba($color: #ffe920, $alpha: 0.2);
+                    .post-icon{
+                        color:#ffe920;
+                    }
+                }
+                .post-btn-nr{
+                    color:#ffe920;
+                }
+            }
             .icon-container{
                 height:40px;
                 width:40px;
@@ -806,6 +817,9 @@ export default{
 }
 .retweeted{
     color:#00BA7C !important;
+}
+.bookmarked{
+    color:#ffe920 !important;
 }
 .post-icon{
     visibility: visible !important;
