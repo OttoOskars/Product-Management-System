@@ -382,8 +382,8 @@ export default{
                     const tweet = this.tweets.find((t) => t.TweetID === tweetId);
                     if (tweet) {
                         tweet.isBookmarked = false;
-                        // tweet.like_count -= 1;
                     }
+                    this.tweets = this.tweets.filter((tweet) => tweet.TweetID !== tweetId);
                 }
             } catch (error) {
                 console.error('Error unbookmarking the tweet:', error);

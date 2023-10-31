@@ -197,11 +197,6 @@ class TweetController extends Controller
                     ->selectRaw('COUNT(*)')
                     ->whereColumn('retweets.TweetID', 'tweets.TweetID');
             }, 'retweet_count')
-            ->selectSub(function ($query) {
-                $query->from('bookmarks')
-                    ->selectRaw('COUNT(*)')
-                    ->whereColumn('bookmarks.TweetID', 'tweets.TweetID');
-            }, 'bookmark_count')
             ->find($id);
     
         if (!$tweet) {
