@@ -377,6 +377,9 @@ export default{
             if (!tweet) {
                 return;
             }
+            if (tweet && tweet.user.UserTag === this.user.UserTag) {
+                return;
+            }
             
             if (tweet.isRetweeted) {
                 this.buttonDisabled = true;
@@ -501,11 +504,6 @@ export default{
         },
     },
     watch:{
-        user(){
-            if (this.user) {
-                this.getSpecificUserTweets(this.user.UserTag);
-            }
-        }
     },
     async mounted() {
         await this.$store.dispatch('initializeApp');
@@ -721,6 +719,7 @@ export default{
     justify-content: space-evenly;
     box-sizing: border-box;
     margin-top:10px;
+    border-bottom:solid 1px #2F3336;
     .post-type-btn{
         height:100%;
         width:100%;
@@ -765,6 +764,18 @@ export default{
     display:flex;
     flex-direction:column;
     box-sizing: border-box;
+    .left-side{
+        width:50px;
+        height:100%;
+        display:flex;
+        flex-direction:column;
+        img{
+            width:50px;
+            height:50px;
+            border-radius: 50%;
+            background-color: white;
+        }
+    }
     .no-posts{
         width:100%;
         height:auto;
@@ -788,18 +799,6 @@ export default{
         padding:15px 10px 5px 15px;
         border-bottom: 1px solid #2F3336;
         cursor:pointer;
-        .left-side{
-            width:50px;
-            height:100%;
-            display:flex;
-            flex-direction:column;
-            img{
-                width:50px;
-                height:50px;
-                border-radius: 50%;
-                background-color: white;
-            }
-        }
         .right-side{
             width:90%;
             height:100%;
@@ -1389,6 +1388,9 @@ export default{
     }
 }
 .post-container{
+    .left-side, .post-top{
+            display:none !important;
+        }
     .no-posts{
         padding:15px;
         font-size:13px;
@@ -1397,9 +1399,6 @@ export default{
         gap:5px!important;
         padding:15px 10px 5px 10px;
         cursor:pointer;
-        .left-side, .post-top{
-            display:none !important;
-        }
         .right-side{
             width:100% !important;
             .top2{
@@ -1491,7 +1490,7 @@ export default{
                     align-items: center;
                     cursor:pointer;
                     .post-icon{
-                        font-size:20px;
+                        font-size:18px;
                         color:#71767B;
                         --ionicon-stroke-width: 30px;
                     }

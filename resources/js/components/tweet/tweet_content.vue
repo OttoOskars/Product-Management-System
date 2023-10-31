@@ -310,6 +310,9 @@ export default {
             if (!tweet) {
                 return;
             }
+            if (tweet && tweet.user.UserTag === this.user.UserTag) {
+                return;
+            }
             
             if (tweet.isRetweeted) {
                 this.buttonDisabled = true;
