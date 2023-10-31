@@ -9,6 +9,7 @@ use App\Models\Tweet;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Retweet;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class TweetController extends Controller
@@ -39,38 +40,101 @@ class TweetController extends Controller
         return response()->json(['message' => 'Tweet created successfully', 'tweet' => $tweet], 201);
     }
 
-    public function getAllTweets()
+    public function getTweets($type)
     {
-        $tweets = Tweet::with('user')
-            ->select('tweets.*')
-            ->selectSub(function ($query) {
-                $query->from('comments')
-                    ->selectRaw('COUNT(*)')
-                    ->whereColumn('comments.TweetID', 'tweets.TweetID');
-            }, 'comment_count')
-            ->selectSub(function ($query) {
-                $query->from('likes')
-                    ->selectRaw('COUNT(*)')
-                    ->whereColumn('likes.TweetID', 'tweets.TweetID');
-            }, 'like_count')
-            ->selectSub(function ($query) {
-                $query->from('retweets')
-                    ->selectRaw('COUNT(*)')
-                    ->whereColumn('retweets.TweetID', 'tweets.TweetID');
-            }, 'retweet_count')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        if (auth()->check()) {
+            $user = auth()->user();
 
-        foreach ($tweets as $tweet) {
-            $now = Carbon::now();
-            $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
-            
-            // Assuming you have a function to check if the user has liked a tweet
-            $tweet->isLiked = $this->checkIfLikedByUser($tweet, Auth::user());
-            $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, Auth::user());
+            $query = Tweet::with('user')
+                ->select('tweets.*')
+                ->selectSub(function ($query) {
+                    $query->from('comments')
+                        ->selectRaw('COUNT(*)')
+                        ->whereColumn('comments.TweetID', 'tweets.TweetID');
+                }, 'comment_count')
+                ->selectSub(function ($query) {
+                    $query->from('likes')
+                        ->selectRaw('COUNT(*)')
+                        ->whereColumn('likes.TweetID', 'tweets.TweetID');
+                }, 'like_count')
+                ->selectSub(function ($query) {
+                    $query->from('retweets')
+                        ->selectRaw('COUNT(*)')
+                        ->whereColumn('retweets.TweetID', 'tweets.TweetID');
+                }, 'retweet_count')
+                ->orderBy('created_at', 'desc');
+
+            if ($type === 'following') {
+                $query->whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID));
+            } elseif ($type === 'my') {
+                $query->where('UserID', $user->UserID);
+            } elseif ($type === 'liked') {
+                $query->whereIn('tweets.TweetID', function ($subquery) use ($user) {
+                    $subquery->select('TweetID')
+                        ->from('likes')
+                        ->where('UserID', $user->UserID);
+                });
+            }
+
+            $tweets = $query->get();
+
+            foreach ($tweets as $tweet) {
+                $now = Carbon::now();
+                $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
+                $tweet->isLiked = $this->checkIfLikedByUser($tweet, $user);
+                $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
+            }
+
+            return response()->json(['tweets' => $tweets]);
+        } else {
+            // Handle the case where the user is not authenticated.
+            return response()->json(['error' => 'User not authenticated.'], 401);
         }
-
-        return response()->json(['tweets' => $tweets]);
+    }
+    public function getUserTweets($userTag)
+    {
+        if (auth()->check()) {
+            $user = auth()->user();
+            $tag = '@' . ltrim($userTag, '@');
+            $user2 = User::where('UserTag', $tag)->first();
+            $userID = $user2->UserID;
+            $query = Tweet::with('user')
+                ->leftJoin('retweets', 'tweets.TweetID', '=', 'retweets.TweetID')
+                ->where(function ($q) use ($userID) {
+                    $q->where('tweets.UserID', $userID)
+                      ->orWhere('retweets.UserID', $userID);
+                })
+                ->select('tweets.*')
+                ->selectSub(function ($query) {
+                    $query->from('comments')
+                        ->selectRaw('COUNT(*)')
+                        ->whereColumn('comments.TweetID', 'tweets.TweetID');
+                }, 'comment_count')
+                ->selectSub(function ($query) {
+                    $query->from('likes')
+                        ->selectRaw('COUNT(*)')
+                        ->whereColumn('likes.TweetID', 'tweets.TweetID');
+                }, 'like_count')
+                ->selectSub(function ($query) {
+                    $query->from('retweets')
+                        ->selectRaw('COUNT(*)')
+                        ->whereColumn('retweets.TweetID', 'tweets.TweetID');
+                }, 'retweet_count')
+                ->orderBy('created_at', 'desc');
+            $tweets = $query->get();
+    
+            foreach ($tweets as $tweet) {
+                $now = Carbon::now();
+                $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
+                $tweet->isLiked = $this->checkIfLikedByUser($tweet, $user);
+                $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
+            }
+    
+            return response()->json(['tweets' => $tweets, 'tweet_count' => $tweets->count()]);
+        } else {
+            // Handle the case where the user is not authenticated.
+            return response()->json(['error' => 'User not authenticated.'], 401);
+        }
     }
 
     private function formatTimeAgo($created_at, $now)

@@ -38,11 +38,14 @@
                     </div>
                 </div>
             </div>
-            <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID"  @click="openTweet(tweet.TweetID)"> 
+            <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID"  @click="openTweet(tweet.TweetID)">
                 <div class="left-side">
                     <img  @click.stop="openProfile(tweet.user.UserTag)">
                 </div>
                 <div class="right-side">
+                    <div class="retweeted" v-if="tweet.isRetweet">
+                        <p class="tweet-text"><span>{{ user.UserTag }}</span> Reposted</p>
+                    </div>
                     <!-- ############################################# -->
                     <div class="top2">
                         <div class="person-image">
@@ -144,7 +147,7 @@ export default{
             comment_text_input: '',
             comments: [],
             commentsByTweet: {},
-            following_tweets: 1,
+            following_tweets: [],
             postType: 'tweets',
             previewImage: null,
             tweetImage: null,
@@ -195,13 +198,17 @@ export default{
             this.isPopupVisible = !this.isPopupVisible;
             setTimeout(() => { this.isPopupVisible = false; }, 10000);
         },
-        GetAllTweets() {
-            axios.get('/api/all-tweets') // Update the URL as per your Laravel routes
-            .then(response => {
-                this.tweets = response.data.tweets;
+        getTweets(type) {
+        axios
+            .get(`/api/tweets/${type}`)
+            .then((response) => {
+                this[type + '_tweets'] = response.data.tweets;
+                if (type === 'all') {
+                    this.tweets = response.data.tweets;
+                }
             })
-            .catch(error => {
-                console.error(error);
+            .catch((error) => {
+            console.error(error);
             });
         },
         onImageChange(event) {
@@ -232,7 +239,7 @@ export default{
                 this.tweet_text_input = '';
                 this.tweetImage = null;
                 this.previewImage = null;
-                this.GetAllTweets();
+                this.getTweets('all');
                 setTimeout(() => {
                     this.buttonDisabled = false;
                 }, 2000);
@@ -248,8 +255,7 @@ export default{
             }
             axios.delete(`/api/tweets/${tweetId}`)
             .then(response => {
-                this.GetAllTweets();
-                this.fetchTweets();
+                this.getTweets('all');
             })
             .catch(error => {
             });
@@ -430,13 +436,8 @@ export default{
     },
     async mounted() {
         await this.$store.dispatch('initializeApp');
-        this.$axios.get('/api/all-tweets')
-        .then(response => {
-            this.tweets = response.data.tweets;
-        })
-        .catch(error => {
-            console.error(error);
-        });
+        this.getTweets('all');
+        this.getTweets('following');
     },   
 }
 </script>

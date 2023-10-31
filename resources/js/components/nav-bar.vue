@@ -202,13 +202,17 @@ export default{
                 this.previewImagenav = null;
             }
         },
-        GetAllTweets() {
-            axios.get('/api/all-tweets') // Update the URL as per your Laravel routes
-            .then(response => {
-                this.tweets = response.data.tweets;
+        getTweets(type) {
+        axios
+            .get(`/api/tweets/${type}`)
+            .then((response) => {
+                this[type + '_tweets'] = response.data.tweets;
+                if (type === 'all') {
+                    this.tweets = response.data.tweets;
+                }
             })
-            .catch(error => {
-                console.error(error);
+            .catch((error) => {
+            console.error(error);
             });
         },
         async createTweetnav() {
@@ -232,7 +236,7 @@ export default{
                 this.tweetImagenav = null;
                 this.previewImagenav = null;
                 this.popupTriggers.TweetTrigger = false;
-                this.GetAllTweets();
+                this.getTweets('all');
                 setTimeout(() => {
                     this.buttonDisabled = false;
                 }, 2000);

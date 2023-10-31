@@ -1,8 +1,8 @@
 <template>
     <div class="profile-container">
         <div class="top">
-            <div class="title"><button class="back-icon" @click="goBack"><ion-icon name="arrow-back-outline"></ion-icon></button><span style="margin-left: 10px;">Profile</span></div>
-            <div class="tweet-count">0 tweets</div>
+            <div class="title"><button class="back-icon" @click="goBack"><ion-icon name="arrow-back-outline"></ion-icon></button><span style="margin-left: 10px;" v-if="userinfo">{{ userinfo.Name }}</span></div>
+            <div class="tweet-count">{{ tweet_count }} posts</div>
             <div class="image">
                 <img :src="mainProfileBackgroundImage">
             </div>
@@ -32,10 +32,64 @@
             <button @click="switchToReplies" class="post-type-btn" :class ="{ 'active-post-type': postType == 'replies' }">Replies<div class="active-line" :class ="{ 'active': postType == 'replies' }"></div></button>
             <button @click="switchToLikes" class="post-type-btn" :class ="{ 'active-post-type': postType == 'likes' }">Likes<div class="active-line" :class ="{ 'active': postType == 'likes' }"></div></button>
         </div>
-        <div class="topics">
+        <div class="topics" >
             <div class="topics-2">Topics to follow</div>
             <div class="topics-3">Tweets about the Topics you follow show up in your home timeline</div>
         </div>
+        <div class="post" v-for="tweet in tweets" :key="tweet.TweetID"  @click="openTweet(tweet.TweetID)">
+                <div class="left-side">
+                    <img  @click.stop="openProfile(tweet.user.UserTag)">
+                </div>
+                <div class="right-side">
+                    <div class="retweeted" v-if="tweet.isRetweet">
+                        <p class="tweet-text"><span>{{ userinfo.UserTag }}</span> Reposted</p>
+                    </div>
+                    <!-- ############################################# -->
+                    <div class="top2">
+                        <div class="person-image">
+                            <img @click.stop="openProfile(tweet.user.UserTag)">
+                        </div>
+                        <div class="info-content">
+                            <div class="userinfo">
+                                <p class="username">{{tweet.user.Name}}</p>
+                                <p class="usertag">{{tweet.user.UserTag}}</p>
+                                <p class="time-posted">{{ tweet.created_ago }}</p>
+                            </div>
+                            <div class="content-text">
+                                <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ############################################# -->
+                    <div class="post-top">
+                        <div class="userinfo">
+                            <p class="username">{{tweet.user.Name}}</p>
+                            <p class="usertag">{{tweet.user.UserTag}}</p>
+                            <p class="time-posted">{{ tweet.created_ago }}</p>
+                        </div>
+                        <div class="content-text">
+                            <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
+                        </div>
+                    </div>
+                    <div class="content-img">
+                        <img v-if="tweet.TweetImage" :src="'/storage/' + tweet.TweetImage"/>
+                    </div>
+                    <div class="bottom">
+                        <button class="post-btn-container heart-btn" @click.stop="toggleLike(tweet.TweetID)">
+                            <div class="icon-container"><ion-icon :name="tweet.isLiked ? 'heart' : 'heart-outline'" class="post-icon" :class ="{ 'liked': tweet.isLiked }"></ion-icon></div>
+                            <p class="post-btn-nr" :class ="{ 'liked': tweet.isLiked }">{{ tweet.like_count }}</p>
+                        </button>
+                        <button class="post-btn-container comment-btn" @click.stop="tweetIdInPopup = tweet.TweetID; TogglePopup('CommentTrigger')">
+                            <div class="icon-container"><ion-icon name="chatbox-outline" class="post-icon"></ion-icon></div>
+                            <p class="post-btn-nr">{{ tweet.comment_count }}</p>
+                        </button>
+                        <button class="post-btn-container retweet-btn" @click.stop="toggleRetweet(tweet.TweetID)">
+                            <div class="icon-container"><ion-icon :name="tweet.isRetweeted ? 'arrow-redo' : 'arrow-redo-outline'" class="post-icon" :class ="{ 'retweeted': tweet.isRetweeted }"></ion-icon></div>
+                            <p class="post-btn-nr" :class ="{ 'retweeted': tweet.isRetweeted }">{{ tweet.retweet_count }}</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
     </div>
     <Popup v-if="popupTriggers.SignInTrigger" :TogglePopup="() => TogglePopup('SignInTrigger')">
         <div class="Sign-Pop-Up">
@@ -90,6 +144,8 @@ export default {
     },
     data(){
         return {
+            tweets: [],
+            tweet_count: 0,
             userinfo: null,
             postType: 'tweets',
             profileChanges: {
@@ -258,16 +314,36 @@ export default {
             const options = { year: 'numeric', month: 'long' };
             return new Date(joinDate).toLocaleDateString(undefined, options);
         },
+        getSpecificUserTweets(userTag) {
+        this.$axios
+            .get(`/api/user-tweets/${userTag}`) // Adjust the URL based on your Laravel routes
+            .then((response) => {
+            this.tweets = response.data.tweets;
+            this.tweet_count = response.data.tweet_count;
+            })
+            .catch((error) => {
+            console.error(error);
+            });
+        },
+        getUserInfo(userTag){
+            this.$axios.get('/api/get-user-tag/' + userTag)
+            .then(response => {
+                this.userinfo = response.data.user;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        },
+    },
+    watch: {
+        $route() {
+            this.getSpecificUserTweets(this.$route.params.UserTag);
+        }
     },
     async mounted() {
         await this.$store.dispatch('initializeApp');
-        this.$axios.get('/api/get-user-tag/' + this.$route.params.UserTag)
-        .then(response => {
-            this.userinfo = response.data.user;
-        })
-        .catch(error => {
-            console.error(error);
-        });
+        this.getUserInfo(this.$route.params.UserTag);
+        this.getSpecificUserTweets(this.$route.params.UserTag);
     }
 }
 </script>
@@ -601,6 +677,191 @@ export default {
             display: flex;
         }
     }
+    .left-side{
+        width:50px;
+        height:100%;
+        display:flex;
+        flex-direction:column;
+        img{
+            width:50px;
+            height:50px;
+            border-radius: 50%;
+            background-color: white;
+        }
+    }
+    .post{
+    width:100%;
+    min-height:auto;
+    display:flex;
+    flex-direction:row;
+    gap:10px;
+    box-sizing: border-box;
+    padding:15px 10px 5px 15px;
+    border-bottom: 1px solid #2F3336;
+    cursor:pointer;
+    .right-side{
+        width:90%;
+        height:100%;
+        display:flex;
+        flex-direction:column;
+        box-sizing: border-box;
+        gap:5px;
+
+        .post-top{
+            width:100%;
+            height:auto;
+            display:flex;
+            flex-direction:column;
+            padding-left:5px;
+            .userinfo{
+                width:100%;
+                height:10px;
+                display:flex;
+                flex-direction:row;
+                justify-content: flex-start;
+                align-items: center;
+                gap:7px;
+                color:white;
+                padding-top:2px;
+                .username{
+                    margin:0;
+                    font-weight: bold;
+                    font-size: 17px;
+                    color:white;
+                }
+                .usertag{
+                    margin:0;
+                    font-size: 17px;
+                    color:#6A6F74;
+                }
+                .time-posted{
+                    margin:0;
+                    font-size: 17px;
+                    color:#6A6F74;
+                }
+            }
+
+            .content-text{
+                width:100%;
+                height:auto;
+                text-align: left;
+                color:white;
+                padding:0px;
+                font-size:17px;
+                word-wrap: break-word;
+            }
+
+        }
+        .content-img{
+            padding-left:5px;
+            width:auto;
+            height:auto;
+            display:flex;
+            justify-content: flex-start;
+            align-items: center;
+            box-sizing: border-box;
+            img{
+                border-radius:15px;
+                max-width:100%;
+                max-height:100%;
+                border:solid 1px #2F3336;
+                background:none;
+            }
+        }
+        .bottom{
+            width:100%;
+            height:40px;
+            display:flex;
+            flex-direction: row;
+            justify-content: space-between;
+            color:#ffffff;
+            .post-btn-container{
+                display:flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                width:auto;
+                height:100%;
+                background: none;
+                border-radius:50px;
+                border:none;
+                text-align: left;
+                transition: all 0.3s;
+                cursor:pointer;
+                .post-btn-nr{
+                    color:#6A6F74;
+                    font-size:14px;
+                    padding-top:1px;
+                }
+            }
+            .comment-btn:hover{
+                .icon-container{
+                    background-color: rgba($color: #1D9BF0, $alpha: 0.2);
+                    .post-icon{
+                        color:#1D9BF0;
+                    }
+                }
+                .post-btn-nr{
+                    color:#1D9BF0;
+                }
+            }
+            .heart-btn:hover{
+                .icon-container{
+                    background-color: rgba($color: #F31C80, $alpha: 0.2);
+                    .post-icon{
+                        color:#F31C80;
+                    }
+                }
+                .post-btn-nr{
+                    color:#F31C80;
+                }
+            }
+            .retweet-btn:hover{
+                .icon-container{
+                    background-color: rgba($color: #00BA7C, $alpha: 0.2);
+                    .post-icon{
+                        color:#00BA7C;
+                    }
+                }
+                .post-btn-nr{
+                    color:#00BA7C;
+                }
+            }
+            .icon-container{
+                height:40px;
+                width:40px;
+                background:none;
+                border-radius:50%;
+                border:none;
+                display:flex;
+                justify-content: center;
+                align-items: center;
+                cursor:pointer;
+                .post-icon{
+                    font-size:20px;
+                    color:#71767B;
+                    --ionicon-stroke-width: 40px;
+                }
+                
+            }
+        }
+    }
+}
+.liked{
+    color:#F31C80 !important;
+}
+.retweeted{
+    color:#00BA7C !important;
+}
+.post-icon{
+    visibility: visible !important;
+}
+.top2{
+    display:none;
+}
+.post:hover{
+    background-color: #080808;
+}
 
     @media (max-width: 850px) and (min-width: 501px) {
         .user-img, .name, .user, .description, .joined, .follow, .topics{
@@ -698,5 +959,136 @@ export default {
                 font-size: 14px;
             }
         }
+        .right-side{
+        width:100% !important;
+    }
+    .top2{
+        width:100%;
+        height:auto;
+        display:flex;
+        flex-direction:row;
+        .person-image{
+            width: 50px;
+            height: auto;
+            display:flex;
+            align-items: center;
+            align-items: flex-start;
+            img{
+                width:40px;
+                height:40px;
+
+                border-radius:50%;
+                background-color: rgb(255, 255, 255);
+            }
+        }
+        .info-content{
+            width:100%;
+            height:auto;
+            display:flex;
+            flex-direction:column;
+            padding-left:5px;
+            .userinfo{
+                width:100%;
+                height:10px;
+                display:flex;
+                flex-direction:row;
+                justify-content: flex-start;
+                align-items: center;
+                gap:7px;
+                color:white;
+                padding-top:2px;
+                .username{
+                    margin:0;
+                    font-weight: bold;
+                    font-size: 15px;
+                    color:white;
+                }
+                .usertag{
+                    margin:0;
+                    font-size: 15px;
+                    color:#6A6F74;
+                }
+                .time-posted{
+                    margin:0;
+                    font-size: 15px;
+                    color:#6A6F74;
+                }
+            }
+
+            .content-text{
+                width:100%;
+                height:auto;
+                text-align: left;
+                color:white;
+                padding:0px;
+                font-size:15px;
+            }
+        }
+
+
+    }
+    .left-side, .post-top{
+        display:none !important;
+    }
+    .post{
+        width:100%;
+        min-height:auto;
+        display:flex;
+        flex-direction:row;
+        gap:5px!important;
+        box-sizing: border-box;
+        padding:15px 10px 5px 10px;
+        border-bottom: 1px solid #2F3336;
+    }
+    .content-img{
+        padding:0 !important;
+    }
+    .tweet-btn{
+        height:30px!important;
+        width:30px!important;
+        background:none;
+        border-radius:50%;
+        border:none;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        cursor:pointer;
+        .create-tweet-icon{
+            font-size:20px;
+            color:#1D9BF0;
+            --ionicon-stroke-width: 40px;
+        }
+    }
+    .bottom{
+        width:100%;
+        height:40px!important;
+        .post-btn-container{
+            width:auto;
+            height:100%;
+            border-radius:50%;
+            transition: all 0.3s;
+            cursor:pointer;
+            .post-btn-nr{
+                color:#6A6F74;
+                font-size:10px !important;
+                padding-top:1px;
+            }
+        }
+    }
+    .content-img{
+            padding-left:5px;
+            width:auto;
+            height:auto;
+            display:flex;
+            justify-content: flex-start;
+            align-items: center;
+            box-sizing: border-box;
+            img{
+                border-radius:15px;
+                width:100%;
+                border:solid 1px #2F3336;
+                background-color: white;
+            }
+    }
     }
 </style>

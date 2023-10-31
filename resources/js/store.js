@@ -19,6 +19,12 @@ const store = createStore({
       delete axios.defaults.headers.common['Authorization'];
     },
   },
+  getters: {
+    // Define a getter for user
+    user: (state) => {
+        return state.user;
+    },
+},
   actions: {
     initializeApp({ commit }) {
       const token = localStorage.getItem(TOKEN_KEY);

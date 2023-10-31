@@ -25,7 +25,8 @@ Route::post('updateDesc', [UserController::class, 'updateDescription']);
 Route::post('updatePFP', [UserController::class, 'updateProfilePicture']);
 Route::post('updateBanner', [UserController::class, 'updateBanner']);
 
-Route::middleware('auth:sanctum')->get('/all-tweets', [TweetController::class, 'getAllTweets']);
+Route::middleware('auth:sanctum')->get('/tweets/{type}', [TweetController::class, 'getTweets']);
+Route::middleware('auth:sanctum')->get('/user-tweets/{userTag}', [TweetController::class, 'getUserTweets']);
 Route::middleware('auth:sanctum')->get('/tweetdata/{id}', [TweetController::class, 'getTweetData']);
 Route::delete('/tweets/{id}',[TweetController::class, 'deleteTweet']);
 

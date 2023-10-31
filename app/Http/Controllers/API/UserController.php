@@ -146,6 +146,7 @@ class UserController extends Controller
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
+        $user->create_date =  'Joined ' . $user->created_at->format('F Y');
         $user->follower_count = $user->followers()->count();
         $user->following_count = $user->following()->count();
 

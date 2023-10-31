@@ -43,6 +43,7 @@ class FollowController extends Controller
         if (auth()->check()) {
             $user1 = auth()->user();
             $topFollowedUsers = User::withCount('followers')
+                ->where('UserID', '!=', $user1->UserID) // Exclude the authenticated user
                 ->orderBy('followers_count', 'desc')
                 ->take(3)
                 ->get();
@@ -63,6 +64,7 @@ class FollowController extends Controller
         if (auth()->check()) {
             $user1 = auth()->user();
             $Users = User::withCount('followers')
+                ->where('UserID', '!=', $user1->UserID) // Exclude the authenticated user
                 ->orderBy('followers_count', 'desc')
                 ->get();
     
