@@ -200,27 +200,6 @@ export default{
         },
     },
     methods: {
-        // toggleBookmark(tweetID) {
-        //     const tweet = this.tweets.find((t) => t.TweetID === tweetID);
-
-        //     if (!tweet) {
-        //         return;
-        //     }
-
-        //     if (this.$store.state.bookmarkedTweets.includes(tweetID)) {
-        //         // Unbookmark the tweet
-        //         this.$store.commit('removeBookmark', tweetID);
-        //         tweet.isBookmarked = false;
-        //     } else {
-        //         // Check if the tweet is not already bookmarked
-        //         if (!tweet.isBookmarked) {
-        //             // Bookmark the tweet
-        //             this.$store.commit('addBookmark', tweet);
-        //             tweet.isBookmarked = true;
-        //         }
-        //     }
-        // },
-
         toggleProfilePopup() {
             this.isPopupVisible = !this.isPopupVisible;
             setTimeout(() => { this.isPopupVisible = false; }, 10000);

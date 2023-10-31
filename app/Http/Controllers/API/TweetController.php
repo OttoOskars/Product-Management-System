@@ -90,6 +90,7 @@ class TweetController extends Controller
                 $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
                 $tweet->isLiked = $this->checkIfLikedByUser($tweet, $user);
                 $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
+                $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
             }
 
             return response()->json(['tweets' => $tweets]);
@@ -135,6 +136,7 @@ class TweetController extends Controller
                 $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
                 $tweet->isLiked = $this->checkIfLikedByUser($tweet, $user);
                 $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
+                $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
             }
     
             return response()->json(['tweets' => $tweets, 'tweet_count' => $tweets->count()]);
