@@ -8,7 +8,7 @@
         </div>
 
         <div class="bookmark-list">
-            <div v-for="tweet in bookmark_tweets" :key="tweet.TweetID">
+            <div v-for="tweet in tweets" :key="tweet.TweetID">
                 <div class="post" @click="openTweet(tweet.TweetID)">
                     <div class="left-side">
                         <img @click.stop="openProfile(tweet.user.UserTag)">
@@ -109,7 +109,7 @@ export default{
     },
     data() {
         return {
-            bookmark_tweets: [],
+            tweets: [],
             comment_text_input: '',
             comments: [],
             commentsByTweet: {},
@@ -168,7 +168,7 @@ export default{
             .get(`/api/tweets/${type}`)
             .then((response) => {
                 this[type + '_tweets'] = response.data.tweets;
-                if (type === 'all') {
+                if (type === 'bookmark') {
                     this.tweets = response.data.tweets;
                 }
             })
