@@ -494,9 +494,6 @@ export default{
                 console.error('Error unbookmarking the tweet:', error);
             }
         },
-
-
-
     },
     async mounted() {
         await this.$store.dispatch('initializeApp');

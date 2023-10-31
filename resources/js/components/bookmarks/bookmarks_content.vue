@@ -8,7 +8,7 @@
         </div>
 
         <div class="bookmark-list">
-            <div v-for="tweet in bookmarkedTweets" :key="tweet.TweetID">
+            <div v-for="tweet in bookmark_tweets" :key="tweet.TweetID">
                 <div class="post" @click="openTweet(tweet.TweetID)">
                     <div class="left-side">
                         <img @click.stop="openProfile(tweet.user.UserTag)">
@@ -107,24 +107,17 @@ export default{
     components: {
         Popup,
     },
-    // props: ['bookmarkedTweets'],
     data() {
         return {
-            tweets: [],
-            // tweet_text_input: '',
+            bookmark_tweets: [],
             comment_text_input: '',
             comments: [],
             commentsByTweet: {},
-            // following_tweets: 1,
-            // postType: 'tweets',
             previewImage: null,
             tweetImage: null,
             isPopupVisible: false,
             buttonDisabled:false,
             tweetIdInPopup: null,
-            // isInputFocused: false,
-            // people: 3,
-            // trends: 5,
         };
     },
     setup(){
@@ -160,9 +153,6 @@ export default{
     },
     computed:{
          ...mapState(['isLoggedIn', 'user']),
-         ...mapState({
-            bookmarkedTweets: (state) => state.bookmarkedTweets,
-        }),
     },
 
     methods: {
@@ -173,7 +163,19 @@ export default{
         // openTweet(id) {
         //     console.log(id);
         // },
-
+        getTweets(type) {
+        axios
+            .get(`/api/tweets/${type}`)
+            .then((response) => {
+                this[type + '_tweets'] = response.data.tweets;
+                if (type === 'all') {
+                    this.tweets = response.data.tweets;
+                }
+            })
+            .catch((error) => {
+            console.error(error);
+            });
+        },
         openProfile(tag){
             const NoSymbolTag = tag.replace(/^@/, '');
             this.$router.push({ name: 'profile', params: { UserTag : NoSymbolTag } });
@@ -334,35 +336,64 @@ export default{
                 console.error('Error unretweetin the tweet:', error);
             }
         },
-
         toggleBookmark(tweetID) {
+            if (this.buttonDisabled) {
+                return;
+            }
             const tweet = this.tweets.find((t) => t.TweetID === tweetID);
-
             if (!tweet) {
                 return;
             }
-
-            if (this.$store.state.bookmarkedTweets.includes(tweetID)) {
-                // Unbookmark the tweet
-                this.$store.commit('addBookmark', tweet);
-                tweet.isBookmarked = true;
+            if (tweet.isBookmarked) {
+                this.buttonDisabled = true;
+                this.removeBookmark(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
             } else {
-                // Bookmark the tweet
-                this.$store.commit('removeBookmark', tweetID);
-                tweet.isBookmarked = false;
+                this.buttonDisabled = true;
+                this.createBookmark(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
+            }
+        },
+        async createBookmark(tweetID) {
+            try {
+                const response = await this.$axios.post(`/api/tweets/bookmark`, { tweetId: tweetID });
+                console.log('Bookmark Response:', response);
+                if (response.status === 201) {
+                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    if (tweet) {
+                        tweet.isBookmarked = true;
+                        // tweet.like_count += 1;
+                    }
+                }
+            } catch (error) {
+                console.error('Error bookmarking the tweet:', error);
+            }
+        },
+
+        async removeBookmark(tweetId) {
+            try {
+                const response = await this.$axios.delete(`/api/tweets/unbookmark/${tweetId}`);
+                console.log('Unbookmark Response:', response);
+                if (response.status === 200) {
+                    const tweet = this.tweets.find((t) => t.TweetID === tweetId);
+                    if (tweet) {
+                        tweet.isBookmarked = false;
+                        // tweet.like_count -= 1;
+                    }
+                }
+            } catch (error) {
+                console.error('Error unbookmarking the tweet:', error);
             }
         },
     },
 
     async mounted() {
         await this.$store.dispatch('initializeApp');
-        axios.get('/api/all-tweets')
-        .then(response => {
-            this.tweets = response.data.tweets;
-        })
-        .catch(error => {
-            console.error(error);
-        });
+        this.getTweets('bookmark');
     },
 }
 
