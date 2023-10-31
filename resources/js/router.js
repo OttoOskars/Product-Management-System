@@ -78,6 +78,12 @@ const router = createRouter({
       component: () => import('./components/bookmarks/bookmarks.vue'),
       meta: { requiresAuth: false }, // Public route
     },
+    {
+        path: '/messages',
+        component: () => import('./components/messages/messages.vue'),
+        meta: { requiresAuth: false }, // Public route
+      },
+
 
     // ...other routes
   ],

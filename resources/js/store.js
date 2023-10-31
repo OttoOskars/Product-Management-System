@@ -8,6 +8,7 @@ const store = createStore({
   state: {
     user: null,
     isLoggedIn: false,
+    bookmarkedTweets: [],
   },
   mutations: {
     setUser(state, user) {
@@ -18,6 +19,22 @@ const store = createStore({
       localStorage.removeItem(TOKEN_KEY);
       delete axios.defaults.headers.common['Authorization'];
     },
+    // addBookmark(state, tweet) {
+    //   state.bookmarkedTweets.push(tweet);
+    // },
+    // removeBookmark(state, tweetID) {
+    //   const index = state.bookmarkedTweets.findIndex((tweet) => tweet.TweetID === tweetID);
+    //   if (index !== -1) {
+    //       state.bookmarkedTweets.splice(index, 1);
+    //   }
+  
+    //   // Set the corresponding tweet's isBookmarked property to false
+    //   const tweet = state.tweets.find((t) => t.TweetID === tweetID);
+    //   if (tweet) {
+    //       tweet.isBookmarked = false;
+    //   }
+    // },
+  
   },
   getters: {
     // Define a getter for user
