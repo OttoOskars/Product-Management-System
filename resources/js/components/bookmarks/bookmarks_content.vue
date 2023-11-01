@@ -63,7 +63,7 @@
                                 <div class="icon-container">
                                     <ion-icon :name="tweet.isBookmarked ? 'bookmark' : 'bookmark-outline'" class="post-icon" :class="{ 'bookmarked': tweet.isBookmarked }"></ion-icon>
                                 </div>
-                                <p class="post-btn-nr" :class="{ 'bookmarked': tweet.isBookmarked }">{{ tweet.isBookmarked ? 'Bookmarked' : 'Bookmark' }}</p>
+                                <p class="post-btn-nr" :class="{ 'bookmarked': tweet.isBookmarked }"></p>
                             </button>
                         </div>
                     </div>
