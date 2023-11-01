@@ -409,10 +409,6 @@ export default{
 </script>
 
 <style lang="scss" scoped>
-.warning-1 {
-    color: red;
-    font-size: 12px;
-}
 .bookmarks-container{
     width:100%;
     height:auto;
