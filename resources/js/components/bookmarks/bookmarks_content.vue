@@ -1,11 +1,5 @@
 <template>
     <div class="bookmarks-container">
-<<<<<<< HEAD
-        <div class="top-top">
-            <div class="title"><button class="back-icon" @click="goBack"><ion-icon name="arrow-back-outline"></ion-icon></button><span style="margin-left: 10px;">Bookmarks</span></div>
-            <div class="user-info" v-if="user">
-                <p class="usertag">{{ user.UserTag }}</p>
-=======
         <div class="black-line"></div>
         <div class="top-bar">
             <button class="back-icon" @click="goBack">
@@ -14,7 +8,6 @@
             <div class="bookmarks-top" v-if="user">
                 <p class="title">Bookmarks</p>
                 <p class="user-tag">{{ user.UserTag }}</p>
->>>>>>> d61df5c659903063ee5ae59ec096132e8fa132e5
             </div>
         </div>
         <div class="post-container">
@@ -419,10 +412,6 @@ export default{
 </script>
 
 <style lang="scss" scoped>
-.warning-1 {
-    color: red;
-    font-size: 12px;
-}
 .bookmarks-container{
     width:100%;
     height:auto;
