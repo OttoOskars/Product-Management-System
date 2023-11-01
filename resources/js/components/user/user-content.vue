@@ -225,7 +225,7 @@ export default{
 
         const popupTriggers = ref({
             CommentTrigger: false,
-            EditTrigger: true,
+            EditTrigger: false,
         });
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger];
