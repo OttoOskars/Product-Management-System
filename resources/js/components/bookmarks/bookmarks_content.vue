@@ -1,7 +1,7 @@
 <template>
     <div class="bookmarks-container">
         <div class="top-top">
-            <div class="title">Bookmarks</div>
+            <div class="title"><button class="back-icon" @click="goBack"><ion-icon name="arrow-back-outline"></ion-icon></button><span style="margin-left: 10px;">Bookmarks</span></div>
             <div class="user-info" v-if="user">
                 <p class="usertag">{{ user.UserTag }}</p>
             </div>
@@ -156,6 +156,9 @@ export default{
     },
 
     methods: {
+        goBack() {
+            this.$router.go(-1);
+        },
         // redirectTo(where) {
         //     this.$router.push(where);
         // },
@@ -420,16 +423,36 @@ export default{
 
     .title{
         width:100%;
-        box-sizing: border-box;
-        height:50%;
+        height:40px;
         display:flex;
         align-items: center;
         justify-content: flex-start;
+        box-sizing: border-box;
+        margin-top: 10px;
+        font-weight: bold;
+        font-size: 22px;
+        color: white;
+    }
+
+    .back-icon{
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        width:40px;
+        height:40px;
+        border-radius: 50%;
+        border:none;
+        font-size:22px;
+        background-color: black;
         color:white;
-        padding:10px;
-        padding-left:20px;
-        font-size: 23px;
-        font-weight:bold;
+        cursor:pointer;
+        transition: all 0.3s;
+        margin-left: 10px;
+        margin-top: 10px;
+    }
+    .back-icon:hover{
+        background-color: rgba($color: #1a1a1a, $alpha: 1);
     }
 
     .usertag {
@@ -439,7 +462,7 @@ export default{
         align-items: center;
         justify-content: flex-start;
         color:gray;
-        padding-left:20px;
+        padding-left:60px;
         font-size: 16px;
     }
 
