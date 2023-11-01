@@ -252,7 +252,7 @@ export default{
             this.postType = 'likes';
         },
         autoSize() {
-            const maxRows = 15;
+            const maxRows = 8;
             const textarea = this.$refs.DescInput;
             textarea.style.height = 'auto';
             const customLineHeight = 1;
@@ -1259,6 +1259,18 @@ export default{
                 resize: none;
                 overflow: hidden;
                 transition: 0.3s all;
+                &::-webkit-scrollbar{
+                    width:4px;
+                }
+                &::-webkit-scrollbar-thumb{
+                    background-color: #2F3336;
+                    border-radius: 5px;;
+                    border:none;
+                }
+                &::-webkit-scrollbar-track{
+                    background:none;
+                    border:none;
+                }
                 &:disabled{
                     color:#808080;
                 }
@@ -1378,12 +1390,9 @@ export default{
         padding:5px;
         font-size: 14px;
         font-weight:600;
-        &:hover{
-            background-color:rgba($color: #202223, $alpha: 0.8);
-        }
     }
     .active-line{
-        height:2px;
+        height:3px;
         width:50px;
     }
 }

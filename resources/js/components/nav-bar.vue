@@ -258,11 +258,9 @@ export default{
         position:fixed;
         box-sizing: border-box;
         padding-left:100px;
-
         z-index:10;
         border-right:solid 1px #2F3336;
         background:black;
-
         color:white;
     }
     .buttons{
@@ -270,15 +268,12 @@ export default{
         display: flex;
         flex-direction: column;
         gap:10px;
-
         box-sizing: border-box;
-
         .button-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-
         .logo{
             width: 100%;
             height:50px;
@@ -290,7 +285,6 @@ export default{
             background-color:black;
             cursor: pointer;
         }
-
         button{
             width: 100%;
             height:50px;
@@ -310,7 +304,6 @@ export default{
             background-color: #1d1d1d;
         }
     }
-
     .profile{
         width:100%;
         display: flex;
@@ -370,7 +363,6 @@ export default{
             justify-content: center;
         }
     }
-
     .profile:hover{
         background-color: #1d1d1d;
     }
@@ -448,9 +440,21 @@ export default{
                         border:none;
                         display:flex;
                         align-items: center;
-                    }
-                    .tweet-input:focus{
-                        outline:none;
+                        &::-webkit-scrollbar{
+                            width:4px;
+                        }
+                        &::-webkit-scrollbar-thumb{
+                            background-color: #2F3336;
+                            border-radius: 5px;;
+                            border:none;
+                        }
+                        &::-webkit-scrollbar-track{
+                            background:none;
+                            border:none;
+                        }
+                        &:focus{
+                            outline:none;
+                        }
                     }
                 }
                 .tweet-image-preview{
@@ -584,7 +588,6 @@ export default{
             background-color: black;
             z-index: 99;
         }
-
         .buttons {
             width:auto;
             display: flex;
@@ -592,7 +595,6 @@ export default{
             gap: 10px;
             flex-wrap: nowrap;
         }
-
         .buttons button {
             width: 50px;
             height: 50px;
@@ -602,7 +604,6 @@ export default{
             justify-content: center;
             padding: 0;
         }
-
         .buttons span {
             display: none;
         }
@@ -648,14 +649,12 @@ export default{
             border-top: 1px solid #2F3336;
             border-right:none;
         }
-
         .buttons {
             width:100%;
             display: flex;
             flex-direction: row;
             justify-content: space-evenly;
         }
-
         .Home, .Explore, .Notifications, .Messages{
             display:flex;
             align-items: center;
@@ -664,7 +663,6 @@ export default{
             width:40px !important;
             border-radius: 50% !important;
         }
-
         .Profile, .logo, .Bookmarks, .More, .profile{
             display:none !important;
         }

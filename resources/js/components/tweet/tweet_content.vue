@@ -755,11 +755,23 @@ export default {
                     display:flex;
                     align-items: center;
                     padding:5px 5px;
-                }
-                .tweet-input:focus{
-                    outline:none;
-                    border-bottom:1px solid #2F3336;
-                    padding: 5px 5px 15px 5px;
+                    &::-webkit-scrollbar{
+                        width:4px;
+                    }
+                    &::-webkit-scrollbar-thumb{
+                        background-color: #2F3336;
+                        border-radius: 5px;;
+                        border:none;
+                    }
+                    &::-webkit-scrollbar-track{
+                        background:none;
+                        border:none;
+                    }
+                    &:focus{
+                        outline:none;
+                        border-bottom:1px solid #2F3336;
+                        padding: 5px 5px 15px 5px;
+                    }
                 }
             }
         }
@@ -1007,9 +1019,21 @@ export default {
                     border:none;
                     display:flex;
                     align-items: center;
-                }
-                .tweet-input:focus{
-                    outline:none;
+                    &::-webkit-scrollbar{
+                        width:4px;
+                    }
+                    &::-webkit-scrollbar-thumb{
+                        background-color: #2F3336;
+                        border-radius: 5px;;
+                        border:none;
+                    }
+                    &::-webkit-scrollbar-track{
+                        background:none;
+                        border:none;
+                    }
+                    &:focus{
+                        outline:none;
+                    }
                 }
             }
         }
