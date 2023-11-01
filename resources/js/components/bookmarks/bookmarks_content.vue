@@ -1,9 +1,20 @@
 <template>
     <div class="bookmarks-container">
+<<<<<<< HEAD
         <div class="top-top">
-            <div class="title">Bookmarks</div>
+            <div class="title"><button class="back-icon" @click="goBack"><ion-icon name="arrow-back-outline"></ion-icon></button><span style="margin-left: 10px;">Bookmarks</span></div>
             <div class="user-info" v-if="user">
                 <p class="usertag">{{ user.UserTag }}</p>
+=======
+        <div class="black-line"></div>
+        <div class="top-bar">
+            <button class="back-icon" @click="goBack">
+                <ion-icon name="arrow-back-outline"></ion-icon>
+            </button>
+            <div class="bookmarks-top" v-if="user">
+                <p class="title">Bookmarks</p>
+                <p class="user-tag">{{ user.UserTag }}</p>
+>>>>>>> d61df5c659903063ee5ae59ec096132e8fa132e5
             </div>
         </div>
         <div class="post-container">
@@ -440,35 +451,55 @@ export default{
     align-items: center;
     padding:0 10px;
 
-    .title{
-        width:100%;
+    .back-icon{
+        display:flex;
+        align-items: center;
+        justify-content: center;
         box-sizing: border-box;
-        height:50%;
-        display:flex;
-        align-items: center;
-        justify-content: flex-start;
+        width:40px;
+        height:40px;
+        border-radius: 50%;
+        border:none;
+        font-size:22px;
+        background:none;
         color:white;
-        padding:10px;
-        padding-left:20px;
-        font-size: 23px;
-        font-weight:bold;
+        cursor:pointer;
+        transition: all 0.3s;
+        &:hover{
+            background-color: rgba($color: #1a1a1a, $alpha: 1);
+        }
     }
-
-    .usertag {
-        width:100%;
-        height:1%;
+    .bookmarks-top{
+        height:100%;
+        width:auto;
         display:flex;
-        align-items: center;
-        justify-content: flex-start;
-        color:gray;
-        padding-left:20px;
-        font-size: 16px;
+        flex-direction: column;
+        padding:10px;
+        padding: 10px 10px 0px 30px;
+        box-sizing: border-box;
+        .title{
+            width:100%;
+            height:50%;
+            display:flex;
+            align-items: center;
+            justify-content: flex-start;
+            box-sizing: border-box;
+            font-weight: bold;
+            font-size: 20px;
+            margin:0;
+            padding:0;
+        }
+        .user-tag{
+            width:100%;
+            height:50%;
+            margin:0;
+            padding:0;
+            font-size: 15px;
+            color:#6A6F74;
+        }
     }
-
-
 }
-
-.bookmarks-main{
+.post-container{
     padding-top:0px;
     padding-bottom:80px;
     width:100%;
