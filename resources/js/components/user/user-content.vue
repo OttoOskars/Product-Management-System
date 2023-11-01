@@ -163,8 +163,8 @@
                         <div v-if ="NameError" class="warning-1">{{ NameError }}</div>
                     </div>
                     <div class="edit-description">
-                        <div class="input-wrap">
-                            <textarea id="desc-input" class="Edit-Input" rows="1" @input="autoSize" ref="DescInput" maxlength="255" required></textarea>
+                        <div class="textarea-wrap">
+                            <textarea id="desc-input" class="Edit-Textarea" rows="1" @input="autoSize" ref="DescInput" maxlength="255" required></textarea>
                             <label for="desc-input">Description</label>
                         </div>
                         <div v-if ="NameError" class="warning-1">{{ NameError }}</div>
@@ -225,7 +225,7 @@ export default{
 
         const popupTriggers = ref({
             CommentTrigger: false,
-            EditTrigger: false,
+            EditTrigger: true,
         });
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger];
@@ -1259,18 +1259,6 @@ export default{
                 resize: none;
                 overflow: hidden;
                 transition: 0.3s all;
-                &::-webkit-scrollbar{
-                    width:4px;
-                }
-                &::-webkit-scrollbar-thumb{
-                    background-color: #2F3336;
-                    border-radius: 5px;;
-                    border:none;
-                }
-                &::-webkit-scrollbar-track{
-                    background:none;
-                    border:none;
-                }
                 &:disabled{
                     color:#808080;
                 }
@@ -1302,6 +1290,74 @@ export default{
         }
         .edit-name{
             padding-top:60px;
+        }
+        .textarea-wrap{
+            border: none;
+            border-radius:6px;
+            font-family: Arial, sans-serif;
+            position:relative;
+            width:auto;
+            min-height: 60px;
+            box-sizing: border-box;
+            display:flex;
+            border: 1px solid #434343;
+            padding-top:26px;
+            &:focus-within {
+                border: 1px solid #1da1f2; /* Change the border when any child is focused */
+            }
+            .Edit-Textarea{
+                font-family: Arial, sans-serif;
+                box-sizing:border-box;
+                color:#ffffff;
+                padding: 0px 13px 0px 13px;
+                outline:none;
+                background: none;
+                border:none;
+                position:relative;
+                display:flex;
+                width:100%;
+                height:100%;
+                border-radius:6px;
+                font-size:18px;
+                resize: none;
+                transition: 0.3s all;
+                &::-webkit-scrollbar{
+                    width:4px;
+                }
+                &::-webkit-scrollbar-thumb{
+                    background-color: #2F3336;
+                    border-radius: 5px;;
+                    border:none;
+                }
+                &::-webkit-scrollbar-track{
+                    background:none;
+                    border:none;
+                }
+                &:disabled{
+                    color:#808080;
+                }
+            }
+            label{
+                font-size:18px;
+                color:#434343;
+                padding:5px;
+                position:absolute;
+                top:15px;
+                left:5px;
+                pointer-events: none;
+                transition: 0.3s all;
+            }
+            .Edit-Textarea:focus+label,
+            .Edit-Textarea:disabled+label,
+            .Edit-Textarea:valid+label{
+                font-size:16px;
+                top:5px;
+                left:7px;
+                padding:0 5px 0 5px;
+            }
+            .Edit-Textarea:focus+label{
+                color:#1da1f2;
+            }
         }
     }
 
@@ -1632,6 +1688,31 @@ export default{
         }
         .edit-name{
             padding-top:40px;
+        }
+        .textarea-wrap{
+            border-radius:6px;
+            min-height: 40px;
+            padding-top: 17px;
+            .Edit-Textarea{
+                padding: 0px 13px 0px 7px;
+                width:100%;
+                height:100%;
+                font-size:13px;
+            }
+            label{
+                font-size:13px;
+                padding:5px;
+                top:5px;
+                left:2px;
+            }
+            .Edit-Textarea:focus+label,
+            .Edit-Textarea:disabled+label,
+            .Edit-Textarea:valid+label{
+                font-size:12px;
+                top:4px;
+                left:2px;
+                padding:0 5px 0 5px;
+            }
         }
     }
 
