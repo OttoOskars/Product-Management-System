@@ -90,6 +90,12 @@
                             <div class="icon-container"><ion-icon :name="tweet.isRetweeted ? 'arrow-redo' : 'arrow-redo-outline'" class="post-icon" :class ="{ 'retweeted': tweet.isRetweeted }"></ion-icon></div>
                             <p class="post-btn-nr" :class ="{ 'retweeted': tweet.isRetweeted }">{{ tweet.retweet_count }}</p>
                         </button>
+                        <button class="post-btn-container bookmark-btn" @click.stop="toggleBookmark(tweet.TweetID)">
+                            <div class="icon-container">
+                                <ion-icon :name="tweet.isBookmarked ? 'bookmark' : 'bookmark-outline'" class="post-icon" :class="{ 'bookmarked': tweet.isBookmarked }"></ion-icon>
+                            </div>
+                            <p class="post-btn-nr" :class="{ 'bookmarked': tweet.isBookmarked }">{{ tweet.isBookmarked ? 'Bookmarked' : 'Bookmark' }}</p>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -371,6 +377,9 @@ export default{
             if (!tweet) {
                 return;
             }
+            if (tweet && tweet.user.UserTag === this.user.UserTag) {
+                return;
+            }
             
             if (tweet.isRetweeted) {
                 this.buttonDisabled = true;
@@ -421,6 +430,59 @@ export default{
                 console.error('Error unretweetin the tweet:', error);
             }
         },
+        toggleBookmark(tweetID) {
+            if (this.buttonDisabled) {
+                return;
+            }
+            const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+            if (!tweet) {
+                return;
+            }
+            if (tweet.isBookmarked) {
+                this.buttonDisabled = true;
+                this.removeBookmark(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
+            } else {
+                this.buttonDisabled = true;
+                this.createBookmark(tweet.TweetID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
+            }
+        },
+        async createBookmark(tweetID) {
+            try {
+                const response = await this.$axios.post(`/api/tweets/bookmark`, { tweetId: tweetID });
+                console.log('Bookmark Response:', response);
+                if (response.status === 201) {
+                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    if (tweet) {
+                        tweet.isBookmarked = true;
+                        // tweet.like_count += 1;
+                    }
+                }
+            } catch (error) {
+                console.error('Error bookmarking the tweet:', error);
+            }
+        },
+
+        async removeBookmark(tweetId) {
+            try {
+                const response = await this.$axios.delete(`/api/tweets/unbookmark/${tweetId}`);
+                console.log('Unbookmark Response:', response);
+                if (response.status === 200) {
+                    const tweet = this.tweets.find((t) => t.TweetID === tweetId);
+                    if (tweet) {
+                        tweet.isBookmarked = false;
+                        // tweet.like_count -= 1;
+                    }
+                }
+            } catch (error) {
+                console.error('Error unbookmarking the tweet:', error);
+            }
+        },
         getSpecificUserTweets(userTag) {
             this.$axios.get(`/api/user-tweets/${userTag}`) // Adjust the URL based on your Laravel routes
             .then((response) => {
@@ -442,11 +504,6 @@ export default{
         },
     },
     watch:{
-        user(){
-            if (this.user) {
-                this.getSpecificUserTweets(this.user.UserTag);
-            }
-        }
     },
     async mounted() {
         await this.$store.dispatch('initializeApp');
@@ -662,6 +719,7 @@ export default{
     justify-content: space-evenly;
     box-sizing: border-box;
     margin-top:10px;
+    border-bottom:solid 1px #2F3336;
     .post-type-btn{
         height:100%;
         width:100%;
@@ -706,6 +764,18 @@ export default{
     display:flex;
     flex-direction:column;
     box-sizing: border-box;
+    .left-side{
+        width:50px;
+        height:100%;
+        display:flex;
+        flex-direction:column;
+        img{
+            width:50px;
+            height:50px;
+            border-radius: 50%;
+            background-color: white;
+        }
+    }
     .no-posts{
         width:100%;
         height:auto;
@@ -729,18 +799,6 @@ export default{
         padding:15px 10px 5px 15px;
         border-bottom: 1px solid #2F3336;
         cursor:pointer;
-        .left-side{
-            width:50px;
-            height:100%;
-            display:flex;
-            flex-direction:column;
-            img{
-                width:50px;
-                height:50px;
-                border-radius: 50%;
-                background-color: white;
-            }
-        }
         .right-side{
             width:90%;
             height:100%;
@@ -1330,6 +1388,9 @@ export default{
     }
 }
 .post-container{
+    .left-side, .post-top{
+            display:none !important;
+        }
     .no-posts{
         padding:15px;
         font-size:13px;
@@ -1338,9 +1399,6 @@ export default{
         gap:5px!important;
         padding:15px 10px 5px 10px;
         cursor:pointer;
-        .left-side, .post-top{
-            display:none !important;
-        }
         .right-side{
             width:100% !important;
             .top2{
@@ -1432,7 +1490,7 @@ export default{
                     align-items: center;
                     cursor:pointer;
                     .post-icon{
-                        font-size:20px;
+                        font-size:18px;
                         color:#71767B;
                         --ionicon-stroke-width: 30px;
                     }

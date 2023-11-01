@@ -3,8 +3,8 @@
         <div class="navbar">
             <NavBar></NavBar>
         </div>
-        <div class="bookmarks-info">
-            <Bookmarks></Bookmarks>
+        <div class="content">
+            <Content></Content>
         </div>
         <div class="search">
             <Search></Search>
@@ -13,14 +13,14 @@
 </template>
 <script>
 import NavBar from '../nav-bar.vue';
-import Bookmarks from './bookmarks_content.vue';
+import Content from './bookmarks_content.vue';
 import Popup from '../Popup.vue';
 import Search from '../home/search.vue';
 export default {
   name: 'bookmarks',
   components: {
     NavBar,
-    Bookmarks,
+    Content,
     Popup,
     Search,
   },
@@ -37,43 +37,44 @@ export default {
     margin: 0 auto;
     display:flex;
     flex-direction: row;
-
+    box-sizing: border-box;
 }
 
-.search{
-    min-height:100%;
-    width:4/12*100%;
-}
 .navbar{
     width: 3/12*100%;
-
+    box-sizing: border-box;
 }
-.bookmarks-info{
-    height:100%;
+.search{
+    min-height: 100%;
+    width:4/12*100%;
+    box-sizing: border-box;
+}
+.content{
+    min-height:100%;
     width:5/12*100%;
-
+    box-sizing: border-box;
 }
 
 @media (max-width: 1250px) {
     .navbar{
         width:100px;
     }
-    .bookmarks-info{
-        width:7/12*100%
-    }
     .search{
         width:4/12*100%
+    }
+    .content{
+        flex-grow: 1;
     }
 }
 @media (max-width: 1000px) {
     .navbar{
         width:100px;
     }
-    .bookmarks-info{
-        width:11/12*100%
-    }
     .search{
         display:none;
+    }
+    .content{
+        flex-grow: 1;
     }
 }
 @media (max-width: 500px) {
@@ -83,12 +84,11 @@ export default {
         bottom:0;
         z-index:99;
     }
-    .bookmarks-info{
-        width:100%
-    }
     .search{
         display:none;
     }
+    .content{
+        width:100%
+    }
 }
-
 </style>

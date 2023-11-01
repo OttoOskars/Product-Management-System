@@ -106,13 +106,23 @@ class TweetController extends Controller
             $tag = '@' . ltrim($userTag, '@');
             $user2 = User::where('UserTag', $tag)->first();
             $userID = $user2->UserID;
-            $query = Tweet::with('user')
-                ->leftJoin('retweets', 'tweets.TweetID', '=', 'retweets.TweetID')
+    
+            $tweets = Tweet::with('user')
+                ->leftJoin('retweets', function($join) use ($userID) {
+                    $join->on('tweets.TweetID', '=', 'retweets.TweetID')
+                        ->where('retweets.UserID', $userID);
+                })
                 ->where(function ($q) use ($userID) {
                     $q->where('tweets.UserID', $userID)
-                      ->orWhere('retweets.UserID', $userID);
+                        ->orWhere('retweets.UserID', $userID);
                 })
-                ->select('tweets.*')
+                ->select('tweets.*', 'retweets.created_at as retweet_created_at')
+                ->selectSub(function ($query) use ($user2) {
+                    $query->from('retweets')
+                        ->selectRaw('COUNT(*)')
+                        ->whereColumn('retweets.TweetID', 'tweets.TweetID')
+                        ->where('retweets.UserID', $user2->UserID); // Count the retweets by user2
+                }, 'isRetweet')
                 ->selectSub(function ($query) {
                     $query->from('comments')
                         ->selectRaw('COUNT(*)')
@@ -128,8 +138,9 @@ class TweetController extends Controller
                         ->selectRaw('COUNT(*)')
                         ->whereColumn('retweets.TweetID', 'tweets.TweetID');
                 }, 'retweet_count')
-                ->orderBy('created_at', 'desc');
-            $tweets = $query->get();
+                ->orderByRaw('IF(retweets.created_at IS NOT NULL, retweets.created_at, tweets.created_at) DESC');
+    
+            $tweets = $tweets->get();
     
             foreach ($tweets as $tweet) {
                 $now = Carbon::now();
@@ -145,7 +156,6 @@ class TweetController extends Controller
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
-
     private function formatTimeAgo($created_at, $now)
     {
         $diff = $created_at->diff($now);
