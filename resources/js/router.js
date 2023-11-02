@@ -18,22 +18,22 @@ const router = createRouter({
     {
       path: '/home2',
       component: () => import('./components/home/home.vue'),
-      meta: { requiresAuth: false }, // Public route
+      meta: { requiresAuth: true }, // Public route
     },
     {
       path: '/explore',
       component: () => import('./components/explore/explore.vue'),
-      meta: { requiresAuth: false }, // Public route
+      meta: { requiresAuth: true }, // Public route
     },
     {
       path: '/trends',
       component: () => import('./components/trends/trends.vue'),
-      meta: { requiresAuth: false }, // Public route
+      meta: { requiresAuth: true }, // Public route
     },
     {
       path: '/people',
       component: () => import('./components/who-to-follow/people.vue'),
-      meta: { requiresAuth: false }, // Public route
+      meta: { requiresAuth: true }, // Public route
     },
     {
       path: '/home',
@@ -44,14 +44,14 @@ const router = createRouter({
     {
      path: '/notifications',
      component: () => import('./components/notifications/notifications.vue'),
-     meta: { requiresAuth: false }, // Public route
+     meta: { requiresAuth: true }, // Public route
     },
 
     {
       path: '/tweet/:tweetID',
       component: () => import('./components/tweet/tweet.vue'),
       name: 'tweet',
-      meta: { requiresAuth: false }, // Protected route (if required)
+      meta: { requiresAuth: true }, // Protected route (if required)
     },
 /*     {
       path: '/profile/:UserTag',
@@ -67,7 +67,7 @@ const router = createRouter({
       path: '/profile/:UserTag',
       component: () => import('./components/user/user.vue'),
       name: 'profile',
-      meta: { requiresAuth: false }, // Protected route (if required)
+      meta: { requiresAuth: true }, // Protected route (if required)
       beforeRouteUpdate(to, from, next) {
         // This hook will be called when the route parameters change
         location.reload(); // This triggers a hard page refresh
@@ -76,12 +76,12 @@ const router = createRouter({
     {
       path: '/bookmarks',
       component: () => import('./components/bookmarks/bookmarks.vue'),
-      meta: { requiresAuth: false }, // Public route
+      meta: { requiresAuth: true }, // Public route
     },
     {
         path: '/messages',
         component: () => import('./components/messages/messages.vue'),
-        meta: { requiresAuth: false }, // Public route
+        meta: { requiresAuth: true }, // Public route
       },
 
 

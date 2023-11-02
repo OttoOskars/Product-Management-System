@@ -153,5 +153,14 @@ export default{
     height: 50px;
     }
 }
+
+
+.write-button:hover{
+    background:#0c79c2;
+}
+
+.right-write-button:hover{
+    background:#0c79c2;
+}
 </style>
 
