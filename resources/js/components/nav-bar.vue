@@ -9,7 +9,7 @@
                 </div>
             </div>
 
-            <button class="Home" @click="$router.push('/home2')">
+            <button class="Home" @click="$router.push('/home')">
                 <div class="button-content">
                     <ion-icon name="home-outline" style="font-size: 24px;"></ion-icon>
                     <span style="font-size: 18px; margin-left: 20px;">Home</span>

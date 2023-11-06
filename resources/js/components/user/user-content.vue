@@ -261,9 +261,11 @@ export default{
     const currentPosts = computed(() => {
       if (postType.value === 'tweets') {
         return tweets.value;
-      } else if (postType.value === 'replies') {
+      }
+      if (postType.value === 'replies') {
         return replies.value;
-      } else if (postType.value === 'likes') {
+      }
+      if (postType.value === 'likes') {
         return liked_tweets.value;
       }
       return [];
@@ -415,14 +417,12 @@ export default{
             this.$router.go(-1);
         },
         async switchToTweets() {
-            await this.getSpecificUserTweets(this.$route.params.UserTag);
             this.postType = 'tweets';
         },
         async switchToReplies() {
             this.postType = 'replies';
         },
         async switchToLikes() {
-            this.getLikedTweets(this.$route.params.UserTag);
             this.postType = 'likes';
         },
         autoSize() {

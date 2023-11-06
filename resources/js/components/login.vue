@@ -150,7 +150,7 @@ export default {
     });
 
     if (store.state.isLoggedIn) {
-      router.push('/home2');
+      router.push('/home');
     }
 
     const validateEmail = async () => {
@@ -207,7 +207,7 @@ export default {
           console.log('Login success:', loginSuccess);
 
           if (loginSuccess) {
-            router.push('/home2');
+            router.push('/home');
           }
         } catch (error) {
           errorLogin.value = 'Invalid password.';

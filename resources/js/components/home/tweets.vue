@@ -167,7 +167,7 @@ export default{
         const store = useStore();
 
         if (store.state.isLoggedIn) {
-            router.push('/home2');
+            router.push('/home');
         }
         const logoutUser = async () => {
             try {
