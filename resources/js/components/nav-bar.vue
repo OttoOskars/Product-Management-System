@@ -67,8 +67,8 @@
 
         </div>
         <div class="profile" @click.stop="toggleProfilePopup">
-            <div class="user-img">
-                <img>
+            <div class="user-img" v-if="user">
+                <img :src="'/storage/' + user.ProfilePicture">
             </div>
             <div class="user-info" v-if="user">
                 <p class="username">{{ user.Name }}</p>
@@ -89,7 +89,7 @@
         <div class="create-popup" v-if="user">
             <div class="top">
                 <div class="left-side-popup">
-                    <img  @click.stop="openProfile(user.UserTag)">
+                    <img  @click.stop="openProfile(user.UserTag)" :src="'/storage/' + user.ProfilePicture">
                 </div>
                 <div class="right-side-popup">
                     <div class="userinfo-popup">

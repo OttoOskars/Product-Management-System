@@ -10,12 +10,12 @@
         <div class="post-container">
             <div class="post" v-if="tweet && tweet.user"> 
                 <div class="left-side">
-                    <img @click.stop="openProfile(tweet.user.UserID)">
+                    <img @click.stop="openProfile(tweet.user.UserID)" :src="'/storage/' + tweet.user.ProfilePicture">
                 </div>
                 <div class="right-side">
                     <div class="top2">
                         <div class="person-image">
-                            <img @click.stop="openProfile(tweet.user.UserID)">
+                            <img @click.stop="openProfile(tweet.user.UserID)" :src="'/storage/' + tweet.user.ProfilePicture">
                         </div>
                         <div class="info-content">
                             <div class="userinfo">
@@ -65,7 +65,7 @@
             </div>
             <div class="create-tweet" v-if="user">
                 <div class="left-side">
-                    <img  @click="openProfile(user.UserID)">
+                    <img  @click="openProfile(user.UserID)" :src="'/storage/' + user.ProfilePicture">
                 </div>
                 <div class="right-side">
                     <div class="replyinginfo">                   
@@ -90,7 +90,7 @@
         <div class="comment-container">
             <div class="comment" v-for="comment in comments" :key="comment.CommentID">
                 <div class="left">
-                    <img @click.stop="openProfile(comment.user.UserID)">
+                    <img @click.stop="openProfile(comment.user.UserID)" :src="'/storage/' + comment.user.ProfilePicture">
                     <div class="content">
                         <div class="userinfo">
                             <p class="username">{{ comment.user.Name }}</p>
@@ -112,7 +112,7 @@
         <div class="create-popup">
             <div class="top">
                 <div class="left-side-popup">
-                    <img  @click="openProfile(user.UserID)">
+                    <img  @click="openProfile(user.UserID)" :src="'/storage/' + user.ProfilePicture">
                 </div>
                 <div class="right-side-popup">
                     <div class="userinfo-popup">

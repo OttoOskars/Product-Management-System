@@ -23,7 +23,7 @@
                 <div class="person" v-for="user in users" :key="user.UserID">
                     <div class="user">
                         <div class="user-img">
-                            <img :src="user.ProfilePicture" alt="" class="person-img"> 
+                            <img :src="'/storage/' + user.ProfilePicture" alt="" class="person-img"> 
                         </div>
                         <div class="user-info">
                             <p class="username">{{ user.Name }}</p>

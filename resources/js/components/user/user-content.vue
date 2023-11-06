@@ -7,14 +7,14 @@
             </button>
             <div class="profile-top">
                 <p class="title" v-if="profileuser">{{ profileuser.Name }}</p>
-                <p class="tweet_count">{{ tweet_count }} posts</p>
+                <p class="tweet_count">{{ postType === 'likes' ? like_count : (postType === 'replies' ? reply_count : tweet_count) }} {{ postType }}</p>
             </div>
         </div>
         <div class="profile-info">
-            <div class="banner">
-                <img>
+            <div class="banner" v-if="profileuser" >
+                <img :src="'/storage/' + profileuser.Banner">
                 <div class="profile-picture">
-                    <img>
+                    <img :src="'/storage/' + profileuser.ProfilePicture">
                 </div>
             </div>
             <div class="edit-button-div">
@@ -39,20 +39,33 @@
             <button @click="switchToLikes" class="post-type-btn" :class ="{ 'active-post-type': postType == 'likes' }">Likes<div class="active-line" :class ="{ 'active': postType == 'likes' }"></div></button>
         </div>
         <div class="post-container" v-if="profileuser">
-            <div class="post" v-for="tweet in tweets" :key="tweet.TweetID"  @click="openTweet(tweet.TweetID)">
-                <div class="left-side">
-                    <img  @click.stop="openProfile(tweet.user.UserTag)">
+            <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID"  @click="openTweet(tweet.TweetID)">
+                <div class="isretweet" v-if="tweet.isRetweet">
+                    <p class="tweet-text"><span>{{ profileuser.UserTag }}</span> Reposted</p>
                 </div>
-                <div class="right-side">
-                    <div class="retweeted" v-if="tweet.isRetweet">
-                        <p class="tweet-text"><span>{{ profileuser.UserTag }}</span> Reposted</p>
+                <div class="inner-post">
+                    <div class="left-side">
+                        <img  @click.stop="openProfile(tweet.user.UserTag)" :src="'/storage/' + tweet.user.ProfilePicture">
                     </div>
-                    <!-- ############################################# -->
-                    <div class="top2">
-                        <div class="person-image">
-                            <img @click.stop="openProfile(tweet.user.UserTag)">
+                    <div class="right-side">
+                        <!-- ############################################# -->
+                        <div class="top2">
+                            <div class="person-image">
+                                <img @click.stop="openProfile(tweet.user.UserTag)">
+                            </div>
+                            <div class="info-content">
+                                <div class="userinfo">
+                                    <p class="username">{{tweet.user.Name}}</p>
+                                    <p class="usertag">{{tweet.user.UserTag}}</p>
+                                    <p class="time-posted">{{ tweet.created_ago }}</p>
+                                </div>
+                                <div class="content-text">
+                                    <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="info-content">
+                        <!-- ############################################# -->
+                        <div class="post-top">
                             <div class="userinfo">
                                 <p class="username">{{tweet.user.Name}}</p>
                                 <p class="usertag">{{tweet.user.UserTag}}</p>
@@ -62,40 +75,29 @@
                                 <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
                             </div>
                         </div>
-                    </div>
-                    <!-- ############################################# -->
-                    <div class="post-top">
-                        <div class="userinfo">
-                            <p class="username">{{tweet.user.Name}}</p>
-                            <p class="usertag">{{tweet.user.UserTag}}</p>
-                            <p class="time-posted">{{ tweet.created_ago }}</p>
+                        <div class="content-img">
+                            <img v-if="tweet.TweetImage" :src="'/storage/' + tweet.TweetImage"/>
                         </div>
-                        <div class="content-text">
-                            <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
+                        <div class="bottom">
+                            <button class="post-btn-container heart-btn" @click.stop="toggleLike(tweet.TweetID)">
+                                <div class="icon-container"><ion-icon :name="tweet.isLiked ? 'heart' : 'heart-outline'" class="post-icon" :class ="{ 'liked': tweet.isLiked }"></ion-icon></div>
+                                <p class="post-btn-nr" :class ="{ 'liked': tweet.isLiked }">{{ tweet.like_count }}</p>
+                            </button>
+                            <button class="post-btn-container comment-btn" @click.stop="tweetIdInPopup = tweet.TweetID; TogglePopup('CommentTrigger')">
+                                <div class="icon-container"><ion-icon name="chatbox-outline" class="post-icon"></ion-icon></div>
+                                <p class="post-btn-nr">{{ tweet.comment_count }}</p>
+                            </button>
+                            <button class="post-btn-container retweet-btn" @click.stop="toggleRetweet(tweet.TweetID)">
+                                <div class="icon-container"><ion-icon :name="tweet.isRetweeted ? 'arrow-redo' : 'arrow-redo-outline'" class="post-icon" :class ="{ 'retweeted': tweet.isRetweeted }"></ion-icon></div>
+                                <p class="post-btn-nr" :class ="{ 'retweeted': tweet.isRetweeted }">{{ tweet.retweet_count }}</p>
+                            </button>
+                            <button class="post-btn-container bookmark-btn" @click.stop="toggleBookmark(tweet.TweetID)">
+                                <div class="icon-container">
+                                    <ion-icon :name="tweet.isBookmarked ? 'bookmark' : 'bookmark-outline'" class="post-icon" :class="{ 'bookmarked': tweet.isBookmarked }"></ion-icon>
+                                </div>
+                                <p class="post-btn-nr" :class="{ 'bookmarked': tweet.isBookmarked }"></p>
+                            </button>
                         </div>
-                    </div>
-                    <div class="content-img">
-                        <img v-if="tweet.TweetImage" :src="'/storage/' + tweet.TweetImage"/>
-                    </div>
-                    <div class="bottom">
-                        <button class="post-btn-container heart-btn" @click.stop="toggleLike(tweet.TweetID)">
-                            <div class="icon-container"><ion-icon :name="tweet.isLiked ? 'heart' : 'heart-outline'" class="post-icon" :class ="{ 'liked': tweet.isLiked }"></ion-icon></div>
-                            <p class="post-btn-nr" :class ="{ 'liked': tweet.isLiked }">{{ tweet.like_count }}</p>
-                        </button>
-                        <button class="post-btn-container comment-btn" @click.stop="tweetIdInPopup = tweet.TweetID; TogglePopup('CommentTrigger')">
-                            <div class="icon-container"><ion-icon name="chatbox-outline" class="post-icon"></ion-icon></div>
-                            <p class="post-btn-nr">{{ tweet.comment_count }}</p>
-                        </button>
-                        <button class="post-btn-container retweet-btn" @click.stop="toggleRetweet(tweet.TweetID)">
-                            <div class="icon-container"><ion-icon :name="tweet.isRetweeted ? 'arrow-redo' : 'arrow-redo-outline'" class="post-icon" :class ="{ 'retweeted': tweet.isRetweeted }"></ion-icon></div>
-                            <p class="post-btn-nr" :class ="{ 'retweeted': tweet.isRetweeted }">{{ tweet.retweet_count }}</p>
-                        </button>
-                        <button class="post-btn-container bookmark-btn" @click.stop="toggleBookmark(tweet.TweetID)">
-                            <div class="icon-container">
-                                <ion-icon :name="tweet.isBookmarked ? 'bookmark' : 'bookmark-outline'" class="post-icon" :class="{ 'bookmarked': tweet.isBookmarked }"></ion-icon>
-                            </div>
-                            <p class="post-btn-nr" :class="{ 'bookmarked': tweet.isBookmarked }"></p>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -130,23 +132,23 @@
         <Popup v-if="popupTriggers.EditTrigger" :TogglePopup="() => TogglePopup('EditTrigger')">
             <div class="edit-popup">
                 <p class="title">Edit profile</p>
-                <button class="save-btn">Save</button>
+                <button class="save-btn" @click="updateProfile()">Save</button>
                 <div class="content">
                     <div class="banner">
-                        <img>
+                        <img class="banner-img" :src="NewBannerImage ? NewBannerImage : '/storage/' + profileuser.Banner">
                         <div class="banner-input">
                             <button class="image-btn">
-                                <input type="file" id="banner-img-input" @change="onImageChange" hidden>
+                                <input type="file" id="banner-img-input" @change="onImageChange($event, 'bannerCropper')" hidden>
                                 <label for="banner-img-input" class="image-label">
                                     <ion-icon name="images-outline" class="image-icon"></ion-icon>
                                 </label>
                             </button>
                         </div>
                         <div class="profile-picture">
-                            <img>
+                            <img class="profile-img" :src="NewProfileImage ? NewProfileImage : '/storage/' + profileuser.ProfilePicture">
                             <div class="pfp-input">
                                 <button class="image-btn">
-                                    <input type="file" id="pfp-img-input" @change="onImageChange" hidden>
+                                    <input type="file" id="pfp-img-input" @change="onImageChange($event, 'profileCropper')" hidden>
                                     <label for="pfp-img-input" class="image-label">
                                         <ion-icon name="images-outline" class="image-icon"></ion-icon>
                                     </label>
@@ -157,14 +159,14 @@
 
                     <div class="edit-name">
                         <div class="input-wrap">
-                            <input type="text" id="name-input" class="Edit-Input" autocomplete="off" maxlength="30" required>
+                            <input type="text" id="name-input" class="Edit-Input" autocomplete="off" maxlength="30" v-model="NewName" required>
                             <label for="name-input">Name</label>
                         </div>
                         <div v-if ="NameError" class="warning-1">{{ NameError }}</div>
                     </div>
                     <div class="edit-description">
                         <div class="textarea-wrap">
-                            <textarea id="desc-input" class="Edit-Textarea" rows="1" @input="autoSize" ref="DescInput" maxlength="255" required></textarea>
+                            <textarea id="desc-input" class="Edit-Textarea" rows="1" @input="autoSize" ref="DescInput" v-model="NewDescription" maxlength="255" required></textarea>
                             <label for="desc-input">Description</label>
                         </div>
                         <div v-if ="NameError" class="warning-1">{{ NameError }}</div>
@@ -172,83 +174,191 @@
                 </div>
             </div>
         </Popup>
+        <Popup v-if="popupTriggers.BannerTrigger" :TogglePopup="() => TogglePopup('BannerTrigger')">
+            <div class="edit-popup">
+                <p class="title">Crop banner</p>
+                <button class="save-btn" @click="saveCroppedBanner">Crop</button>
+                <div class="content">
+                    <cropper
+                        ref="bannerCropper"
+                        :aspect-ratio="15 / 5"
+                        :view-mode="3"
+                        :drag-mode="'move'"
+                        :guides="false"
+                        :img-style="{ 'min-width': '100%', 'max-height': '500px' }"
+                        :auto-crop-area="1"
+                    />
+                </div>
+            </div>
+        </Popup>
+        <Popup v-if="popupTriggers.PFPTrigger" :TogglePopup="() => TogglePopup('PFPTrigger')">
+            <div class="edit-popup">
+                <p class="title">Crop profile picture</p>
+                <button class="save-btn" @click="saveCroppedProfile">Crop</button>
+                <div class="content" style="min-width: 100%; min-height:100%">
+                    <cropper
+                        class="profileCropper"
+                        ref="profileCropper"
+                        :aspect-ratio="1 / 1"
+                        :view-mode="3"
+                        :drag-mode="'move'"
+                        :guides="false"
+                        :img-style="{ 'min-width': '100%', 'max-height': '500px' }"
+                        :auto-crop-area="1"
+                    />
+                </div>
+            </div>
+        </Popup>
     </div>
 </template>
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Popup from '../Popup.vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { mapState } from 'vuex';
+import 'cropperjs/dist/cropper.css';
+import VueCropper from 'vue-cropperjs';
 export default{
     name: 'profile',
     components: {
         Popup,
+        cropper: VueCropper,
     },
     data(){
         return {
-            tweet_count:0,
-            tweets: [],
-            likes: [],
-            replies: [],
-            comments: [],
-            profileuser: null,
-            postType: 'tweets',
-            comment_text_input: '',
         }
     },
     computed:{
         ...mapState(['user']),
-        currentPosts() {
-            if (this.postType === 'tweets') {
-                return this.tweets;
-            } else if (this.postType === 'replies') {
-                return this.replies;
-            } else if (this.postType === 'likes') {
-                return this.likes;
-            }
-            return [];
-        },
-    },
-    setup(){
-        const router = useRouter();
-        const store = useStore();
-        const logoutUser = async () => {
-            try {
-                await store.dispatch('logout');
-                router.push('/');
-            } catch (error) {
-                console.error(error);
-            }
-        };
 
-        const popupTriggers = ref({
-            CommentTrigger: false,
-            EditTrigger: false,
-        });
-        const TogglePopup = (trigger) => {
-            popupTriggers.value[trigger] = !popupTriggers.value[trigger];
-            if (!popupTriggers.value[trigger]) {
-            }
-        };
-        return {
-            popupTriggers,
-            TogglePopup,
-            logoutUser,
-        }
     },
+    setup() {
+    const tweet_count = ref(0);
+    const like_count = ref(0);
+    const reply_count = ref(0);
+    const tweets = ref([]);
+    const liked_tweets = ref([]);
+    const replies = ref([]);
+    const comments = ref([]);
+    const profileuser = ref(null);
+    const postType = ref('tweets');
+    const comment_text_input = ref('');
+    const NewBannerImage = ref(null);
+    const NewProfileImage = ref(null);
+    const NewName = ref('');
+    const NewDescription = ref('');
+
+    const router = useRouter();
+    const store = useStore();
+
+    const currentPosts = computed(() => {
+      if (postType.value === 'tweets') {
+        return tweets.value;
+      } else if (postType.value === 'replies') {
+        return replies.value;
+      } else if (postType.value === 'likes') {
+        return liked_tweets.value;
+      }
+      return [];
+    });
+
+    const logoutUser = async () => {
+      try {
+        await store.dispatch('logout');
+        router.push('/');
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const popupTriggers = ref({
+      CommentTrigger: false,
+      EditTrigger: false,
+      BannerTrigger: false,
+      PFPTrigger: false,
+    });
+
+    const TogglePopup = (trigger) => {
+      if (trigger === 'EditTrigger') {
+        NewName.value= profileuser.value.Name;
+        NewDescription.value= profileuser.value.Description;
+      }
+      popupTriggers.value[trigger] = !popupTriggers.value[trigger];
+    };
+
+    return {
+      tweet_count,
+      like_count,
+      reply_count,
+      tweets,
+      liked_tweets,
+      replies,
+      comments,
+      profileuser,
+      postType,
+      comment_text_input,
+      NewBannerImage,
+      NewProfileImage,
+      NewName,
+      NewDescription,
+      currentPosts,
+      popupTriggers,
+      TogglePopup,
+      logoutUser,
+    };
+  },
     methods: {
+        async updateProfile() {
+            const formData = new FormData();
+            const contentType = 'image/png';
+            if (this.NewProfileImage) {
+                const blob = await (await fetch(this.NewProfileImage)).blob();
+                const file = new File([blob], 'profile_picture.png', { type: contentType });
+                formData.append('profile_picture', file);
+            } else {
+                console.log('No profile image selected.');
+                formData.append('profile_picture', null);
+            }
+            if (this.NewBannerImage) {
+                const blob = await (await fetch(this.NewBannerImage)).blob();
+                const file = new File([blob], 'banner_picture.png', { type: contentType });
+                formData.append('banner_picture', file);
+            } else {
+                console.log('No banner image selected.');
+                formData.append('banner_picture', null);
+            }
+            formData.append('Name', this.NewName);
+            formData.append('Description', this.NewDescription);
+            try {
+                const response = await this.$axios.post('/api/update-profile', formData, {
+                    headers: {
+                    'Content-Type': 'multipart/form-data',
+                    },
+                });
+                if (response.data.success) {
+                    this.getUserInfo(this.$route.params.UserTag);
+                    this.popupTriggers.EditTrigger = false;
+                } else {
+                    console.error(response.data.message);
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+            }
+        },
         goBack() {
             this.$router.go(-1);
         },
-        switchToTweets() {
+        async switchToTweets() {
+            await this.getSpecificUserTweets(this.$route.params.UserTag);
             this.postType = 'tweets';
         },
-        switchToReplies() {
+        async switchToReplies() {
             this.postType = 'replies';
         },
-        switchToLikes() {
+        async switchToLikes() {
+            this.getLikedTweets(this.$route.params.UserTag);
             this.postType = 'likes';
         },
         autoSize() {
@@ -264,14 +374,55 @@ export default{
                 textarea.style.height = maxHeight + 'px';
             }
         },
-        onImageChange(event) {
-            this.BannerImage = event.target.files[0];
-            if (this.BannerImage) {
-                // Create a URL for the selected image and set it as the preview
-                this.PrevBannerImage = URL.createObjectURL(this.tweetImagenav);
-            } else {
-                this.PrevBannerImage = null;
+        saveCroppedBanner() {
+            const cropper = this.$refs.bannerCropper;
+
+            if (cropper) {
+                const croppedCanvas = cropper.getCroppedCanvas();
+                if (croppedCanvas) {
+                    const croppedImageDataURL = croppedCanvas.toDataURL();
+                    this.NewBannerImage = croppedImageDataURL;
+                    this.popupTriggers.BannerTrigger = false;
+                }
             }
+        },
+        saveCroppedProfile() {
+            const cropper = this.$refs.profileCropper;
+
+            if (cropper) {
+                const croppedCanvas = cropper.getCroppedCanvas();
+                if (croppedCanvas) {
+                    const croppedImageDataURL = croppedCanvas.toDataURL();
+                    this.NewProfileImage = croppedImageDataURL;
+                    this.popupTriggers.PFPTrigger = false;
+                }
+            }
+        },
+        onImageChange(event, cropperRef) {
+            if (cropperRef === 'bannerCropper') {
+                this.popupTriggers.BannerTrigger = true;
+            } else if (cropperRef === 'profileCropper') {
+                this.popupTriggers.PFPTrigger = true;
+                
+            }
+            const input = event.target;
+            const file = input.files[0];
+            console.log('cropperRef:', cropperRef);
+            console.log('file:', file);
+
+            this.$nextTick(() => {
+                const cropper = this.$refs[cropperRef];
+                console.log('cropper:', cropper);
+
+                if (cropper && file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        cropper.replace(e.target.result);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
         },
         openProfile(tag){
             const NoSymbolTag = tag.replace(/^@/, '');
@@ -302,7 +453,7 @@ export default{
                 this.main_comment_text_input = '';
                 this.popup_comment_text_input = '';
                 if (response.status === 201) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
                     if (tweet) {
                         tweet.comment_count += 1;
                     }
@@ -320,7 +471,7 @@ export default{
             if (this.buttonDisabled) {
                 return;
             }
-            const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+            const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
             if (!tweet) {
                 return;
             }
@@ -343,7 +494,7 @@ export default{
                 const response = await this.$axios.post(`/api/tweets/like`, { tweetId: tweetID });
                 console.log('Like Response:', response);
                 if (response.status === 201) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
                     if (tweet) {
                         tweet.isLiked = true;
                         tweet.like_count += 1;
@@ -359,10 +510,16 @@ export default{
                 const response = await this.$axios.delete(`/api/tweets/unlike/${tweetId}`);
                 console.log('Unlike Response:', response);
                 if (response.status === 200) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetId);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetId);
                     if (tweet) {
                         tweet.isLiked = false;
                         tweet.like_count -= 1;
+                        if (this.postType === 'likes') {
+                            const index = this.currentPosts.findIndex((t) => t.TweetID === tweetId);
+                            if (index !== -1) {
+                                this.currentPosts.splice(index, 1);
+                            }
+                        }
                     }
                 }
             } catch (error) {
@@ -373,7 +530,7 @@ export default{
             if (this.buttonDisabled) {
                 return;
             }
-            const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+            const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
             if (!tweet) {
                 return;
             }
@@ -402,7 +559,7 @@ export default{
                 console.log('Retweet Response:', response);
 
                 if (response.status === 201) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
                     if (tweet) {
                         tweet.isRetweeted = true;
                         tweet.retweet_count += 1;
@@ -420,7 +577,7 @@ export default{
                 console.log('Unretweet Response:', response);
 
                 if (response.status === 200) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetId);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetId);
                     if (tweet) {
                         tweet.isRetweeted = false;
                         tweet.retweet_count -= 1;
@@ -434,7 +591,7 @@ export default{
             if (this.buttonDisabled) {
                 return;
             }
-            const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+            const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
             if (!tweet) {
                 return;
             }
@@ -457,7 +614,7 @@ export default{
                 const response = await this.$axios.post(`/api/tweets/bookmark`, { tweetId: tweetID });
                 console.log('Bookmark Response:', response);
                 if (response.status === 201) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
                     if (tweet) {
                         tweet.isBookmarked = true;
                         // tweet.like_count += 1;
@@ -473,7 +630,7 @@ export default{
                 const response = await this.$axios.delete(`/api/tweets/unbookmark/${tweetId}`);
                 console.log('Unbookmark Response:', response);
                 if (response.status === 200) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetId);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetId);
                     if (tweet) {
                         tweet.isBookmarked = false;
                         // tweet.like_count -= 1;
@@ -502,6 +659,26 @@ export default{
                 console.error(error);
             });
         },
+        getLikedTweets(userTag) {
+            this.$axios.get(`/api/liked-tweets/${userTag}`) // Adjust the URL based on your Laravel routes
+            .then((response) => {
+                this.liked_tweets = response.data.tweets;
+                this.like_count = response.data.tweet_count;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        },
+        getCommentedTweets(userTag) {
+            this.$axios.get(`/api/commented-tweets/${userTag}`) // Adjust the URL based on your Laravel routes
+            .then((response) => {
+                this.replies = response.data.tweets;
+                this.reply_count = response.data.tweet_count;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        },
     },
     watch:{
     },
@@ -509,6 +686,8 @@ export default{
         await this.$store.dispatch('initializeApp');
         this.getUserInfo(this.$route.params.UserTag);
         this.getSpecificUserTweets(this.$route.params.UserTag);
+        this.getLikedTweets(this.$route.params.UserTag);
+        this.getCommentedTweets(this.$route.params.UserTag);
     },
 }
 </script>
@@ -576,6 +755,7 @@ export default{
             height:50%;
             display:flex;
             align-items: center;
+            color:white;
             justify-content: flex-start;
             box-sizing: border-box;
             font-weight: bold;
@@ -600,8 +780,8 @@ export default{
     flex-direction: column;
     box-sizing: border-box;
     .banner{
+        aspect-ratio: 15/5;
         width:100%;
-        height:200px;
         position: relative;
         img{
             height:100%;
@@ -616,6 +796,7 @@ export default{
             bottom: -70px;
             left: 20px;
             z-index:5;
+            box-sizing: border-box;
             img{
                 height:100%;
                 width:100%;
@@ -793,12 +974,27 @@ export default{
         width:100%;
         min-height:auto;
         display:flex;
-        flex-direction:row;
-        gap:10px;
+        flex-direction:column;
+        gap:0px;
         box-sizing: border-box;
-        padding:15px 10px 5px 15px;
         border-bottom: 1px solid #2F3336;
         cursor:pointer;
+        .isretweet{
+            padding-left:15px;
+            height:25px;
+            font-size:14px;
+            color:#1da1f2;
+        }
+        .inner-post{
+            width:100%;
+            min-height:auto;
+            display:flex;
+            flex-direction:row;
+            gap:10px;
+            box-sizing: border-box;
+            padding:15px 10px 5px 15px;
+            cursor:pointer;
+        }
         .right-side{
             width:90%;
             height:100%;
@@ -806,7 +1002,6 @@ export default{
             flex-direction:column;
             box-sizing: border-box;
             gap:5px;
-
             .post-top{
                 width:100%;
                 height:auto;
@@ -1168,11 +1363,11 @@ export default{
         gap:10px;
         box-sizing: border-box;
         .banner{
+            aspect-ratio: 15/5;
             width:100%;
-            height:160px;
             position: relative;
             box-sizing: border-box;
-            img{
+            .banner-img{
                 height:100%;
                 width:100%;
                 border:none;
@@ -1192,7 +1387,7 @@ export default{
                 left: 20px;
                 box-sizing: border-box;
 
-                img{
+                .profile-img{
                     height:100%;
                     width:100%;
                     background: white;
@@ -1362,6 +1557,12 @@ export default{
     }
 
 }
+.profileCropper{
+    .cropper-crop-box{
+        border-radius: 50%;
+        overflow: hidden;
+    }
+}
 
 @media (min-width: 500px) {
 }
@@ -1385,7 +1586,6 @@ export default{
 }
 .profile-info{
     .banner{
-        height:130px;
         img{
             background: gray;
         }
@@ -1461,9 +1661,17 @@ export default{
         font-size:13px;
     }
     .post{
-        gap:5px!important;
-        padding:15px 10px 5px 10px;
-        cursor:pointer;
+        gap:0px;
+        .isretweet{
+            padding-left:15px;
+            height:20px;
+            font-size:12px;
+        }
+        .inner-post{
+            gap:5px !important;
+            padding:15px 10px 5px 15px;
+
+        }
         .right-side{
             width:100% !important;
             .top2{
@@ -1640,8 +1848,8 @@ export default{
         height:auto;
         gap:10px;
         .banner{
+            aspect-ratio: 15/5;
             width:100%;
-            height:100px;
             .profile-picture{
                 width:80px;
                 height:80px;
