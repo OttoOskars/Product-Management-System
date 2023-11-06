@@ -107,7 +107,7 @@
                     </div>
                 </div>
             </div>
-            <div class="no-posts">{{ profileuser.UserTag }} currently has no more {{ postType }}</div>
+            <div class="no-posts">{{ profileuser.UserTag }} currently has no {{ noMorePosts() }} {{ postType }}</div>
         </div>
         <Popup v-if="popupTriggers.CommentTrigger" :TogglePopup="() => TogglePopup('CommentTrigger')">
             <div class="comment-popup">
@@ -324,6 +324,13 @@ export default{
                 return 'tweet';
             } else {
                 return this.postType;
+            }
+        },
+        noMorePosts(){
+            if (this.currentPosts.length > 0) {
+                return 'more';
+            } else {
+                return ""
             }
         },
         openfollowing(tag){
