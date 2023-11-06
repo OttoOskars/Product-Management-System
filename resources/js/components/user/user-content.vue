@@ -98,6 +98,9 @@
                                 <p class="post-btn-nr" :class="{ 'bookmarked': tweet.isBookmarked }"></p>
                             </button>
                         </div>
+                        <button class="delete-btn" @click.stop="deleteTweet(tweet.TweetID)" v-if="profileuser.UserID === tweet.user.UserID && profileuser.UserID === user.UserID">
+                            <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -433,6 +436,28 @@ export default{
             this.$router.push({ name: 'tweet', params: { tweetID: id } });
             console.log(id);
         },
+        deleteTweet(tweetID) {
+            if (confirm('Are you sure you want to delete this tweet?')) {
+                this.performDeleteTweet(tweetID);
+            }
+        },
+        async performDeleteTweet(tweetID) {
+            if (!tweetID) {
+                console.error('Tweet ID not provided');
+                return;
+            }
+            try {
+                await this.$axios.delete(`/api/tweets/${tweetID}`);
+                const index = this.currentPosts.findIndex((t) => t.TweetID === tweetID);
+                this.tweet_count -= 1;
+                if (index !== -1) {
+                    this.currentPosts.splice(index, 1);
+                }
+                console.log(`Tweet with ID ${tweetID} deleted successfully.`);
+            } catch (error) {
+                console.error('Error deleting tweet:', error);
+            }
+        },
         async createComment(tweetID, commentText) {
             if (this.buttonDisabled) {
                 return;
@@ -504,7 +529,6 @@ export default{
                 console.error('Error liking the tweet:', error);
             }
         },
-
         async unlikeTweet(tweetId) {
             try {
                 const response = await this.$axios.delete(`/api/tweets/unlike/${tweetId}`);
@@ -513,7 +537,7 @@ export default{
                     const tweet = this.currentPosts.find((t) => t.TweetID === tweetId);
                     if (tweet) {
                         tweet.isLiked = false;
-                        tweet.like_count -= 1;
+                        this.like_count -= 1;
                         if (this.postType === 'likes') {
                             const index = this.currentPosts.findIndex((t) => t.TweetID === tweetId);
                             if (index !== -1) {
@@ -569,7 +593,6 @@ export default{
                 console.error('Error retweeting the tweet:', error);
             }
         },
-
         async unretweetTweet(tweetId) {
             try {
                 const response = await this.$axios.delete(`/api/tweets/unretweet/${tweetId}`);
@@ -624,7 +647,6 @@ export default{
                 console.error('Error bookmarking the tweet:', error);
             }
         },
-
         async removeBookmark(tweetId) {
             try {
                 const response = await this.$axios.delete(`/api/tweets/unbookmark/${tweetId}`);
@@ -975,6 +997,7 @@ export default{
         min-height:auto;
         display:flex;
         flex-direction:column;
+        position:relative;
         gap:0px;
         box-sizing: border-box;
         border-bottom: 1px solid #2F3336;
@@ -1149,6 +1172,30 @@ export default{
                         --ionicon-stroke-width: 40px;
                     }
                     
+                }
+            }
+            .delete-btn{
+                height:25px;
+                width:25px;
+                background:none;
+                border-radius:50%;
+                border:none;
+                display:flex;
+                justify-content: center;
+                align-items: center;
+                padding:0;
+                cursor:pointer;
+                position:absolute;
+                right:5px;
+                top:5px;
+                .delete-icon{
+                    font-size:16px;
+                    color:#f11515;
+                    --ionicon-stroke-width: 30px;
+                    visibility: visible;
+                }
+                &:hover{
+                    background-color: rgba($color: #f11515, $alpha: 0.1);
                 }
             }
         }

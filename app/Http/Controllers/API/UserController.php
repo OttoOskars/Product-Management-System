@@ -190,9 +190,9 @@ class UserController extends Controller
             $user->description = $newDescription;
             $messages[] = 'Description updated successfully';
         } else {
-            $success = false;
-            $messages[] = 'Description cannot be empty';
+            $user->description = '';
         }
+
         if ($newProfilePicture) {
             $image = $request->file('profile_picture');
             $path = $image->store('profile_pictures', 'public');

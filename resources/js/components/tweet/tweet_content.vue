@@ -1145,14 +1145,14 @@ export default {
 }
 
 @media (max-width: 500px) {
-    .top-bar{
-        width:100%;
-        height:35px;
-        .title{
-            font-size:17px !important;
-        }
-    } 
-    .post-container{
+.top-bar{
+    width:100%;
+    height:35px;
+    .title{
+        font-size:17px !important;
+    }
+} 
+.post-container{
     .create-tweet{
         gap:5px;
         padding:10px;
@@ -1303,97 +1303,97 @@ export default {
         }
     }
 }
-    .comment{
-        width:100%;
-        min-height:auto;
-        gap:5px !important;
-        .left{
-            width:auto;
+.comment{
+    width:100%;
+    min-height:auto;
+    gap:5px !important;
+    .left{
+        width:auto;
+        height:100%;
+        gap:5px;
+        img{
+            width:40px;
+            height:40px;
+            border-radius: 50%;
+            background-color: white;
+        }
+        .content{
+            max-width: 80%;
             height:100%;
-            gap:5px;
+            .userinfo{
+                width:100%;
+                height:10px;
+                gap:7px;
+                padding-top:2px;
+                .username{
+                    font-size: 15px;
+                }
+                .usertag{
+                    font-size: 15px;
+                }
+                .time-posted{
+                    font-size: 15px;
+                }
+            }
+            .content-text{
+                font-size:15px;
+            }
+        }
+    }
+}
+.create-popup{
+    width:100% !important;
+    min-height: 250px;
+    padding:30px 0px 0px 0px;
+    box-sizing: border-box;
+    .top{
+        width:100%;
+        gap:5px;
+        padding:20px 15px 10px 10px;
+
+        .left-side-popup{
+            width:40px;
+            box-sizing: border-box;
             img{
                 width:40px;
                 height:40px;
-                border-radius: 50%;
-                background-color: white;
-            }
-            .content{
-                max-width: 80%;
-                height:100%;
-                .userinfo{
-                    width:100%;
-                    height:10px;
-                    gap:7px;
-                    padding-top:2px;
-                    .username{
-                        font-size: 15px;
-                    }
-                    .usertag{
-                        font-size: 15px;
-                    }
-                    .time-posted{
-                        font-size: 15px;
-                    }
-                }
-                .content-text{
-                    font-size:15px;
-                }
             }
         }
-    }
-    .create-popup{
-        width:100% !important;
-        min-height: 250px;
-        padding:30px 0px 0px 0px;
-        box-sizing: border-box;
-        .top{
-            width:100%;
+        .right-side-popup{
             gap:5px;
-            padding:20px 15px 10px 10px;
-
-            .left-side-popup{
-                width:40px;
-                box-sizing: border-box;
-                img{
-                    width:40px;
-                    height:40px;
-                }
-            }
-            .right-side-popup{
+            .userinfo-popup{
                 gap:5px;
-                .userinfo-popup{
-                    gap:5px;
-                    .username{
-                        margin:0;
-                        font-size: 13px;
-                    }
-                    .usertag{
-                        margin:0;
-                        font-size: 13px;
-
-                    }
+                .username{
+                    margin:0;
+                    font-size: 13px;
                 }
-                .tweet-input-container{
-                    padding:0;
-                    padding-right:10px;
-                    .tweet-input{
-                        font-size: 14px !important;
-                    }
+                .usertag{
+                    margin:0;
+                    font-size: 13px;
+
                 }
             }
-        }
-
-        .bottom{
-            width:100%;
-            height:40px !important;
-            display:flex;
-            padding: 5px 10px;
-            .popup-button{
-                padding:12px;
-                font-size: 11px;
+            .tweet-input-container{
+                padding:0;
+                padding-right:10px;
+                .tweet-input{
+                    font-size: 14px !important;
+                }
             }
         }
     }
+
+    .bottom{
+        width:100%;
+        height:40px !important;
+        display:flex;
+        padding: 5px 10px;
+        .popup-button{
+            padding:12px;
+            font-size: 11px;
+        }
+    }
+}
     
 }
 
