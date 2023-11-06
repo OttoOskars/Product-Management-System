@@ -144,18 +144,24 @@ class UserController extends Controller
 
     public function getUserByTag($tag)
     {
-        $tag = '@' . ltrim($tag, '@');
-        $user = User::where('UserTag', $tag)->first();
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+        if (auth()->check()) {
+            $user = auth()->user();
+            $tag = '@' . ltrim($tag, '@');
+            $user2 = User::where('UserTag', $tag)->first();
+            if (!$user2) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+            $user2->create_date =  'Joined ' . $user->created_at->format('F Y');
+            $user2->follower_count = $user->followers()->count();
+            $user2->following_count = $user->following()->count();
+
+            $user2->isFollowedByMe = $this->checkIfFollowedByUser($user, $user2);
+
+            return response()->json(['user' => $user2]);
+        } else {
+            // Handle the case where the user is not authenticated.
+            return response()->json(['error' => 'User not authenticated.'], 401);
         }
-        $user->create_date =  'Joined ' . $user->created_at->format('F Y');
-        $user->follower_count = $user->followers()->count();
-        $user->following_count = $user->following()->count();
-
-        $user->isFollowedByMe = $this->checkIfFollowedByUser(auth()->user(), $user);
-
-        return response()->json(['user' => $user]);
     }
     private function checkIfFollowedByUser($user1, $user2)
     {

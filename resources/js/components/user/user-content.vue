@@ -17,8 +17,11 @@
                     <img :src="'/storage/' + profileuser.ProfilePicture">
                 </div>
             </div>
-            <div class="edit-button-div">
+            <div class="edit-button-div" v-if="profileuser">
                 <button class="edit-profile" @click="() => TogglePopup('EditTrigger')" v-if="profileuser && profileuser.UserID === user.UserID">Edit profile</button>
+                <button class="follow-button" @click="toggleFollowUnfollow(user.UserID)" v-if="!(profileuser.UserID === user.UserID)">
+                    {{ profileuser.isFollowedByMe ? 'Unfollow' : 'Follow' }}
+                </button>
             </div>
             <div class="profile-details" v-if="profileuser">
                 <div class="user-info">
@@ -319,6 +322,39 @@ export default{
         openfollowers(tag){
             const NoSymbolTag = tag.replace(/^@/, '');
             this.$router.push({ name: 'followers', params: { UserTag : NoSymbolTag } });
+        },
+        toggleFollowUnfollow(userID) {
+            const user = this.profileuser
+            if (user.isFollowedByMe) {
+                this.handleUnfollow(userID);
+            } else {
+                this.handleFollow(userID);
+            }
+        },
+        async handleFollow(userID) {
+            try {
+                const response = await this.$axios.post(`/api/follow/${userID}`);
+                console.log('Follow Response:', response);
+                if (response.status === 200) {
+                    const user = this.profileuser
+                    user.isFollowedByMe = true;
+                }
+            } catch (error) {
+                console.error('Error following the user:', error);
+            }
+        },
+
+        async handleUnfollow(userID) {
+            try {
+                const response = await this.$axios.post(`/api/unfollow/${userID}`);
+                console.log('Unfollow Response:', response);
+                if (response.status === 200) {
+                    const user = this.profileuser
+                    user.isFollowedByMe = false;
+                }
+            } catch (error) {
+                console.error('Error unfollowing the user:', error);
+            }
         },
         async updateProfile() {
             const formData = new FormData();
@@ -854,6 +890,42 @@ export default{
             border:1px solid #6A6F74;
             border-radius: 50px;
             background-color: #000000;
+        }
+        .follow-button{
+            padding:10px 20px; 
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 50px;
+            border:none;
+            background-color: white;
+            color:black;
+            font-size:15px;
+            font-weight: bold;
+            transition:all 0.3s;
+            cursor:pointer;
+            &:hover{
+                background-color: #D7DBDC;
+            }
+        }
+        .followed-button{
+            padding:10px 20px; 
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 50px;
+            border:none;
+            background-color: #1D9BF0;
+            color:rgb(255, 255, 255);
+            font-size:15px;
+            font-weight: bold;
+            transition:all 0.3s;
+            cursor:pointer;
+            &:hover{
+                background-color: #1a8bd6;
+            }
         }
     }
     .profile-details{
@@ -1661,6 +1733,14 @@ export default{
         padding: 0px 10px;
         .edit-profile{
             padding:5px 10px; 
+            font-size: 14px;
+        }
+        .follow-button{
+            padding:5px 10px;
+            font-size: 14px;
+        }
+        .followed-button{
+            padding:5px 10px;
             font-size: 14px;
         }
     }
