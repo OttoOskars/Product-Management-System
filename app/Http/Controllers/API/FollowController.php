@@ -100,29 +100,51 @@ class FollowController extends Controller
         return $user2->followers->contains('UserID', $user1->UserID);
     }
 
-    public function getFollowingUsers(Request $request)
+    public function getFollowingUsers($userTag)
     {
-        $user = $request->user(); // Get the authenticated user
-
-        // Fetch the list of users that the current user is following
-        $followingUsers = User::select('users.*')
-            ->join('follows', 'users.UserID', '=', 'follows.FollowingID')
-            ->where('follows.FollowerID', $user->UserID)
-            ->get();
-
-        return response()->json($followingUsers);
+        if (auth()->check()) {
+            $user = auth()->user();
+            $tag = '@' . ltrim($userTag, '@');
+            $user2 = User::where('UserTag', $tag)->first();
+            if (!$user2) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+            $userID = $user2->UserID;
+            $following = User::select('users.*')
+                ->join('follows', 'users.UserID', '=', 'follows.FollowingID')
+                ->where('follows.FollowerID', $user->UserID)
+                ->get();
+            foreach ($following as $user3) {
+                $user3->isFollowedByMe = $this->checkIfFollowedByUser($user, $user3);
+            }
+            return response()->json($following);
+        } else {
+            // Handle the case where the user is not authenticated.
+            return response()->json(['error' => 'User not authenticated.'], 401);
+        }
     }
 
-    public function getFollowers(Request $request)
+    public function getFollowers($userTag)
     {
-        $user = $request->user(); // Get the authenticated user
-
-        // Fetch the list of users who are following the current user
-        $followers = User::select('users.*')
-            ->join('follows', 'users.UserID', '=', 'follows.FollowerID')
-            ->where('follows.FollowingID', $user->UserID)
-            ->get();
-
-        return response()->json($followers);
+        if (auth()->check()) {
+            $user = auth()->user();
+            $tag = '@' . ltrim($userTag, '@');
+            $user2 = User::where('UserTag', $tag)->first();
+            if (!$user2) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+            $userID = $user2->UserID;
+            $followers = User::select('users.*')
+                ->join('follows', 'users.UserID', '=', 'follows.FollowerID')
+                ->where('follows.FollowingID', $user2->UserID)
+                ->get();
+            foreach ($followers as $user3) {
+                $user3->isFollowedByMe = $this->checkIfFollowedByUser($user, $user3);
+            }
+            return response()->json($followers);
+        } else {
+            // Handle the case where the user is not authenticated.
+            return response()->json(['error' => 'User not authenticated.'], 401);
+        }
     }
 }

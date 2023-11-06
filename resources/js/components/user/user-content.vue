@@ -28,8 +28,8 @@
                 <div class="description">{{ profileuser.Description }}</div>
                 <div class="join-date"><ion-icon name="calendar-outline" class="callendar-icon"></ion-icon>{{ profileuser.create_date }}</div>
                 <div class="follow-info">
-                    <p><span class="bold">{{ profileuser.following_count }}</span>Following</p>
-                    <p><span class="bold">{{ profileuser.follower_count }}</span>Followers</p>
+                    <p @click="openfollowing(profileuser.UserTag)"><span class="bold">{{ profileuser.following_count }}</span>Following</p>
+                    <p @click="openfollowers(profileuser.UserTag)"><span class="bold">{{ profileuser.follower_count }}</span>Followers</p>
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@
                         <!-- ############################################# -->
                         <div class="top2">
                             <div class="person-image">
-                                <img @click.stop="openProfile(tweet.user.UserTag)">
+                                <img @click.stop="openProfile(tweet.user.UserTag)" :src="'/storage/' + tweet.user.ProfilePicture">
                             </div>
                             <div class="info-content">
                                 <div class="userinfo">
@@ -235,7 +235,6 @@ export default{
     },
     computed:{
         ...mapState(['user']),
-
     },
     setup() {
     const tweet_count = ref(0);
@@ -313,6 +312,14 @@ export default{
     };
   },
     methods: {
+        openfollowing(tag){
+            const NoSymbolTag = tag.replace(/^@/, '');
+            this.$router.push({ name: 'following', params: { UserTag : NoSymbolTag } });
+        },
+        openfollowers(tag){
+            const NoSymbolTag = tag.replace(/^@/, '');
+            this.$router.push({ name: 'followers', params: { UserTag : NoSymbolTag } });
+        },
         async updateProfile() {
             const formData = new FormData();
             const contentType = 'image/png';

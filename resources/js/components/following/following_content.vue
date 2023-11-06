@@ -1,24 +1,26 @@
 <template>
     <div class="following-container">
+        <div class="black-line"></div>
         <div class="top-bar">
             <button class="back-icon" @click="goBack">
                 <ion-icon name="arrow-back-outline"></ion-icon>
             </button>
-            <div class="following-top">
-                <p class="title">Following</p>
+            <div class="profile-top">
+                <p class="title" v-if="followuser">{{ followuser.Name }} follows</p>
+                <p class="tweet_count">{{ followingList.length }} people</p>
             </div>
         </div>
         <div class="people-container">
-            <div class="person" v-for="user in followingList" :key="user.UserID">
+            <div class="person" v-for="person in followingList" :key="person.UserID">
                 <div class="user-info">
-                    <img :src="user.ProfilePicture" alt="" class="person-img">
+                    <img @click.stop="openProfile(person.UserTag)" :src="'/storage/' + person.ProfilePicture" alt="" class="person-img">
                     <div class="person-info">
-                        <p class="username">{{ user.Name }}</p>
-                        <p class="usertag">{{ user.UserTag }}</p>
+                        <p class="username">{{ person.Name }}</p>
+                        <p class="usertag">{{ person.UserTag }}</p>
                     </div>
                 </div>
-                <button class="follow-btn" @click="toggleFollowUnfollow(user.UserID)" :class="{ 'followed-btn': user.isFollowedByMe }">
-                    {{ user.isFollowedByMe ? 'Unfollow' : 'Follow' }}
+                <button class="follow-btn" v-if="!person.UserID === user.UserID" @click="toggleFollowUnfollow(person.UserID)" :class="{ 'followed-btn': person.isFollowedByMe }">
+                    {{ person.isFollowedByMe ? 'Unfollow' : 'Follow' }}
                 </button>
             </div>
         </div>
@@ -26,19 +28,24 @@
 </template>
 <script>
 import axios from 'axios';
+import { mapState } from 'vuex';
 export default {
     name: 'Following',
     data(){
         return {
             followingList: [],
+            followuser: null,
         }
+    },
+    computed:{
+        ...mapState(['user']),
     },
     methods: {
         goBack() {
             this.$router.go(-1);
         },
-        fetchFollowingList() {
-            axios.get('/api/following')
+        fetchFollowingList(tag) {
+            axios.get('/api/following/' + tag)
                 .then(response => {
                     this.followingList = response.data;
                 })
@@ -46,9 +53,58 @@ export default {
                     console.error('Error fetching following list:', error);
                 });
         },
+        openProfile(tag){
+            const NoSymbolTag = tag.replace(/^@/, '');
+            this.$router.push({ name: 'profile', params: { UserTag : NoSymbolTag } });
+            console.log(tag);
+        },
+        toggleFollowUnfollow(userID) {
+            const user = this.followingList.find((t) => t.UserID === userID);
+            if (user.isFollowedByMe) {
+                this.handleUnfollow(userID);
+            } else {
+                this.handleFollow(userID);
+            }
+        },
+        async handleFollow(userID) {
+            try {
+                const response = await this.$axios.post(`/api/follow/${userID}`);
+                console.log('Follow Response:', response);
+                if (response.status === 200) {
+                    const user = this.followingList.find((t) => t.UserID === userID);
+                    user.isFollowedByMe = true;
+                }
+            } catch (error) {
+                console.error('Error following the user:', error);
+            }
+        },
+
+        async handleUnfollow(userID) {
+            try {
+                const response = await this.$axios.post(`/api/unfollow/${userID}`);
+                console.log('Unfollow Response:', response);
+                if (response.status === 200) {
+                    const user = this.followingList.find((t) => t.UserID === userID);
+                    user.isFollowedByMe = false;
+                }
+            } catch (error) {
+                console.error('Error unfollowing the user:', error);
+            }
+        },
+        getUserInfo(userTag){
+            this.$axios.get('/api/get-user-tag/' + userTag)
+            .then(response => {
+                this.followuser = response.data.user;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        },
     },
-    mounted() {
-        this.fetchFollowingList();
+    async mounted() {
+        await this.$store.dispatch('initializeApp');
+        this.getUserInfo(this.$route.params.UserTag);
+        this.fetchFollowingList(this.$route.params.UserTag);
     },
 }
 </script>
@@ -57,6 +113,15 @@ export default {
     width:100%;
     height:auto;
     color:white;
+}
+.black-line{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:2px;
+    z-index:8;
+    background-color: black;
 }
 .top-bar{
     height:60px;
@@ -90,7 +155,7 @@ export default {
             background-color: rgba($color: #1a1a1a, $alpha: 1);
         }
     }
-    .following-top{
+    .profile-top{
         height:100%;
         width:auto;
         display:flex;
@@ -103,12 +168,21 @@ export default {
             height:50%;
             display:flex;
             align-items: center;
+            color:white;
             justify-content: flex-start;
             box-sizing: border-box;
             font-weight: bold;
             font-size: 20px;
-            margin-top: 7.5px;
+            margin:0;
             padding:0;
+        }
+        .tweet_count{
+            width:100%;
+            height:50%;
+            margin:0;
+            padding:0;
+            font-size: 15px;
+            color:#6A6F74;
         }
     }
 }
@@ -119,7 +193,7 @@ export default {
     flex-direction:column;
     box-sizing: border-box;
     padding-top: 0px;
-    padding-bottom:100px;
+    padding-bottom:80px;
     .person{
         width:100%;
         height:70px;

@@ -74,14 +74,24 @@ const router = createRouter({
       meta: { requiresAuth: true }, // Public route
     },
     {
-      path: '/following',
+      path: '/:UserTag/following',
       component: () => import('./components/following/following.vue'),
-      meta: { requiresAuth: false }, // Public route
+      name: 'following',
+      meta: { requiresAuth: false }, // Protected route (if required)
+      beforeRouteUpdate(to, from, next) {
+        // This hook will be called when the route parameters change
+        location.reload(); // This triggers a hard page refresh
+      },
     },
     {
-      path: '/followers',
+      path: '/:UserTag/followers',
       component: () => import('./components/followers/followers.vue'),
-      meta: { requiresAuth: false }, // Public route
+      name: 'followers',
+      meta: { requiresAuth: false }, // Protected route (if required)
+      beforeRouteUpdate(to, from, next) {
+        // This hook will be called when the route parameters change
+        location.reload(); // This triggers a hard page refresh
+      },
     },
 
 
