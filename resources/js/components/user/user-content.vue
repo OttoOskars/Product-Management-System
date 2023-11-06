@@ -7,7 +7,7 @@
             </button>
             <div class="profile-top">
                 <p class="title" v-if="profileuser">{{ profileuser.Name }}</p>
-                <p class="tweet_count">{{ postType === 'likes' ? like_count : (postType === 'replies' ? reply_count : tweet_count) }} {{ postType }}</p>
+                <p class="tweet_count">{{ postType === 'likes' ? like_count : (postType === 'replies' ? reply_count : tweet_count) }} {{ calculateModifiedPostType() }}</p>
             </div>
         </div>
         <div class="profile-info">
@@ -315,6 +315,17 @@ export default{
     };
   },
     methods: {
+        calculateModifiedPostType() {
+            if (this.postType === 'likes' && this.like_count === 1) {
+                return 'like';
+            } else if (this.postType === 'replies' && this.reply_count === 1) {
+                return 'reply';
+            } else if (this.postType === 'tweets' && this.tweet_count === 1) {
+                return 'tweet';
+            } else {
+                return this.postType;
+            }
+        },
         openfollowing(tag){
             const NoSymbolTag = tag.replace(/^@/, '');
             this.$router.push({ name: 'following', params: { UserTag : NoSymbolTag } });
