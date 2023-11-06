@@ -5,30 +5,16 @@
 <script>
 import router from '../router';
 import store from '../store';
-
 export default {
-  name: 'App',
-  data: () => ({
-    showCreateAccount: false,
-    isLoggedIn: false
-  }),
-  setup() {
-    if (store.state.isLoggedIn){
-        this.isLoggedIn=true
-        router.push('/home')
-    }
-  },
-  methods: {
-    goToExample(){
-        this.$router.push('/test');
+    name: 'App',
+    data: () => ({
+    }),
+    setup() {
     },
     created() {
-        if (store.state.isLoggedIn){
-            this.isLoggedIn=true
-        }
     },
-    
-    logout(e){
+    methods: {
+        logout(e){
             e.preventDefault()
             this.$axios.get('/sanctum/csrf-cookie').then(response => {
                 this.$axios.post('/api/logout')
@@ -44,7 +30,7 @@ export default {
                 })
             })
         }
-  },
+    },
 };
 
 
