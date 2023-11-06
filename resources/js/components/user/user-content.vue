@@ -436,7 +436,7 @@ export default{
         },
         openProfile(tag){
             const NoSymbolTag = tag.replace(/^@/, '');
-            this.$router.push({ name: 'profile', params: { UserTag : NoSymbolTag } });
+            this.$router.push('/profile/' + NoSymbolTag);
             console.log(tag);
         },
         openTweet(id) {
@@ -709,7 +709,10 @@ export default{
             });
         },
     },
-    watch:{
+    watch: {
+        '$route.params.UserTag'(newUserTag) {
+            window.location.reload();
+        },
     },
     async mounted() {
         await this.$store.dispatch('initializeApp');

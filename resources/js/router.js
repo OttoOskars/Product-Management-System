@@ -58,10 +58,6 @@ const router = createRouter({
       component: () => import('./components/user/user.vue'),
       name: 'profile',
       meta: { requiresAuth: false }, // Protected route (if required)
-      beforeRouteUpdate(to, from, next) {
-        // This hook will be called when the route parameters change
-        location.reload(); // This triggers a hard page refresh
-      },
     },
     {
       path: '/bookmarks',
@@ -99,10 +95,10 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     if (to.meta.requiresAuth && !store.state.user) {
       // If the route requires authentication and the user is not logged in, redirect to the login page
-      next('/');
+      await push('/');
     } else {
       next();
     }
