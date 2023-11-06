@@ -69,10 +69,20 @@ const router = createRouter({
       meta: { requiresAuth: true }, // Public route
     },
     {
-        path: '/messages',
-        component: () => import('./components/messages/messages.vue'),
-        meta: { requiresAuth: true }, // Public route
-      },
+      path: '/messages',
+      component: () => import('./components/messages/messages.vue'),
+      meta: { requiresAuth: true }, // Public route
+    },
+    {
+      path: '/following',
+      component: () => import('./components/following/following.vue'),
+      meta: { requiresAuth: false }, // Public route
+    },
+    {
+      path: '/followers',
+      component: () => import('./components/followers/followers.vue'),
+      meta: { requiresAuth: false }, // Public route
+    },
 
 
     // ...other routes

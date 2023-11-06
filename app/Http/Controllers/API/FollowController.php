@@ -95,9 +95,34 @@ class FollowController extends Controller
         }
     }
 
-
     private function checkIfFollowedByUser($user1, $user2)
     {
         return $user2->followers->contains('UserID', $user1->UserID);
+    }
+
+    public function getFollowingUsers(Request $request)
+    {
+        $user = $request->user(); // Get the authenticated user
+
+        // Fetch the list of users that the current user is following
+        $followingUsers = User::select('users.*')
+            ->join('follows', 'users.UserID', '=', 'follows.FollowingID')
+            ->where('follows.FollowerID', $user->UserID)
+            ->get();
+
+        return response()->json($followingUsers);
+    }
+
+    public function getFollowers(Request $request)
+    {
+        $user = $request->user(); // Get the authenticated user
+
+        // Fetch the list of users who are following the current user
+        $followers = User::select('users.*')
+            ->join('follows', 'users.UserID', '=', 'follows.FollowerID')
+            ->where('follows.FollowingID', $user->UserID)
+            ->get();
+
+        return response()->json($followers);
     }
 }
