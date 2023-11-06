@@ -11,7 +11,7 @@
         <div class="people-container">
             <div class="person" v-for="user in users" :key="user.UserID">
                 <div class="user-info">
-                    <img :src="user.ProfilePicture" alt="" class="person-img"> 
+                    <img :src="'/storage/' + user.ProfilePicture" class="person-img"> 
                     <div class="person-info">
                         <p class="username">{{ user.Name }}</p>
                         <p class="usertag">{{ user.UserTag }}</p>

@@ -14,12 +14,12 @@
             <div v-for="tweet in tweets" :key="tweet.TweetID">
                 <div class="post" @click="openTweet(tweet.TweetID)">
                     <div class="left-side">
-                        <img @click.stop="openProfile(tweet.user.UserTag)">
+                        <img @click.stop="openProfile(tweet.user.UserTag)" :src="'/storage/' + tweet.user.ProfilePicture">
                     </div>
                     <div class="right-side">
                         <div class="top2">
                             <div class="person-image">
-                                <img @click.stop="openProfile(tweet.user.UserTag)">
+                                <img @click.stop="openProfile(tweet.user.UserTag)" :src="'/storage/' + tweet.user.ProfilePicture">
                             </div>
                             <div class="info-content">
                                 <div class="userinfo">
@@ -74,7 +74,7 @@
             <div class="comment-popup">
                 <div class="top">
                     <div class="left-side-popup">
-                        <img  @click="openProfile(user.UserTag)">
+                        <img v-if="user.ProfilePicture"  @click="openProfile(user.UserTag)" :src="'/storage/' + user.ProfilePicture">
                     </div>
                     <div class="right-side-popup">
                         <div class="userinfo-popup">
