@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div class="edit-button-div">
-                <button class="edit-profile" @click="() => TogglePopup('EditTrigger')">Edit profile</button>
+                <button class="edit-profile" @click="() => TogglePopup('EditTrigger')" v-if="profileuser && profileuser.UserID === user.UserID">Edit profile</button>
             </div>
             <div class="profile-details" v-if="profileuser">
                 <div class="user-info">
