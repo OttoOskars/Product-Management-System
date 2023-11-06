@@ -19,7 +19,7 @@
                         <p class="usertag">{{ person.UserTag }}</p>
                     </div>
                 </div>
-                <button class="follow-btn" v-if="!person.UserID === user.UserID" @click="toggleFollowUnfollow(person.UserID)" :class="{ 'followed-btn': person.isFollowedByMe }">
+                <button class="follow-btn" v-if="!(person.UserID === user.UserID)" @click="toggleFollowUnfollow(person.UserID)" :class="{ 'followed-btn': person.isFollowedByMe }">
                     {{ person.isFollowedByMe ? 'Unfollow' : 'Follow' }}
                 </button>
             </div>
