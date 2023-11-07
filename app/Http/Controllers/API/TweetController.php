@@ -289,12 +289,15 @@ class TweetController extends Controller
         if (!$tweet) {
             return response()->json(['message' => 'Tweet not found'], 404);
         }
-
+        $tweet->likes()->delete();
+        $tweet->retweets()->delete();
+        $tweet->bookmarks()->delete();
+        $tweet->comments()->delete();
         $tweet->delete();
+
 
         return response()->json(['message' => 'Tweet deleted successfully']);
     }
-
     public function getTweetData($id)
     {
         $tweet = Tweet::with('user')
@@ -330,8 +333,7 @@ class TweetController extends Controller
         }
         return response()->json(['tweet' => $tweet]);
     }
-    
-    // Add a function to check if a user has liked a tweet
+
     private function checkIfLikedByUser($tweet, $user)
     {
         return $tweet->likes->contains('UserID', $user->UserID);
