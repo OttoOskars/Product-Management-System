@@ -20,8 +20,17 @@
             </div>
             <div class="edit-button-div" v-if="profileuser">
                 <button class="edit-profile" @click="() => TogglePopup('EditTrigger')" v-if="profileuser.UserID === user.UserID">Edit profile</button>
-                <button class="follow-button" @click="toggleFollowUnfollow(user.UserID)" v-if="!(profileuser.UserID === user.UserID)">
-                    {{ profileuser.isFollowedByMe ? 'Unfollow' : 'Follow' }}
+                <button  
+                    class="follow-button" 
+                    @click="toggleFollowUnfollow(profileuser.UserID)"
+                    v-if="!(profileuser.UserID === user.UserID)"
+                    :class="{
+                        'followed-button': profileuser.isFollowedByMe,
+                        'unfollow-button': profileuser.isFollowedByMe && isHovered[profileuser.UserID]
+                    }"
+                    @mouseover="isHovered[profileuser.UserID] = true"
+                    @mouseout="isHovered[profileuser.UserID] = false">
+                    {{ followButtonLabel(profileuser) }}
                 </button>
             </div>
             <div class="profile-details" v-if="profileuser">
@@ -260,10 +269,22 @@ export default{
     },
     data(){
         return {
+            isHovered: [],
         }
     },
     computed:{
         ...mapState(['user']),
+        followButtonLabel() {
+            return (person) => {
+                if (this.isHovered[person.UserID] && person.isFollowedByMe) {
+                    return 'Unfollow';
+                } else if (person.isFollowedByMe) {
+                    return 'Following';
+                } else {
+                    return 'Follow';
+                }
+            };
+        },
     },
     setup() {
     const tweet_count = ref(0);
@@ -974,7 +995,7 @@ export default{
             background-color: #000000;
         }
         .follow-button{
-            padding:10px 20px; 
+            padding:10px 15px; 
             display:flex;
             align-items: center;
             justify-content: center;
@@ -992,21 +1013,36 @@ export default{
             }
         }
         .followed-button{
-            padding:10px 20px; 
+            padding:10px 15px; 
             display:flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             border-radius: 50px;
-            border:none;
-            background-color: #1D9BF0;
-            color:rgb(255, 255, 255);
+            border:1px solid #6A6F74;
+            background-color: black;
+            color:white;
+            font-size:15px;
+            font-weight: bold;
+            transition:all 0.3s;
+            cursor:pointer;
+        }
+        .unfollow-button{
+            padding:10px 15px; 
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 50px;
+            border:1px solid #e42020;
+            background-color: rgba($color: #e42020, $alpha: 0.4);
+            color:#e42020;
             font-size:15px;
             font-weight: bold;
             transition:all 0.3s;
             cursor:pointer;
             &:hover{
-                background-color: #1a8bd6;
+                background-color: rgba($color: #e42020, $alpha: 0.15);
             }
         }
     }

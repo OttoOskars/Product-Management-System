@@ -112,7 +112,7 @@ class FollowController extends Controller
             $userID = $user2->UserID;
             $following = User::select('users.*')
                 ->join('follows', 'users.UserID', '=', 'follows.FollowingID')
-                ->where('follows.FollowerID', $user->UserID)
+                ->where('follows.FollowerID', $user2->UserID)
                 ->get();
             foreach ($following as $user3) {
                 $user3->isFollowedByMe = $this->checkIfFollowedByUser($user, $user3);

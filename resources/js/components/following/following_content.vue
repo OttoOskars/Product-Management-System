@@ -19,8 +19,17 @@
                         <p class="usertag">{{ person.UserTag }}</p>
                     </div>
                 </div>
-                <button class="follow-btn" v-if="!(person.UserID === user.UserID)" @click="toggleFollowUnfollow(person.UserID)" :class="{ 'followed-btn': person.isFollowedByMe }">
-                    {{ person.isFollowedByMe ? 'Unfollow' : 'Follow' }}
+                <button  
+                    class="follow-button" 
+                    @click="toggleFollowUnfollow(person.UserID)"
+                    v-if="!(person.UserID === user.UserID)"
+                    :class="{
+                        'followed-button': person.isFollowedByMe,
+                        'unfollow-button': person.isFollowedByMe && isHovered[person.UserID]
+                    }"
+                    @mouseover="isHovered[person.UserID] = true"
+                    @mouseout="isHovered[person.UserID] = false">
+                    {{ followButtonLabel(person) }}
                 </button>
             </div>
         </div>
@@ -35,10 +44,22 @@ export default {
         return {
             followingList: [],
             followuser: null,
+            isHovered:  [],
         }
     },
     computed:{
         ...mapState(['user']),
+        followButtonLabel() {
+            return (person) => {
+                if (this.isHovered[person.UserID] && person.isFollowedByMe) {
+                    return 'Unfollow';
+                } else if (person.isFollowedByMe) {
+                    return 'Following';
+                } else {
+                    return 'Follow';
+                }
+            };
+        },
     },
     methods: {
         goBack() {
@@ -240,20 +261,56 @@ export default {
                 }
             }
         }
-        .follow-btn {
-            background-color: #1e87f9;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 20px;
-            cursor: pointer;
-            height: 40px;
-            width: 80px;
-            font-weight: bold;
-        }
-        .followed-btn {
+        .follow-button{
+            padding:10px 15px; 
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 50px;
+            border:none;
             background-color: white;
-            color:#1d9bf0
+            color:black;
+            font-size:15px;
+            font-weight: bold;
+            transition:all 0.3s;
+            cursor:pointer;
+            &:hover{
+                background-color: #D7DBDC;
+            }
+        }
+        .followed-button{
+            padding:10px 15px; 
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 50px;
+            border:1px solid #6A6F74;
+            background-color: black;
+            color:white;
+            font-size:15px;
+            font-weight: bold;
+            transition:all 0.3s;
+            cursor:pointer;
+        }
+        .unfollow-button{
+            padding:10px 15px; 
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 50px;
+            border:1px solid #e42020;
+            background-color: rgba($color: #e42020, $alpha: 0.4);
+            color:#e42020;
+            font-size:15px;
+            font-weight: bold;
+            transition:all 0.3s;
+            cursor:pointer;
+            &:hover{
+                background-color: rgba($color: #e42020, $alpha: 0.15);
+            }
         }
     }
 }

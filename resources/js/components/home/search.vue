@@ -20,19 +20,28 @@
         <div class="who-to-follow">
             <div class="title">Who to follow</div>
             <div class="people-container">
-                <div class="person" v-for="user in users" :key="user.UserID">
+                <div class="person" v-for="person in users" :key="person.UserID">
                     <div class="user">
                         <div class="user-img">
-                            <img @click.stop="openProfile(user.UserTag)" :src="'/storage/' + user.ProfilePicture" alt="" class="person-img"> 
+                            <img @click.stop="openProfile(person.UserTag)" :src="'/storage/' + person.ProfilePicture" alt="" class="person-img"> 
                         </div>
                         <div class="user-info">
-                            <p class="username">{{ user.Name }}</p>
-                            <p class="usertag">{{ user.UserTag }}</p>
+                            <p class="username">{{ person.Name }}</p>
+                            <p class="usertag">{{ person.UserTag }}</p>
                         </div>
                     </div>
                     <div class="button-container">
-                        <button class="follow-button" @click="toggleFollowUnfollow(user.UserID)">
-                            {{ user.isFollowedByMe ? 'Unfollow' : 'Follow' }}
+                        <button  
+                            class="follow-button" 
+                            @click="toggleFollowUnfollow(person.UserID)"
+                            v-if="!(person.UserID === user.UserID)"
+                            :class="{
+                                'followed-button': person.isFollowedByMe,
+                                'unfollow-button': person.isFollowedByMe && isHovered[person.UserID]
+                            }"
+                            @mouseover="isHovered[person.UserID] = true"
+                            @mouseout="isHovered[person.UserID] = false">
+                            {{ followButtonLabel(person) }}
                         </button>
                     </div>
                 </div>
@@ -72,8 +81,23 @@ export default {
             isInputFocused: false,
             search: '',
             users: [], // Initialize as an empty array
-            trends: [], // Initialize as an empty array
+            trends: 6, // Initialize as an empty array
+            isHovered: [],
         };
+    },
+    computed: {
+        ...mapState(['user']),
+        followButtonLabel() {
+            return (person) => {
+                if (this.isHovered[person.UserID] && person.isFollowedByMe) {
+                    return 'Unfollow';
+                } else if (person.isFollowedByMe) {
+                    return 'Following';
+                } else {
+                    return 'Follow';
+                }
+            };
+        },
     },
     setup() {
         // ...
@@ -141,7 +165,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .search-container{
-    width: 100%;
+    width:1/3 * 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -149,15 +173,16 @@ export default {
     position: fixed;
     box-sizing: border-box;
     padding-left: 30px;
+    padding-right:10px;
     padding-top: 10px;
     border-left: solid 1px #2F3336;
     background: none;
     color: white;
 }
 .search-input-container {
-    width: 400px;
+    width: 100%;
     height: 60px;
-    position: fixed;
+    position: sticky;
     top: 0;
     box-sizing: border-box;
     z-index: 99;
@@ -167,7 +192,7 @@ export default {
     align-items: center;
     .search-input {
         width: 100%;
-        height: 90%;
+        height: 50px;
         border-radius: 50px;
         padding-left:60px;
         border:  1px solid transparent;
@@ -231,13 +256,12 @@ export default {
     font-size: x-large;
 }
 .who-to-follow{
-    width:400px;
+    width:100%;
     height:auto;
     background-color: #16181C;
     display:flex;
     flex-direction: column;
     box-sizing: border-box;
-    margin-top:70px;
     border-radius: 25px;
     .people-container{
         box-sizing: border-box;
@@ -305,7 +329,7 @@ export default {
                 align-items: center;
                 justify-content: center;
                 .follow-button{
-                    padding:10px 20px; 
+                    padding:10px 15px; 
                     display:flex;
                     align-items: center;
                     justify-content: center;
@@ -318,27 +342,23 @@ export default {
                     font-weight: bold;
                     transition:all 0.3s;
                     cursor:pointer;
-                }
-                .follow-button:hover{
-                    background-color: #D7DBDC;
+                    &:hover{
+                        background-color: #D7DBDC;
+                    }
                 }
                 .followed-button{
-                    padding:10px 20px; 
-                    display:flex;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                    border-radius: 50px;
-                    border:none;
-                    background-color: #1D9BF0;
-                    color:rgb(255, 255, 255);
-                    font-size:15px;
-                    font-weight: bold;
-                    transition:all 0.3s;
-                    cursor:pointer;
+                    border:1px solid #6A6F74;
+                    background-color: #16181C;
+                    color:white;
                 }
-                .followed-button:hover{
-                    background-color: #1a8bd6;
+                .unfollow-button{
+                    border:1px solid #e42020;
+                    background-color: rgba($color: #e42020, $alpha: 0.4);
+                    color:#e42020;
+                    cursor:pointer;
+                    &:hover{
+                        background-color: rgba($color: #e42020, $alpha: 0.15);
+                    }
                 }
             }
         }
@@ -373,7 +393,7 @@ export default {
 .trends{
     position:sticky;
     top:80px;
-    width:400px;
+    width:100%;
     height:auto;
     background-color: #16181C;
     display:flex;
@@ -423,25 +443,17 @@ export default {
     
 }
 @media (max-width: 1250px) {
+    .search-container{
+        width:400px;
+    }
     .who-to-follow{
-        width:300px;
+        width:100%;
     }
     .search-input-container{
-        width:300px;
+        width:100%;
     }
     .trends{
-        width:300px;
-    }
-}
-@media (max-width: 1100px) {
-    .who-to-follow{
-        width:300px;
-    }
-    .search-input-container{
-        width:300px;
-    }
-    .trends{
-        width:300px;
+        width:100%;
     }
 }
 </style>
