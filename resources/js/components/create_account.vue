@@ -297,7 +297,7 @@
           const response = await this.$store.dispatch('register', registrationData);
 
           if (response.success) {
-            this.$router.push('/home2');
+            this.$router.push('/home');
           } else {
             if (response.message.includes('Email')) {
               this.emailError = response.message;
