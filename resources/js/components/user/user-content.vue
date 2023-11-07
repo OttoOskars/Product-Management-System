@@ -49,7 +49,7 @@
                 </div>
                 <div class="inner-post">
                     <div class="left-side">
-                        <img  @click.stop="openProfile(tweet.user.UserTag)" :src="'/storage/' + tweet.user.ProfilePicture">
+                        <img @click.stop="openProfile(tweet.user.UserTag)" :src="'/storage/' + tweet.user.ProfilePicture">
                         <div class="horizontal-comment-line" v-if="postType === 'replies'"></div>
                     </div>
                     <div class="right-side">

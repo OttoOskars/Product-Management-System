@@ -21,7 +21,7 @@
                 <div class="person" v-for="user in users" :key="user.UserID">
                     <div class="user">
                         <div class="user-img">
-                            <img :src="'/storage/' + user.ProfilePicture" alt="" class="person-img"> 
+                            <img @click.stop="openProfile(user.UserTag)" :src="'/storage/' + user.ProfilePicture" alt="" class="person-img"> 
                         </div>
                         <div class="user-info">
                             <p class="username">{{ user.Name }}</p>
@@ -72,8 +72,10 @@ export default{
         redirectTo(where) {
             this.$router.push(where);
         },
-        openProfile(id){
-            console.log(id);
+        openProfile(tag){
+            const NoSymbolTag = tag.replace(/^@/, '');
+            this.$router.push('/profile/' + NoSymbolTag);
+            console.log(tag);
         },
         toggleFollowUnfollow(userID) {
             const user = this.users.find((t) => t.UserID === userID);
