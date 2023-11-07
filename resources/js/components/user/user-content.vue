@@ -51,7 +51,7 @@
             <button @click="switchToReplies" class="post-type-btn" :class ="{ 'active-post-type': postType == 'replies' }">Replies<div class="active-line" :class ="{ 'active': postType == 'replies' }"></div></button>
             <button @click="switchToLikes" class="post-type-btn" :class ="{ 'active-post-type': postType == 'likes' }">Likes<div class="active-line" :class ="{ 'active': postType == 'likes' }"></div></button>
         </div>
-        <div class="post-container" v-if="profileuser && currentPosts.length > 0">
+        <div class="post-container">
             <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID"  @click="openTweet(tweet.TweetID)">
                 <div class="isretweet" v-if="tweet.isRetweet">
                     <p class="tweet-text"><span>{{ profileuser.UserTag }}</span> Reposted</p>
@@ -141,7 +141,7 @@
                     </div>
                 </div>
             </div>
-            <div class="no-posts">{{ profileuser.UserTag }} currently has no {{ noMorePosts() }} {{ postType }}</div>
+            <div class="no-posts" v-if="profileuser">{{ profileuser.UserTag }} currently has no {{ noMorePosts() }} {{ postType }}</div>
         </div>
         <Popup v-if="popupTriggers.CommentTrigger" :TogglePopup="() => TogglePopup('CommentTrigger')">
             <div class="comment-popup">
