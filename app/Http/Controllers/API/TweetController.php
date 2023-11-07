@@ -66,7 +66,7 @@ class TweetController extends Controller
                 ->orderBy('created_at', 'desc');
     
                 if ($type === 'following') {
-                    $query->whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID));
+                    $query->whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID))->whereNotIn('UserID', [$user->UserID]);
                 } elseif ($type === 'my') {
                     $query->where('UserID', $user->UserID);
                 } elseif ($type === 'liked') {
@@ -166,35 +166,31 @@ class TweetController extends Controller
     
             $userID = $user2->UserID;
     
-            $tweets = Tweet::with('user', 'comments')
-                ->join('comments', function($join) use ($userID) {
-                    $join->on('tweets.TweetID', '=', 'comments.TweetID')
-                        ->where('comments.UserID', $userID);
-                })
-                ->where(function ($q) use ($userID) {
-                    $q->where('tweets.UserID', $userID)
-                        ->orWhere('comments.UserID', $userID);
-                })
-                ->select('tweets.*')
-                ->selectSub(function ($query) {
-                    $query->from('comments')
-                        ->selectRaw('COUNT(*)')
-                        ->whereColumn('comments.TweetID', 'tweets.TweetID');
-                }, 'comment_count')
-                ->selectSub(function ($query) {
-                    $query->from('likes')
-                        ->selectRaw('COUNT(*)')
-                        ->whereColumn('likes.TweetID', 'tweets.TweetID');
-                }, 'like_count')
-                ->selectSub(function ($query) {
-                    $query->from('retweets')
-                        ->selectRaw('COUNT(*)')
-                        ->whereColumn('retweets.TweetID', 'tweets.TweetID');
-                }, 'retweet_count')
-                ->orderByRaw('IF(comments.created_at IS NOT NULL, comments.created_at, tweets.created_at) DESC');
-    
-            $tweets = $tweets->get();
-    
+            $tweets = Tweet::with(['user', 'comments' => function ($query) use ($userID) {
+                $query->where('UserID', $userID);
+            }])
+            ->whereHas('comments', function ($query) use ($userID) {
+                $query->where('UserID', $userID);
+            })
+            ->select('tweets.*')
+            ->selectSub(function ($query) {
+                $query->from('comments')
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('comments.TweetID', 'tweets.TweetID');
+            }, 'comment_count')
+            ->selectSub(function ($query) {
+                $query->from('likes')
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('likes.TweetID', 'tweets.TweetID');
+            }, 'like_count')
+            ->selectSub(function ($query) {
+                $query->from('retweets')
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('retweets.TweetID', 'tweets.TweetID');
+            }, 'retweet_count')
+            ->orderBy('tweets.created_at', 'desc')
+            ->get();
+
             foreach ($tweets as $tweet) {
                 $now = Carbon::now();
                 $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
@@ -203,9 +199,10 @@ class TweetController extends Controller
                 $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
             }
     
-            return response()->json(['tweets' => $tweets, 'tweet_count' => $tweets->count()]);
+            $tweetCount = $tweets->count();
+    
+            return response()->json(['tweets' => $tweets, 'tweet_count' => $tweetCount]);
         } else {
-            // Handle the case where the user is not authenticated.
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }

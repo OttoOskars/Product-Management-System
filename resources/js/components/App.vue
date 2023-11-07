@@ -10,6 +10,9 @@ export default {
     data: () => ({
     }),
     setup() {
+        if (store.state.isLoggedIn) {
+            router.push('/home');
+        }
     },
     created() {
     },

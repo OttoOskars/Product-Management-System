@@ -12,13 +12,14 @@
         </div>
         <div class="profile-info">
             <div class="banner" v-if="profileuser" >
-                <img :src="'/storage/' + profileuser.Banner">
+                <img class="banner-image" v-if="profileuser.Banner" :src="'/storage/' + profileuser.Banner">
+                <div v-if="!profileuser.Banner" class="banner-image"></div>
                 <div class="profile-picture">
                     <img :src="'/storage/' + profileuser.ProfilePicture">
                 </div>
             </div>
             <div class="edit-button-div" v-if="profileuser">
-                <button class="edit-profile" @click="() => TogglePopup('EditTrigger')" v-if="profileuser && profileuser.UserID === user.UserID">Edit profile</button>
+                <button class="edit-profile" @click="() => TogglePopup('EditTrigger')" v-if="profileuser.UserID === user.UserID">Edit profile</button>
                 <button class="follow-button" @click="toggleFollowUnfollow(user.UserID)" v-if="!(profileuser.UserID === user.UserID)">
                     {{ profileuser.isFollowedByMe ? 'Unfollow' : 'Follow' }}
                 </button>
@@ -41,7 +42,7 @@
             <button @click="switchToReplies" class="post-type-btn" :class ="{ 'active-post-type': postType == 'replies' }">Replies<div class="active-line" :class ="{ 'active': postType == 'replies' }"></div></button>
             <button @click="switchToLikes" class="post-type-btn" :class ="{ 'active-post-type': postType == 'likes' }">Likes<div class="active-line" :class ="{ 'active': postType == 'likes' }"></div></button>
         </div>
-        <div class="post-container" v-if="profileuser">
+        <div class="post-container" v-if="profileuser && currentPosts.length > 0">
             <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID"  @click="openTweet(tweet.TweetID)">
                 <div class="isretweet" v-if="tweet.isRetweet">
                     <p class="tweet-text"><span>{{ profileuser.UserTag }}</span> Reposted</p>
@@ -49,12 +50,14 @@
                 <div class="inner-post">
                     <div class="left-side">
                         <img  @click.stop="openProfile(tweet.user.UserTag)" :src="'/storage/' + tweet.user.ProfilePicture">
+                        <div class="horizontal-comment-line" v-if="postType === 'replies'"></div>
                     </div>
                     <div class="right-side">
                         <!-- ############################################# -->
                         <div class="top2">
                             <div class="person-image">
                                 <img @click.stop="openProfile(tweet.user.UserTag)" :src="'/storage/' + tweet.user.ProfilePicture">
+                                <div class="horizontal-comment-line" v-if="postType === 'replies'"></div>
                             </div>
                             <div class="info-content">
                                 <div class="userinfo">
@@ -101,8 +104,30 @@
                                 <p class="post-btn-nr" :class="{ 'bookmarked': tweet.isBookmarked }"></p>
                             </button>
                         </div>
-                        <button class="delete-btn" @click.stop="deleteTweet(tweet.TweetID)" v-if="profileuser.UserID === tweet.user.UserID && profileuser.UserID === user.UserID">
+                        <button class="delete-btn" @click.stop="deleteTweet(tweet.TweetID)" v-if="this.postType=== 'tweets' && profileuser.UserID === tweet.user.UserID && profileuser.UserID === user.UserID">
                             <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="verical-comment-line" v-if="postType === 'replies'"></div>
+                <div class="comment-container">
+                    <div class="comment" v-for="comment in tweet.comments" :key="comment.CommentID" v-if="profileuser">
+                        <div class="left">
+                            <img :src="'/storage/' + profileuser.ProfilePicture">
+                            <div class="horizontal-comment-line" v-if="postType === 'replies'"></div>
+                            <div class="content">
+                                <div class="userinfo">
+                                    <p class="username">{{ profileuser.Name }}</p>
+                                    <p class="usertag">{{ profileuser.UserTag }}</p>
+                                    <p class="time-posted">{{ comment.created_ago }}</p>
+                                </div>
+                                <div class="content-text">
+                                    <p>{{ comment.CommentText }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="delete-btn" @click.stop="deleteComment(comment.TweetID, comment.CommentID)" v-if="profileuser.UserID === user.UserID">
+                                <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
                         </button>
                     </div>
                 </div>
@@ -141,7 +166,8 @@
                 <button class="save-btn" @click="updateProfile()">Save</button>
                 <div class="content">
                     <div class="banner">
-                        <img class="banner-img" :src="NewBannerImage ? NewBannerImage : '/storage/' + profileuser.Banner">
+                        <img v-if="profileuser.Banner || NewBannerImage" class="banner-image" :src="NewBannerImage ? NewBannerImage : '/storage/' + profileuser.Banner">
+                        <div v-if="!profileuser.Banner && !NewBannerImage" class="banner-image"></div>
                         <div class="banner-input">
                             <button class="image-btn">
                                 <input type="file" id="banner-img-input" @change="onImageChange($event, 'bannerCropper')" hidden>
@@ -260,14 +286,18 @@ export default{
 
     const currentPosts = computed(() => {
       if (postType.value === 'tweets') {
+        console.log(currentPosts.value);
         return tweets.value;
       }
-      if (postType.value === 'replies') {
-        return replies.value;
-      }
       if (postType.value === 'likes') {
+        console.log(currentPosts.value);
         return liked_tweets.value;
       }
+      if (postType.value === 'replies') {
+        console.log(currentPosts.value);
+        return replies.value;
+      }
+      
       return [];
     });
 
@@ -344,11 +374,22 @@ export default{
             this.$router.push({ name: 'followers', params: { UserTag : NoSymbolTag } });
         },
         toggleFollowUnfollow(userID) {
+            if (this.buttonDisabled) {
+                return;
+            }
             const user = this.profileuser
             if (user.isFollowedByMe) {
+                this.buttonDisabled = true;
                 this.handleUnfollow(userID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1000);
             } else {
+                this.buttonDisabled = true;
                 this.handleFollow(userID);
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1000);
             }
         },
         async handleFollow(userID) {
@@ -363,7 +404,6 @@ export default{
                 console.error('Error following the user:', error);
             }
         },
-
         async handleUnfollow(userID) {
             try {
                 const response = await this.$axios.post(`/api/unfollow/${userID}`);
@@ -416,13 +456,13 @@ export default{
         goBack() {
             this.$router.go(-1);
         },
-        async switchToTweets() {
+        switchToTweets() {
             this.postType = 'tweets';
         },
-        async switchToReplies() {
+        switchToReplies() {
             this.postType = 'replies';
         },
-        async switchToLikes() {
+        switchToLikes() {
             this.postType = 'likes';
         },
         autoSize() {
@@ -517,6 +557,28 @@ export default{
                 console.log(`Tweet with ID ${tweetID} deleted successfully.`);
             } catch (error) {
                 console.error('Error deleting tweet:', error);
+            }
+        },
+        deleteComment(tweetID, commentID) {
+            if (confirm('Are you sure you want to delete this comment?')) {
+                this.performDeleteComment(tweetID, commentID);
+            }
+        },
+        async performDeleteComment(tweetID, commentID) {
+            if (!commentID) {
+                console.error('Comment ID not provided');
+                return;
+            }
+            try {
+                await this.$axios.delete(`/api/delete-comments/${commentID}`);
+                const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
+                if (tweet) {
+                    tweet.comment_count -= 1;
+                }
+                this.getCommentedTweets(this.$route.params.UserTag);
+                console.log(`Comment with ID ${commentID} deleted successfully.`);
+            } catch (error) {
+                console.error('Error deleting comment:', error);
             }
         },
         async createComment(tweetID, commentText) {
@@ -769,11 +831,13 @@ export default{
         },
     },
     async mounted() {
+        console.log('Component mounted');
         await this.$store.dispatch('initializeApp');
         this.getUserInfo(this.$route.params.UserTag);
+        this.getCommentedTweets(this.$route.params.UserTag);
         this.getSpecificUserTweets(this.$route.params.UserTag);
         this.getLikedTweets(this.$route.params.UserTag);
-        this.getCommentedTweets(this.$route.params.UserTag);
+        console.log('Data loaded:', this.tweets, this.replies, this.liked_tweets);
     },
 }
 </script>
@@ -869,7 +933,7 @@ export default{
         aspect-ratio: 15/5;
         width:100%;
         position: relative;
-        img{
+        .banner-image{
             height:100%;
             width:100%;
             border:none;
@@ -1073,6 +1137,7 @@ export default{
         display:flex;
         flex-direction:column;
         img{
+            z-index: 2;
             width:50px;
             height:50px;
             border-radius: 50%;
@@ -1319,6 +1384,130 @@ export default{
         background-color: #080808;
     }
 }
+
+.verical-comment-line{
+    position:absolute;
+    bottom: 0px;
+    left:5px;
+    top: 40px;
+    width:1px;
+    background-color: #211f1f;
+    z-index: 1;
+}
+.horizontal-comment-line{
+    position:absolute;
+    height:1px;
+    width:50px;
+    top:40px;
+    left:5px;
+    z-index:1;
+    background-color: #211f1f;
+}
+
+.comment-container{
+    width:100%;
+    height:auto;
+    display:flex;
+    flex-direction:column;
+    box-sizing: border-box;
+    .comment{
+        width:100%;
+        min-height:auto;
+        display:flex;
+        flex-direction:row;
+        gap:10px;
+        box-sizing: border-box;
+        padding:15px 10px 5px 15px;
+        border-top: 1px solid #2F3336;
+        border-image: linear-gradient(90deg, transparent 4%,#2F3336 4%);
+        border-image-slice: 1;
+        justify-content: space-between;
+        position: relative;
+        cursor:pointer;
+        .left{
+            width:auto;
+            height:100%;
+            display:flex;
+            flex-direction:row;
+            gap:15px;
+            box-sizing: border-box;
+            img{
+                width:50px;
+                height:50px;
+                border-radius: 50%;
+                background-color: white;
+                z-index:2;
+            }
+            .content{
+                flex-grow: 1;
+                height:100%;
+                display:flex;
+                flex-direction: column;
+                box-sizing: border-box;
+                .userinfo{
+                    width:100%;
+                    height:10px;
+                    display:flex;
+                    flex-direction:row;
+                    justify-content: flex-start;
+                    align-items: center;
+                    gap:7px;
+                    color:white;
+                    padding-top:2px;
+                    .username{
+                        margin:0;
+                        font-weight: bold;
+                        font-size: 17px;
+                        color:white;
+                    }
+                    .usertag{
+                        margin:0;
+                        font-size: 17px;
+                        color:#6A6F74;
+                    }
+                    .time-posted{
+                        margin:0;
+                        font-size: 17px;
+                        color:#6A6F74;
+                    }
+                }
+                .content-text{
+                    height:auto;
+                    width:100%;
+                    text-align: left;
+                    color:white;
+                    padding:0px;
+                    font-size:17px;
+                    overflow-wrap: break-word;
+                }
+            }
+        }
+        .delete-btn{
+            height:25px;
+            width:25px;
+            background:none;
+            border-radius:50%;
+            border:none;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            padding:0;
+            cursor:pointer;
+            position:absolute;
+            right:5px;
+            top:5px;
+            .delete-icon{
+                font-size:16px;
+                color:#f11515;
+                --ionicon-stroke-width: 30px;
+                visibility: visible;
+            }
+            &:hover{
+                background-color: rgba($color: #f11515, $alpha: 0.1);
+            }
+        }
+    }
+}
 .comment-popup{
     width:500px;
     min-height: 300px;
@@ -1514,11 +1703,11 @@ export default{
             width:100%;
             position: relative;
             box-sizing: border-box;
-            .banner-img{
+            .banner-image{
                 height:100%;
                 width:100%;
                 border:none;
-                background: white;
+                background: gray;
             }
             .banner-input{
                 position:absolute;
@@ -1733,9 +1922,6 @@ export default{
 }
 .profile-info{
     .banner{
-        img{
-            background: gray;
-        }
         .profile-picture{
             width:90px;
             height:90px;
@@ -1843,7 +2029,7 @@ export default{
                     img{
                         width:40px;
                         height:40px;
-
+                        z-index:2;
                         border-radius:50%;
                         background-color: rgb(255, 255, 255);
                     }
@@ -1923,6 +2109,61 @@ export default{
                         --ionicon-stroke-width: 30px;
                     }
                     
+                }
+            }
+        }
+    }
+}
+.verical-comment-line{
+    bottom: 0px;
+    left:6px;
+    top: 35px;
+    width:1px;
+}
+.horizontal-comment-line{
+    height:1px;
+    width:30px;
+    top:35px;
+    left:6px;
+}
+.comment-container{
+    .comment{
+        width:100%;
+        min-height:auto;
+        gap:5px !important;
+        border-top: 1px solid #2F3336;
+        border-image: linear-gradient(90deg, transparent 6%,#2F3336 6%);
+        border-image-slice: 1;
+        .left{
+            width:auto;
+            height:100%;
+            gap:5px;
+            img{
+                width:40px;
+                height:40px;
+                border-radius: 50%;
+                background-color: white;
+            }
+            .content{
+                max-width: 80%;
+                height:100%;
+                .userinfo{
+                    width:100%;
+                    height:10px;
+                    gap:7px;
+                    padding-top:2px;
+                    .username{
+                        font-size: 15px;
+                    }
+                    .usertag{
+                        font-size: 15px;
+                    }
+                    .time-posted{
+                        font-size: 15px;
+                    }
+                }
+                .content-text{
+                    font-size:15px;
                 }
             }
         }

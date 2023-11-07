@@ -8,7 +8,7 @@
             <div class="title">Tweet</div>
         </div>
         <div class="post-container">
-            <div class="post" v-if="tweet && tweet.user"> 
+            <div class="post" v-if="tweet && tweet.user">
                 <div class="left-side">
                     <img @click.stop="openProfile(tweet.user.UserID)" :src="'/storage/' + tweet.user.ProfilePicture">
                 </div>
@@ -65,7 +65,7 @@
             </div>
             <div class="create-tweet" v-if="user">
                 <div class="left-side">
-                    <img  @click="openProfile(user.UserID)" :src="'/storage/' + user.ProfilePicture">
+                    <img @click.stop="openProfile(user.UserTag)" :src="'/storage/' + user.ProfilePicture">
                 </div>
                 <div class="right-side">
                     <div class="replyinginfo">                   
@@ -90,7 +90,7 @@
         <div class="comment-container">
             <div class="comment" v-for="comment in comments" :key="comment.CommentID">
                 <div class="left">
-                    <img @click.stop="openProfile(comment.user.UserID)" :src="'/storage/' + comment.user.ProfilePicture">
+                    <img @click.stop="openProfile(comment.user.UserTag)" :src="'/storage/' + comment.user.ProfilePicture">
                     <div class="content">
                         <div class="userinfo">
                             <p class="username">{{ comment.user.Name }}</p>
@@ -237,7 +237,10 @@ export default {
                 console.error('Error deleting comment:', error);
             }
         },
-        openProfile(userID) {
+        openProfile(tag){
+            const NoSymbolTag = tag.replace(/^@/, '');
+            this.$router.push('/profile/' + NoSymbolTag);
+            console.log(tag);
         },
         autoSize() {
             const maxRows = 10;

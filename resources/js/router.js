@@ -13,7 +13,7 @@ const router = createRouter({
     {
       path: '/home',
       component: () => import('./components/home/home.vue'),
-      meta: { requiresAuth: false },
+      meta: { requiresAuth: true },
     },
     {
       path: '/explore',
@@ -47,7 +47,7 @@ const router = createRouter({
       path: '/profile/:UserTag',
       component: () => import('./components/user/user.vue'),
       name: 'profile',
-      meta: { requiresAuth: false },
+      meta: { requiresAuth: true },
     },
     {
       path: '/bookmarks',
@@ -63,20 +63,20 @@ const router = createRouter({
       path: '/:UserTag/following',
       component: () => import('./components/following/following.vue'),
       name: 'following',
-      meta: { requiresAuth: false },
+      meta: { requiresAuth: true },
     },
     {
       path: '/:UserTag/followers',
       component: () => import('./components/followers/followers.vue'),
       name: 'followers',
-      meta: { requiresAuth: false },
+      meta: { requiresAuth: true },
     },
   ],
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth && !store.state.user) {
-      await push('/');
+      next('/');
     } else {
       next();
     }
