@@ -10,25 +10,68 @@
         <div class="messages-right">
             <div class="right-text">Select a message</div>
             <div class="right-under-text">Choose from your existing conversations, start a new one, or just keep swimming.</div>
-            <button class="right-write-button">New message</button>
+            <button class="right-write-button" @click="TogglePopup('EditTrigger')">New message</button>
 
         </div>
+
+
+        <Popup v-if="popupTriggers.EditTrigger" :TogglePopup="() => TogglePopup('EditTrigger')">
+            <div class="edit-popup">
+                <p class="title-popup">New message</p>
+                <button class="next-btn">Next</button>
+
+                    <div class="search-people">
+                        <div class="input-wrap">
+                            <!-- <input type="text" id="name-input" class="Edit-Input" autocomplete="on" maxlength="30" required> -->
+                            <input v-model="searchInput" @input="handleSearchInput" placeholder="Search usernames..." />
+                            <!-- <label for="name-input"><ion-icon name="search-outline"></ion-icon>Search people</label> -->
+                        </div>
+
+                        <ul>
+                            <li v-for="UserTag in users" :key="UserTag">{{ user.UserTag }}</li>
+                        </ul>
+                    </div>
+             </div>
+        </Popup>
+
+
+
     </div>
 
 </template>
 
 <script>
 import { ref } from 'vue';
+import Popup from '@/components/Popup.vue';
 export default{
     name: 'Search',
+    components: {
+        Popup,
+    },
     data() {
         return {
             isInputFocused: false,
             people: 3,
+            searchInput: '',
+            UserTag: [],
         };
     },
     setup () {
+        const popupTriggers = ref({
+            TweetTrigger: false,
+        });
+        const TogglePopup = (trigger) => {
+            popupTriggers.value[trigger] = !popupTriggers.value[trigger]
+            if (!popupTriggers.value[trigger]) {
+            }
+		}
+        return {
+            popupTriggers,
+            TogglePopup,
+        }
     },
+
+
 
     methods: {
         redirectTo(where) {
@@ -38,9 +81,22 @@ export default{
         openTweet(id) {
             console.log(id);
         },
+        handleSearchInput() {
+    if (this.searchInput.length > 0) {
+      this.$axios.get('/users/UserTag/' + this.searchInput)
+        .then(response => {
+            this.UserTag = response.data.users.filter(user => user.UserTag.toLowerCase().startsWith(this.searchInput.toLowerCase()));
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    } else {
+        this.UserTag = [];
+    }
+        },
     },
-
 }
+
 </script>
 
 <style lang="scss" scoped>
@@ -162,5 +218,109 @@ export default{
 .right-write-button:hover{
     background:#0c79c2;
 }
+
+
+.edit-popup{
+    width:500px;
+    min-height:550px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding:50px 20px 10px 20px;
+    box-sizing: border-box;
+    .title-popup{
+        margin:0;
+        padding:0;
+        font-weight: bold;
+        font-size: 22px;
+        color: white;
+    }
+    .next-btn{
+        position:absolute;
+        top:10px;
+        right:10px;
+        width:auto;
+        height:auto;
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        color:#000000;
+        border:none;
+        background-color: white;
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: bold;
+        padding:8px 16px;
+    }
+
+    .input-wrap{
+            border: none;
+            border-radius:6px;
+            font-family: Arial, sans-serif;
+            position:relative;
+            width:auto;
+            height: 60px;
+            box-sizing: border-box;
+            display:flex;
+            .Edit-Input{
+                font-family: Arial, sans-serif;
+                box-sizing:border-box;
+                border: 1px solid #434343;
+                color:#ffffff;
+                padding: 20px 13px 5px 13px;
+                outline:none;
+                background: none;
+                position:relative;
+                display:flex;
+                width:100%;
+                height:100%;
+                border-radius:6px;
+                font-size:18px;
+                resize: none;
+                overflow: hidden;
+                transition: 0.3s all;
+                &:disabled{
+                    color:#808080;
+                }
+                &:focus{
+                    border:1px solid #1da1f2;
+                }
+            }
+            label{
+                font-size:18px;
+                color:#434343;
+                padding:5px;
+                position:absolute;
+                top:15px;
+                left:5px;
+                pointer-events: none;
+                transition: 0.3s all;
+            }
+            .Edit-Input:focus+label,
+            .Edit-Input:disabled+label,
+            .Edit-Input:valid+label{
+                font-size:16px;
+                top:5px;
+                left:7px;
+                padding:0 5px 0 5px;
+            }
+            .Edit-Input:focus+label{
+                color:#1da1f2;
+            }
+        }
+        .search-people{
+            padding-top:20px;
+        }
+
+
+
+
+
+
+}
+
+
+
+
 </style>
 
