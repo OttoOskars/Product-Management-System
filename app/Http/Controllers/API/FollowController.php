@@ -95,9 +95,56 @@ class FollowController extends Controller
         }
     }
 
-
     private function checkIfFollowedByUser($user1, $user2)
     {
         return $user2->followers->contains('UserID', $user1->UserID);
+    }
+
+    public function getFollowingUsers($userTag)
+    {
+        if (auth()->check()) {
+            $user = auth()->user();
+            $tag = '@' . ltrim($userTag, '@');
+            $user2 = User::where('UserTag', $tag)->first();
+            if (!$user2) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+            $userID = $user2->UserID;
+            $following = User::select('users.*')
+                ->join('follows', 'users.UserID', '=', 'follows.FollowingID')
+                ->where('follows.FollowerID', $user2->UserID)
+                ->get();
+            foreach ($following as $user3) {
+                $user3->isFollowedByMe = $this->checkIfFollowedByUser($user, $user3);
+            }
+            return response()->json($following);
+        } else {
+            // Handle the case where the user is not authenticated.
+            return response()->json(['error' => 'User not authenticated.'], 401);
+        }
+    }
+
+    public function getFollowers($userTag)
+    {
+        if (auth()->check()) {
+            $user = auth()->user();
+            $tag = '@' . ltrim($userTag, '@');
+            $user2 = User::where('UserTag', $tag)->first();
+            if (!$user2) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+            $userID = $user2->UserID;
+            $followers = User::select('users.*')
+                ->join('follows', 'users.UserID', '=', 'follows.FollowerID')
+                ->where('follows.FollowingID', $user2->UserID)
+                ->get();
+            foreach ($followers as $user3) {
+                $user3->isFollowedByMe = $this->checkIfFollowedByUser($user, $user3);
+            }
+            return response()->json($followers);
+        } else {
+            // Handle the case where the user is not authenticated.
+            return response()->json(['error' => 'User not authenticated.'], 401);
+        }
     }
 }

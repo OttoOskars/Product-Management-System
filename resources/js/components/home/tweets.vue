@@ -3,8 +3,8 @@
         <div class="black-line"></div>
         <div class="top-bar">
             <div class="title">Home</div>
-            <div class="title2">
-                <div class="user-img" @click.stop="toggleProfilePopup"><img></div>
+            <div class="title2" v-if="user">
+                <div class="user-img" @click.stop="toggleProfilePopup"><img :src="'/storage/' + user.ProfilePicture"></div>
                 <div class="logo">
                     <ion-icon name="logo-yahoo"></ion-icon>
                 </div>
@@ -17,7 +17,7 @@
         <div class="post-container">
             <div class="create-tweet">
                 <div class="left-side">
-                    <img  @click="openProfile(user.UserTag)">
+                    <img v-if="user" @click="openProfile(user.UserTag)" :src="'/storage/' + user.ProfilePicture">
                 </div>
                 <div class="right-side">
                     <div class="top">
@@ -40,7 +40,7 @@
             </div>
             <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID"  @click="openTweet(tweet.TweetID)">
                 <div class="left-side">
-                    <img  @click.stop="openProfile(tweet.user.UserTag)">
+                    <img v-if="tweet.user.ProfilePicture" @click.stop="openProfile(tweet.user.UserTag)" :src="'/storage/' + tweet.user.ProfilePicture">
                 </div>
                 <div class="right-side">
                     <div class="retweeted" v-if="tweet.isRetweet">
@@ -49,7 +49,7 @@
                     <!-- ############################################# -->
                     <div class="top2">
                         <div class="person-image">
-                            <img @click.stop="openProfile(tweet.user.UserTag)">
+                            <img v-if="tweet.user.ProfilePicture" @click.stop="openProfile(tweet.user.UserTag)" :src="'/storage/' + tweet.user.ProfilePicture">
                         </div>
                         <div class="info-content">
                             <div class="userinfo">
@@ -105,7 +105,7 @@
         <div class="comment-popup">
             <div class="top">
                 <div class="left-side-popup">
-                    <img  @click="openProfile(user.UserTag)">
+                    <img  @click="openProfile(user.UserTag)" :src="'/storage/' + user.ProfilePicture">
                 </div>
                 <div class="right-side-popup">
                     <div class="userinfo-popup">
@@ -167,7 +167,7 @@ export default{
         const store = useStore();
 
         if (store.state.isLoggedIn) {
-            router.push('/home2');
+            router.push('/home');
         }
         const logoutUser = async () => {
             try {
@@ -332,7 +332,7 @@ export default{
             if (this.buttonDisabled) {
                 return;
             }
-            const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+            const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
             if (!tweet) {
                 return;
             }
@@ -355,7 +355,7 @@ export default{
                 const response = await this.$axios.post(`/api/tweets/like`, { tweetId: tweetID });
                 console.log('Like Response:', response);
                 if (response.status === 201) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
                     if (tweet) {
                         tweet.isLiked = true;
                         tweet.like_count += 1;
@@ -371,7 +371,7 @@ export default{
                 const response = await this.$axios.delete(`/api/tweets/unlike/${tweetId}`);
                 console.log('Unlike Response:', response);
                 if (response.status === 200) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetId);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetId);
                     if (tweet) {
                         tweet.isLiked = false;
                         tweet.like_count -= 1;
@@ -385,7 +385,7 @@ export default{
             if (this.buttonDisabled) {
                 return;
             }
-            const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+            const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
             if (!tweet) {
                 return;
             }
@@ -414,7 +414,7 @@ export default{
                 console.log('Retweet Response:', response);
 
                 if (response.status === 201) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
                     if (tweet) {
                         tweet.isRetweeted = true;
                         tweet.retweet_count += 1;
@@ -432,7 +432,7 @@ export default{
                 console.log('Unretweet Response:', response);
 
                 if (response.status === 200) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetId);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetId);
                     if (tweet) {
                         tweet.isRetweeted = false;
                         tweet.retweet_count -= 1;
@@ -448,7 +448,7 @@ export default{
             if (this.buttonDisabled) {
                 return;
             }
-            const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+            const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
             if (!tweet) {
                 return;
             }
@@ -471,7 +471,7 @@ export default{
                 const response = await this.$axios.post(`/api/tweets/bookmark`, { tweetId: tweetID });
                 console.log('Bookmark Response:', response);
                 if (response.status === 201) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetID);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
                     if (tweet) {
                         tweet.isBookmarked = true;
                         // tweet.like_count += 1;
@@ -487,7 +487,7 @@ export default{
                 const response = await this.$axios.delete(`/api/tweets/unbookmark/${tweetId}`);
                 console.log('Unbookmark Response:', response);
                 if (response.status === 200) {
-                    const tweet = this.tweets.find((t) => t.TweetID === tweetId);
+                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetId);
                     if (tweet) {
                         tweet.isBookmarked = false;
                         // tweet.like_count -= 1;
@@ -556,6 +556,7 @@ export default{
             display:flex;
             align-items: center;
             justify-content: center;
+            cursor:pointer;
             img{
                 width:40px;
                 height:40px;

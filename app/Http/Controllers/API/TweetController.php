@@ -45,7 +45,7 @@ class TweetController extends Controller
     {
         if (auth()->check()) {
             $user = auth()->user();
-
+    
             $query = Tweet::with('user')
                 ->select('tweets.*')
                 ->selectSub(function ($query) {
@@ -64,26 +64,132 @@ class TweetController extends Controller
                         ->whereColumn('retweets.TweetID', 'tweets.TweetID');
                 }, 'retweet_count')
                 ->orderBy('created_at', 'desc');
-
-            if ($type === 'following') {
-                $query->whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID));
-            } elseif ($type === 'my') {
-                $query->where('UserID', $user->UserID);
-            } elseif ($type === 'liked') {
-                $query->whereIn('tweets.TweetID', function ($subquery) use ($user) {
-                    $subquery->select('TweetID')
-                        ->from('likes')
-                        ->where('UserID', $user->UserID);
-                });
-            } elseif ($type === 'bookmark') {
-                $query->whereIn('tweets.TweetID', function ($subquery) use ($user) {
-                    $subquery->select('TweetID')
-                        ->from('bookmarks')
-                        ->where('UserID', $user->UserID);
-                });
-            }
-
+    
+                if ($type === 'following') {
+                    $query->whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID))->whereNotIn('UserID', [$user->UserID]);
+                } elseif ($type === 'my') {
+                    $query->where('UserID', $user->UserID);
+                } elseif ($type === 'liked') {
+                    $query->whereIn('tweets.TweetID', function ($subquery) use ($user) {
+                        $subquery->select('TweetID')
+                            ->from('likes')
+                            ->where('UserID', $user->UserID);
+                    });
+                } elseif ($type === 'bookmark') {
+                    $query->whereIn('tweets.TweetID', function ($subquery) use ($user) {
+                        $subquery->select('TweetID')
+                            ->from('bookmarks')
+                            ->where('UserID', $user->UserID);
+                    });
+                }
+    
             $tweets = $query->get();
+    
+            foreach ($tweets as $tweet) {
+                $now = Carbon::now();
+                $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
+                $tweet->isLiked = $this->checkIfLikedByUser($tweet, $user);
+                $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
+                $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
+            }
+    
+            return response()->json(['tweets' => $tweets]);
+        } else {
+            // Handle the case where the user is not authenticated.
+            return response()->json(['error' => 'User not authenticated.'], 401);
+        }
+    }
+    public function getUserLikedTweets($userTag)
+    {
+        if (auth()->check()) {
+            $user = auth()->user();
+            $tag = '@' . ltrim($userTag, '@');
+            $user2 = User::where('UserTag', $tag)->first();
+            if (!$user2) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+            $userID = $user2->UserID;
+    
+            $tweets = Tweet::with('user')
+                ->join('likes', function($join) use ($userID) {
+                    $join->on('tweets.TweetID', '=', 'likes.TweetID')
+                        ->where('likes.UserID', $userID);
+                })
+                ->where(function ($q) use ($userID) {
+                    $q->where('tweets.UserID', $userID)
+                        ->orWhere('likes.UserID', $userID);
+                })
+                ->select('tweets.*', 'likes.created_at as likes_created_at')
+                ->selectSub(function ($query) {
+                    $query->from('comments')
+                        ->selectRaw('COUNT(*)')
+                        ->whereColumn('comments.TweetID', 'tweets.TweetID');
+                }, 'comment_count')
+                ->selectSub(function ($query) {
+                    $query->from('likes')
+                        ->selectRaw('COUNT(*)')
+                        ->whereColumn('likes.TweetID', 'tweets.TweetID');
+                }, 'like_count')
+                ->selectSub(function ($query) {
+                    $query->from('retweets')
+                        ->selectRaw('COUNT(*)')
+                        ->whereColumn('retweets.TweetID', 'tweets.TweetID');
+                }, 'retweet_count')
+                ->orderByRaw('IF(likes.created_at IS NOT NULL, likes.created_at, tweets.created_at) DESC');
+    
+            $tweets = $tweets->get();
+    
+            foreach ($tweets as $tweet) {
+                $now = Carbon::now();
+                $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
+                $tweet->isLiked = $this->checkIfLikedByUser($tweet, $user);
+                $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
+                $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
+            }
+    
+            return response()->json(['tweets' => $tweets, 'tweet_count' => $tweets->count()]);
+        } else {
+            // Handle the case where the user is not authenticated.
+            return response()->json(['error' => 'User not authenticated.'], 401);
+        }
+    }
+    public function getUserCommentedTweets($userTag)
+    {
+        if (auth()->check()) {
+            $user = auth()->user();
+            $tag = '@' . ltrim($userTag, '@');
+            $user2 = User::where('UserTag', $tag)->first();
+    
+            if (!$user2) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+    
+            $userID = $user2->UserID;
+    
+            $tweets = Tweet::with(['user', 'comments' => function ($query) use ($userID) {
+                $query->where('UserID', $userID);
+            }])
+            ->whereHas('comments', function ($query) use ($userID) {
+                $query->where('UserID', $userID);
+            })
+            ->select('tweets.*')
+            ->selectSub(function ($query) {
+                $query->from('comments')
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('comments.TweetID', 'tweets.TweetID');
+            }, 'comment_count')
+            ->selectSub(function ($query) {
+                $query->from('likes')
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('likes.TweetID', 'tweets.TweetID');
+            }, 'like_count')
+            ->selectSub(function ($query) {
+                $query->from('retweets')
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('retweets.TweetID', 'tweets.TweetID');
+            }, 'retweet_count')
+            ->orderBy('tweets.created_at', 'desc')
+            ->get();
 
             foreach ($tweets as $tweet) {
                 $now = Carbon::now();
@@ -92,10 +198,11 @@ class TweetController extends Controller
                 $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
                 $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
             }
-
-            return response()->json(['tweets' => $tweets]);
+    
+            $tweetCount = $tweets->count();
+    
+            return response()->json(['tweets' => $tweets, 'tweet_count' => $tweetCount]);
         } else {
-            // Handle the case where the user is not authenticated.
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
@@ -182,12 +289,15 @@ class TweetController extends Controller
         if (!$tweet) {
             return response()->json(['message' => 'Tweet not found'], 404);
         }
-
+        $tweet->likes()->delete();
+        $tweet->retweets()->delete();
+        $tweet->bookmarks()->delete();
+        $tweet->comments()->delete();
         $tweet->delete();
+
 
         return response()->json(['message' => 'Tweet deleted successfully']);
     }
-
     public function getTweetData($id)
     {
         $tweet = Tweet::with('user')
@@ -223,8 +333,7 @@ class TweetController extends Controller
         }
         return response()->json(['tweet' => $tweet]);
     }
-    
-    // Add a function to check if a user has liked a tweet
+
     private function checkIfLikedByUser($tweet, $user)
     {
         return $tweet->likes->contains('UserID', $user->UserID);

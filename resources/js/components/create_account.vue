@@ -297,7 +297,7 @@
           const response = await this.$store.dispatch('register', registrationData);
 
           if (response.success) {
-            this.$router.push('/home2');
+            this.$router.push('/home');
           } else {
             if (response.message.includes('Email')) {
               this.emailError = response.message;
@@ -357,7 +357,7 @@
 .input-label.active {
   transform: translateY(-100%);
   font-size: 10px;
-  color: blue;
+  color: #1D9BF0;
 }
 
 .input-label.committed {
@@ -455,7 +455,7 @@ input[type="text"], input[type="password"], input[type="email"] {
 }
 
 .account-input:focus {
-  border: 2px solid blue;
+  border: 2px solid #1D9BF0;
 }
 
 .account-input::-webkit-input-placeholder {
@@ -463,7 +463,7 @@ input[type="text"], input[type="password"], input[type="email"] {
 }
 
 .account-input:focus::-webkit-input-placeholder {
-  color: blue;
+  color: #1D9BF0;
 }
 
 select {
@@ -479,7 +479,7 @@ select {
 }
 
 .select-1:focus, .select-2:focus, .select-3:focus {
-  border-color: blue;
+  border-color: #1D9BF0;
 }
 
 .select-2 {
@@ -1186,7 +1186,7 @@ select option { color: white; }
     border: 1px solid gray;
   }
   .account-input:focus {
-    border: 1px solid blue;
+    border: 1px solid #1D9BF0;
   }
   .warning {
     top: 80%;
@@ -1297,7 +1297,7 @@ select option { color: white; }
     border: 1px solid gray;
   }
   .account-input:focus {
-    border: 1px solid blue;
+    border: 1px solid #1D9BF0;
   }
   .warning {
     top: 75%;

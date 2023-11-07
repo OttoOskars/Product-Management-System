@@ -18,19 +18,28 @@
         <div class="who-to-follow">
             <div class="title">Who to follow</div>
             <div class="people-container">
-                <div class="person" v-for="user in users" :key="user.UserID">
+                <div class="person" v-for="person in users" :key="person.UserID">
                     <div class="user">
                         <div class="user-img">
-                            <img :src="user.ProfilePicture" alt="" class="person-img"> 
+                            <img @click.stop="openProfile(person.UserTag)" :src="'/storage/' + person.ProfilePicture" alt="" class="person-img"> 
                         </div>
                         <div class="user-info">
-                            <p class="username">{{ user.Name }}</p>
-                            <p class="usertag">{{ user.UserTag }}</p>
+                            <p class="username">{{ person.Name }}</p>
+                            <p class="usertag">{{ person.UserTag }}</p>
                         </div>
                     </div>
                     <div class="button-container">
-                        <button class="follow-button" @click="toggleFollowUnfollow(user.UserID)">
-                            {{ user.isFollowedByMe ? 'Unfollow' : 'Follow' }}
+                        <button  
+                            class="follow-button" 
+                            @click="toggleFollowUnfollow(person.UserID)"
+                            v-if="!(person.UserID === user.UserID)"
+                            :class="{
+                                'followed-button': person.isFollowedByMe,
+                                'unfollow-button': person.isFollowedByMe && isHovered[person.UserID]
+                            }"
+                            @mouseover="isHovered[person.UserID] = true"
+                            @mouseout="isHovered[person.UserID] = false">
+                            {{ followButtonLabel(person) }}
                         </button>
                     </div>
                 </div>
@@ -43,6 +52,7 @@
     </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 import { ref } from 'vue';
 export default{
     name: 'Search',
@@ -50,7 +60,22 @@ export default{
         return {
             isInputFocused: false,
             users: [],
+            isHovered: [],
         };
+    },
+    computed: {
+        ...mapState(['user']),
+        followButtonLabel() {
+            return (person) => {
+                if (this.isHovered[person.UserID] && person.isFollowedByMe) {
+                    return 'Unfollow';
+                } else if (person.isFollowedByMe) {
+                    return 'Following';
+                } else {
+                    return 'Follow';
+                }
+            };
+        },
     },
     setup () {
         const search = ref('');
@@ -72,8 +97,10 @@ export default{
         redirectTo(where) {
             this.$router.push(where);
         },
-        openProfile(id){
-            console.log(id);
+        openProfile(tag){
+            const NoSymbolTag = tag.replace(/^@/, '');
+            this.$router.push('/profile/' + NoSymbolTag);
+            console.log(tag);
         },
         toggleFollowUnfollow(userID) {
             const user = this.users.find((t) => t.UserID === userID);
@@ -292,7 +319,7 @@ export default{
                 align-items: center;
                 justify-content: center;
                 .follow-button{
-                    padding:10px 20px; 
+                    padding:10px 15px; 
                     display:flex;
                     align-items: center;
                     justify-content: center;
@@ -305,9 +332,42 @@ export default{
                     font-weight: bold;
                     transition:all 0.3s;
                     cursor:pointer;
+                    &:hover{
+                        background-color: #D7DBDC;
+                    }
                 }
-                .follow-button:hover{
-                    background-color: #D7DBDC;
+                .followed-button{
+                    padding:10px 15px; 
+                    display:flex;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                    border-radius: 50px;
+                    border:1px solid #6A6F74;
+                    background-color: #16181C;
+                    color:white;
+                    font-size:15px;
+                    font-weight: bold;
+                    transition:all 0.3s;
+                    cursor:pointer;
+                }
+                .unfollow-button{
+                    padding:10px 15px; 
+                    display:flex;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                    border-radius: 50px;
+                    border:1px solid #e42020;
+                    background-color: rgba($color: #e42020, $alpha: 0.4);
+                    color:#e42020;
+                    font-size:15px;
+                    font-weight: bold;
+                    transition:all 0.3s;
+                    cursor:pointer;
+                    &:hover{
+                        background-color: rgba($color: #e42020, $alpha: 0.15);
+                    }
                 }
             }
         }

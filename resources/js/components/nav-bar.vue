@@ -1,15 +1,13 @@
 <template>
-    <div class="navbar-container"><!-- display-flex column space-between -->
-        <div class="buttons"><!-- display-flex column gap 10px -->
-            <!-- Each button in a div??? -->
-            <!-- Each button width: 100% and height:??? -->
+    <div class="navbar-container">
+        <div class="buttons">
             <div class="logo">
                 <div class="button-content">
                     <ion-icon name="logo-yahoo" style="font-size: 36px;"></ion-icon>
                 </div>
             </div>
 
-            <button class="Home" @click="$router.push('/home2')">
+            <button class="Home" @click="$router.push('/home')">
                 <div class="button-content">
                     <ion-icon name="home-outline" style="font-size: 24px;"></ion-icon>
                     <span style="font-size: 18px; margin-left: 20px;">Home</span>
@@ -67,8 +65,8 @@
 
         </div>
         <div class="profile" @click.stop="toggleProfilePopup">
-            <div class="user-img">
-                <img>
+            <div class="user-img" v-if="user">
+                <img :src="'/storage/' + user.ProfilePicture">
             </div>
             <div class="user-info" v-if="user">
                 <p class="username">{{ user.Name }}</p>
@@ -89,7 +87,7 @@
         <div class="create-popup" v-if="user">
             <div class="top">
                 <div class="left-side-popup">
-                    <img  @click.stop="openProfile(user.UserTag)">
+                    <img  @click.stop="openProfile(user.UserTag)" :src="'/storage/' + user.ProfilePicture">
                 </div>
                 <div class="right-side-popup">
                     <div class="userinfo-popup">
@@ -608,7 +606,13 @@ export default{
             display: none;
         }
         .profile{
+            width: 50px;
+            height: 50px;
+            border-radius:50%;
+            display: flex;
+            align-items: center;
             justify-content: center;
+            padding: 35px;
             .user-info{
                 display:none;
             }

@@ -3,8 +3,8 @@
         <div class="navbar">
             <NavBar></NavBar>
         </div>
-        <div class="profile-info">
-            <Profile></Profile>
+        <div class="following">
+            <Following></Following>
         </div>
         <div class="search">
             <Search></Search>
@@ -13,16 +13,14 @@
 </template>
 <script>
 import NavBar from '../nav-bar.vue';
-import Profile from './profile_content.vue';
+import Following from './following_content.vue';
 import Search from '../home/search.vue';
-import Popup from '../Popup.vue';
 export default {
-  name: 'profile',
+  name: 'following',
   components: {
     NavBar,
-    Profile,
+    Following,
     Search,
-    Popup,
   },
   data() {
     return {
@@ -45,7 +43,7 @@ export default {
     min-height:100%;
     width:4/12*100%;
 }
-.profile-info{
+.following{
     min-height:100%;
     width:5/12*100%;
 }
@@ -54,7 +52,7 @@ export default {
     .navbar{
         width:100px;
     }
-    .profile-info{
+    .following{
         width:7/12*100%
     }
     .search{
@@ -66,7 +64,7 @@ export default {
     .navbar{
         width:100px;
     }
-    .profile-info{
+    .following{
         width:11/12*100%
     }
     .search{
@@ -81,7 +79,7 @@ export default {
         bottom:0;
         z-index:9999;
     }
-    .profile-info{
+    .following{
         width:100%
     }
     .search{

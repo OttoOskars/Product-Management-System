@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class UserController extends Controller
@@ -83,6 +85,7 @@ class UserController extends Controller
                     $user->UserTag = $correctTag;
                     $user->Email = strtolower($request->Email);
                     $user->Password = Hash::make($request->Password);
+                    $user->ProfilePicture = 'profile_pictures/DefaultPFP.jpeg';
 
                     $dob = Carbon::parse($request->DOB)->format('Y-m-d');
                     $user->DOB = $dob;
@@ -141,18 +144,24 @@ class UserController extends Controller
 
     public function getUserByTag($tag)
     {
-        $tag = '@' . ltrim($tag, '@');
-        $user = User::where('UserTag', $tag)->first();
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+        if (auth()->check()) {
+            $user = auth()->user();
+            $tag = '@' . ltrim($tag, '@');
+            $user2 = User::where('UserTag', $tag)->first();
+            if (!$user2) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+            $user2->create_date =  'Joined ' . $user2->created_at->format('F Y');
+            $user2->follower_count = $user2->followers()->count();
+            $user2->following_count = $user2->following()->count();
+
+            $user2->isFollowedByMe = $this->checkIfFollowedByUser($user, $user2);
+
+            return response()->json(['user' => $user2]);
+        } else {
+            // Handle the case where the user is not authenticated.
+            return response()->json(['error' => 'User not authenticated.'], 401);
         }
-        $user->create_date =  'Joined ' . $user->created_at->format('F Y');
-        $user->follower_count = $user->followers()->count();
-        $user->following_count = $user->following()->count();
-
-        $user->isFollowedByMe = $this->checkIfFollowedByUser(auth()->user(), $user);
-
-        return response()->json(['user' => $user]);
     }
     private function checkIfFollowedByUser($user1, $user2)
     {
@@ -161,106 +170,78 @@ class UserController extends Controller
 
     public function getUser()
     {
-       /*  return auth()->user(); */
        return Auth::user();
     }
-
-    public function updateName(Request $request)
+    public function updateProfile(Request $request)
     {
         $user = auth()->user();
-        $newName = $request->Name;
+
+        $newName = $request->input('Name');
+        $newDescription = $request->input('Description');
+        $newProfilePicture = $request->file('profile_picture');
+        $newBannerPicture = $request->file('banner_picture');
+
+        $success = true;
+        $messages = [];
 
         if ($newName) {
             $user->Name = $newName;
-            $user->save();
-            $success = true;
-            $message = 'Name updated successfully';
-
+            $messages[] = 'Name updated successfully';
         } else {
             $success = false;
-            $message = 'Name cannot be empty';
+            $messages[] = 'Name cannot be empty';
         }
-
-        $response = [
-            'success' => $success,
-            'message' => $message,
-        ];
-        return response()->json($response);
-    }
-
-    public function updateDescription(Request $request)
-    {
-        $user = auth()->user();
-        $newDescription = $request->Description;
 
         if ($newDescription) {
             $user->description = $newDescription;
-            $user->save();
-            $success = true;
-            $message = 'Description updated successfully';
-
+            $messages[] = 'Description updated successfully';
         } else {
-            $success = false;
-            $message = 'Description cannot be empty';
+            $user->description = '';
         }
 
-        $response = [
-            'success' => $success,
-            'message' => $message,
-        ];
-        return response()->json($response);
-    }
+        if ($newProfilePicture) {
+            $image = $request->file('profile_picture');
+            $path = $image->store('profile_pictures', 'public');
+            if ($user->ProfilePicture) {
+                $imagePath = public_path('storage/' . $user->ProfilePicture);
     
-    public function updateProfilePicture(Request $request)
-    {
-        if ($request->hasFile('profile_picture')) {
-            $ProfilePicture = $request->file('profile_picture');
-            $fileName = time() . '_' . $ProfilePicture->getClientOriginalName();
-            $path = $ProfilePicture->storeAs('profile_pictures', $fileName, 'public');
-
-            if (auth()->user()->ProfilePicture) {
-                Storage::delete('/public/' . auth()->user()->ProfilePicture);
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                    Log::info('Image deleted: ' . $imagePath); // Log the image deletion
+                } else {
+                    Log::info('Image not found: ' . $imagePath); // Log if the image was not found
+                }
             }
-
-            auth()->user()->ProfilePicture = $path;
-            auth()->user()->save();
-            $success = true;
-            $message = 'Profile picture uploaded successfully';
-        } else {
-            $success = false;
-            $message = 'Please select a valid image file.';
+            $user->ProfilePicture = $path;
+            $messages[] = 'Profile picture uploaded successfully';
         }
+        if ($newBannerPicture) {
+            $image = $request->file('banner_picture');
+            $path = $image->store('banner_pictures', 'public');
+            if ($user->Banner) {
+                $imagePath = public_path('storage/' . $user->Banner);
+    
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                    Log::info('Image deleted: ' . $imagePath); // Log the image deletion
+                } else {
+                    Log::info('Image not found: ' . $imagePath); // Log if the image was not found
+                }
+            }
+            $user->Banner = $path;
+            $messages[] = 'Banner uploaded successfully';
+        }
+        if (!$success) {
+            $messages[] = 'Please select a valid image file.';
+        }
+
+        $user->save();
 
         $response = [
             'success' => $success,
-            'message' => $message,
+            'messages' => $messages,
         ];
-        return response()->json($response);
-    }
-    public function updateBanner(Request $request)
-    {
-        if ($request->hasFile('banner_picture')) {
-            $BannerPicture = $request->file('banner_picture');
-            $fileName = time() . '_' . $BannerPicture->getClientOriginalName();
-            $path = $Banner->storeAs('banner_pictures', $fileName, 'public');
 
-            if (auth()->user()->Banner) {
-                Storage::delete('/public/' . auth()->user()->Banner);
-            }
-
-            auth()->user()->Banner = $path;
-            auth()->user()->save();
-            $success = true;
-            $message = 'Banner picture uploaded successfully';
-        } else {
-            $success = false;
-            $message = 'Please select a valid image file.';
-        }
-
-        $response = [
-            'success' => $success,
-            'message' => $message,
-        ];
         return response()->json($response);
     }
 }
