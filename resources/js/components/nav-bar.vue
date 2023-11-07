@@ -1,8 +1,6 @@
 <template>
-    <div class="navbar-container"><!-- display-flex column space-between -->
-        <div class="buttons"><!-- display-flex column gap 10px -->
-            <!-- Each button in a div??? -->
-            <!-- Each button width: 100% and height:??? -->
+    <div class="navbar-container">
+        <div class="buttons">
             <div class="logo">
                 <div class="button-content">
                     <ion-icon name="logo-yahoo" style="font-size: 36px;"></ion-icon>
@@ -608,7 +606,13 @@ export default{
             display: none;
         }
         .profile{
+            width: 50px;
+            height: 50px;
+            border-radius:50%;
+            display: flex;
+            align-items: center;
             justify-content: center;
+            padding: 35px;
             .user-info{
                 display:none;
             }

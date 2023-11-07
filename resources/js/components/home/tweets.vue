@@ -4,7 +4,7 @@
         <div class="top-bar">
             <div class="title">Home</div>
             <div class="title2" v-if="user">
-                <div class="user-img" @click.stop="toggleProfilePopup" :src="'/storage/' + user.ProfilePicture"><img></div>
+                <div class="user-img" @click.stop="toggleProfilePopup"><img :src="'/storage/' + user.ProfilePicture"></div>
                 <div class="logo">
                     <ion-icon name="logo-yahoo"></ion-icon>
                 </div>
@@ -556,6 +556,7 @@ export default{
             display:flex;
             align-items: center;
             justify-content: center;
+            cursor:pointer;
             img{
                 width:40px;
                 height:40px;
