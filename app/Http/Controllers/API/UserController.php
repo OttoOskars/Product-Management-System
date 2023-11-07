@@ -152,8 +152,8 @@ class UserController extends Controller
                 return response()->json(['message' => 'User not found'], 404);
             }
             $user2->create_date =  'Joined ' . $user2->created_at->format('F Y');
-            $user2->follower_count = $user2->following()->count();
-            $user2->following_count = $user2->followers()->count();
+            $user2->follower_count = $user2->followers()->count();
+            $user2->following_count = $user2->following()->count();
 
             $user2->isFollowedByMe = $this->checkIfFollowedByUser($user, $user2);
 
