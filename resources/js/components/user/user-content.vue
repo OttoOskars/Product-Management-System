@@ -1058,7 +1058,7 @@ export default{
         }
         .follow-info{
             width:100%;
-            height:auto;
+            height:30px;
             display:flex;
             flex-direction: row;
             align-items: center;
@@ -1068,6 +1068,14 @@ export default{
                 font-size: 16px;
                 margin:0;
                 padding:0;
+                cursor:pointer;
+                &:hover{
+                    color:#92969a;
+                    border-bottom:1px solid #92969a;
+                    .bold{
+                        color:white;
+                    }
+                }
                 .bold{
                     color:white;
                     font-weight: bold;
