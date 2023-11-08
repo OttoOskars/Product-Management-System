@@ -235,25 +235,17 @@ export default{
     }
 }
 @media (max-width: 1250px) {
+    .search-container{
+        width:400px;
+    }
     .who-to-follow{
-        width:300px;
+        width:100%;
     }
     .search-input-container{
-        width:300px;
+        width:100%;
     }
     .trends{
-        width:300px;
-    }
-}
-@media (max-width: 1100px) {
-    .who-to-follow{
-        width:300px;
-    }
-    .search-input-container{
-        width:300px;
-    }
-    .trends{
-        width:300px;
+        width:100%;
     }
 }
 </style>
