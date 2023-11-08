@@ -1634,19 +1634,5 @@ export default{
     }
 
 }
-.delete-popup{
-    width: 100%;
-    .delete-title{
-        font-size: 20px;
-    }
-    .tweet-p{
-        font-size: 13px;
-    }
-    .tweet-buttons{
-        .cancel-button, .delete-button{
-            font-size: 13px;
-        }
-    }
-}
 }
 </style>
