@@ -7,7 +7,7 @@
             </button>
             <div class="profile-top">
                 <p class="title" v-if="profileuser">{{ profileuser.Name }}</p>
-                <p class="tweet_count">{{ postType === 'likes' ? like_count : (postType === 'replies' ? reply_count : tweet_count) }} {{ calculateModifiedPostType() }}</p>
+                <p class="tweet_count">{{ calculateModifiedPostType() }}</p>
             </div>
         </div>
         <div class="profile-info">
@@ -113,7 +113,7 @@
                                 <p class="post-btn-nr" :class="{ 'bookmarked': tweet.isBookmarked }"></p>
                             </button>
                         </div>
-                        <button class="delete-btn" @click.stop="deleteTweet(tweet.TweetID)" v-if="this.postType=== 'tweets' && profileuser.UserID === tweet.user.UserID && profileuser.UserID === user.UserID">
+                        <button class="delete-btn" @click.stop="deleteTweetID = tweet.TweetID; TogglePopup('DeleteTrigger')" v-if="this.postType=== 'tweets' && profileuser.UserID === tweet.user.UserID && profileuser.UserID === user.UserID">
                             <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
                         </button>
                     </div>
@@ -135,8 +135,8 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="delete-btn" @click.stop="deleteComment(comment.TweetID, comment.CommentID)" v-if="profileuser.UserID === user.UserID">
-                                <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
+                        <button class="delete-btn" @click.stop="deleteCommentTweetID = comment.TweetID; deleteCommentID = comment.CommentID; TogglePopup('DeleteTrigger2')" v-if="profileuser.UserID === user.UserID">
+                            <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
                         </button>
                     </div>
                 </div>
@@ -250,6 +250,26 @@
                 </div>
             </div>
         </Popup>
+        <Popup v-if="popupTriggers.DeleteTrigger" :TogglePopup="() => TogglePopup('DeleteTrigger')">
+            <div class="delete-popup">
+                <h1 class="delete-title">Delete Tweet</h1>
+                <p class="tweet-p">Are you sure you want to delete this tweet?</p>
+                <div class="tweet-buttons">
+                    <button class="cancel-button" @click="TogglePopup('DeleteTrigger')">Cancel</button>
+                    <button class="delete-button" @click.stop="deleteTweet(deleteTweetID)">Delete</button>
+                </div>
+            </div>
+        </Popup>
+        <Popup v-if="popupTriggers.DeleteTrigger2" :TogglePopup="() => TogglePopup('DeleteTrigger2')">
+            <div class="delete-popup">
+                <h1 class="delete-title">Delete Comment</h1>
+                <p class="tweet-p">Are you sure you want to delete this comment?</p>
+                <div class="tweet-buttons">
+                    <button class="cancel-button" @click="TogglePopup('DeleteTrigger2')">Cancel</button>
+                    <button class="delete-button" @click="deleteComment(deleteCommentTweetID, deleteCommentID)">Delete</button>
+                </div>
+            </div>
+        </Popup>
     </div>
 </template>
 <script>
@@ -270,6 +290,9 @@ export default{
     data(){
         return {
             isHovered: [],
+            deleteTweetID: null,
+            deleteCommentTweetID: null,
+            deleteCommentID: null,
         }
     },
     computed:{
@@ -336,6 +359,8 @@ export default{
       EditTrigger: false,
       BannerTrigger: false,
       PFPTrigger: false,
+      DeleteTrigger: false,
+      DeleteTrigger2: false,
     });
 
     const TogglePopup = (trigger) => {
@@ -369,12 +394,12 @@ export default{
   },
     methods: {
         calculateModifiedPostType() {
-            if (this.postType === 'likes' && this.like_count === 1) {
-                return 'like';
-            } else if (this.postType === 'replies' && this.reply_count === 1) {
-                return 'reply';
-            } else if (this.postType === 'tweets' && this.tweet_count === 1) {
-                return 'tweet';
+            if (this.postType === 'likes') {
+                return this.like_count === 1 ? '1 tweet liked' : `${this.like_count} tweets liked`;
+            } else if (this.postType === 'replies') {
+                return this.reply_count === 1 ? '1 tweet replied to' : `${this.reply_count} tweets replied to`;
+            } else if (this.postType === 'tweets') {
+                return this.tweet_count === 1 ? '1 tweet' : `${this.tweet_count} tweets`;
             } else {
                 return this.postType;
             }
@@ -559,9 +584,7 @@ export default{
             console.log(id);
         },
         deleteTweet(tweetID) {
-            if (confirm('Are you sure you want to delete this tweet?')) {
-                this.performDeleteTweet(tweetID);
-            }
+            this.performDeleteTweet(tweetID);
         },
         async performDeleteTweet(tweetID) {
             if (!tweetID) {
@@ -575,15 +598,14 @@ export default{
                 if (index !== -1) {
                     this.currentPosts.splice(index, 1);
                 }
+                this.popupTriggers.DeleteTrigger = false;
                 console.log(`Tweet with ID ${tweetID} deleted successfully.`);
             } catch (error) {
                 console.error('Error deleting tweet:', error);
             }
         },
         deleteComment(tweetID, commentID) {
-            if (confirm('Are you sure you want to delete this comment?')) {
-                this.performDeleteComment(tweetID, commentID);
-            }
+            this.performDeleteComment(tweetID, commentID);
         },
         async performDeleteComment(tweetID, commentID) {
             if (!commentID) {
@@ -596,6 +618,7 @@ export default{
                 if (tweet) {
                     tweet.comment_count -= 1;
                 }
+                this.popupTriggers.DeleteTrigger2 = false;
                 this.getCommentedTweets(this.$route.params.UserTag);
                 console.log(`Comment with ID ${commentID} deleted successfully.`);
             } catch (error) {
@@ -863,6 +886,68 @@ export default{
 }
 </script>
 <style lang="scss" scoped>
+.delete-popup{
+  display:flex;
+  flex-direction:column;
+  justify-content: center;
+  width:500px;
+  padding:60px 50px;
+  gap:20px;
+  margin-top:10px;
+  box-sizing: border-box;
+  .delete-title{
+    color:white;
+    font-size:30px;
+    font-weight:600;
+    margin:0;
+  }
+  .tweet-p{
+    color: gray;
+    margin-top: 0px;
+  }
+  .tweet-buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    .cancel-button{
+        display: flex;
+        margin-right: 10px;
+        padding:10px 15px; 
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 50px;
+        border:1px solid #6A6F74;
+        background-color: rgba($color: #16181C, $alpha: 0.5);
+        color:white;
+        font-size:15px;
+        font-weight: bold;
+        transition:all 0.3s;
+        cursor:pointer;
+        &:hover{
+            background-color: rgba($color: #16181C, $alpha: 1);
+        }
+    }
+    .delete-button{
+        display: flex;
+        padding:10px 15px; 
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 50px;
+        border:1px solid #e42020;
+        background-color: rgba($color: #e42020, $alpha: 0.1);
+        color:#e42020;
+        font-size:15px;
+        font-weight: bold;
+        transition:all 0.3s;
+        cursor:pointer;
+        &:hover{
+            background-color: rgba($color: #e42020, $alpha: 0.3);
+        }
+    }
+  }
+}
 .warning-1 {
     color: red;
     font-size: 12px;
@@ -2364,6 +2449,20 @@ export default{
         }
     }
 
+}
+.delete-popup{
+    width: 100%;
+    .delete-title{
+        font-size: 20px;
+    }
+    .tweet-p{
+        font-size: 13px;
+    }
+    .tweet-buttons{
+        .cancel-button, .delete-button{
+            font-size: 13px;
+        }
+    }
 }
 }
 </style>
