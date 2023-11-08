@@ -128,18 +128,17 @@ class UserController extends Controller
     }
     public function getUserById($id)
     {
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+        if (auth()->check()) {
+            $user = auth()->user();
+            $user2 = User::find($id);
+            if (!$user2) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+            $user2->isFollowedByMe = $this->checkIfFollowedByUser($user, $user2);
+            return response()->json(['user' => $user2]);
+        } else {
+            return response()->json(['error' => 'User not authenticated.'], 401);
         }
-        $userData = [
-            'UserID' => $user->UserID,
-            'Name' => $user->Name,
-            'UserTag' => $user->UserTag,
-        ];
-
-        return response()->json(['user' => $userData]);
     }
 
     public function getUserByTag($tag)
@@ -154,12 +153,9 @@ class UserController extends Controller
             $user2->create_date =  'Joined ' . $user2->created_at->format('F Y');
             $user2->follower_count = $user2->followers()->count();
             $user2->following_count = $user2->following()->count();
-
             $user2->isFollowedByMe = $this->checkIfFollowedByUser($user, $user2);
-
             return response()->json(['user' => $user2]);
         } else {
-            // Handle the case where the user is not authenticated.
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }

@@ -17,28 +17,38 @@ class TweetController extends Controller
 {
     public function createTweet(Request $request)
     {
-        $user = auth()->user();
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        if (auth()->check()) {
+            $user = auth()->user();
+            $tweet = new Tweet();
+    
+            if ($request->has('tweetText')) {
+                $tweet->TweetText = $request->input('tweetText');
+            }
+    
+            if ($request->hasFile('tweetImage')) {
+                $image = $request->file('tweetImage');
+                $path = $image->store('tweet_pictures', 'public');
+                $tweet->TweetImage = $path;
+            }
+    
+            $user->tweets()->save($tweet);
+            $tweet->user = $user;
+            $tweet->created_ago = 'now';
+            $tweet->like_count = 0;
+            $tweet->comment_count = 0;
+            $tweet->retweet_count = 0;
+            $tweet->isLiked = $this->checkIfLikedByUser($tweet, $user);
+            $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
+            $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
+    
+            return response()->json(['message' => 'Tweet created successfully', 'tweet' => $tweet], 201);
+    
+            $tweetCount = $tweets->count();
+    
+            return response()->json(['tweets' => $tweets, 'tweet_count' => $tweetCount]);
+        } else {
+            return response()->json(['error' => 'User not authenticated.'], 401);
         }
-
-        $tweet = new Tweet();
-
-        // Check if tweet text is provided
-        if ($request->has('tweetText')) {
-            $tweet->TweetText = $request->input('tweetText');
-        }
-
-        // Check if an image is provided
-        if ($request->hasFile('tweetImage')) {
-            $image = $request->file('tweetImage');
-            $path = $image->store('tweet_pictures', 'public');
-            $tweet->TweetImage = $path;
-        }
-
-        $user->tweets()->save($tweet);
-
-        return response()->json(['message' => 'Tweet created successfully', 'tweet' => $tweet], 201);
     }
 
     public function getTweets($type)
@@ -167,7 +177,7 @@ class TweetController extends Controller
             $userID = $user2->UserID;
     
             $tweets = Tweet::with(['user', 'comments' => function ($query) use ($userID) {
-                $query->where('UserID', $userID);
+                $query->where('UserID', $userID)->orderBy('created_at', 'desc');;
             }])
             ->whereHas('comments', function ($query) use ($userID) {
                 $query->where('UserID', $userID);
@@ -197,6 +207,9 @@ class TweetController extends Controller
                 $tweet->isLiked = $this->checkIfLikedByUser($tweet, $user);
                 $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
                 $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
+                foreach ($tweet->comments as $comment) {
+                    $comment->created_ago = $this->formatTimeAgo($comment->created_at, $now);
+                }
             }
     
             $tweetCount = $tweets->count();

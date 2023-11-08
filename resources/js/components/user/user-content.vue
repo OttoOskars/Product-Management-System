@@ -1,5 +1,5 @@
 <template>
-    <div class="tweets-container">
+    <div class="content-container">
         <div class="black-line"></div>
         <div class="top-bar">
             <button class="back-icon" @click="goBack">
@@ -144,7 +144,7 @@
             <div class="no-posts" v-if="profileuser">{{ profileuser.UserTag }} currently has no {{ noMorePosts() }} {{ postType }}</div>
         </div>
         <Popup v-if="popupTriggers.CommentTrigger" :TogglePopup="() => TogglePopup('CommentTrigger')">
-            <div class="comment-popup">
+            <div class="create-tweet-or-comment-popup">
                 <div class="top">
                     <div class="left-side-popup">
                         <img  @click="openProfile(user.UserTag)">
@@ -344,6 +344,10 @@ export default{
         NewDescription.value= profileuser.value.Description;
       }
       popupTriggers.value[trigger] = !popupTriggers.value[trigger];
+      comment_text_input.value = '';
+      if (!popupTriggers.value[trigger]) {
+          
+      }
     };
 
     return {
@@ -615,18 +619,10 @@ export default{
                     tweetId: tweetID,
                     commentText: commentText,
                 });
+                const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
                 const newComment = response.data.comment;
-                const userResponse = await this.$axios.get(`/api/get-user/${newComment.UserID}`);
-                newComment.user = userResponse.data.user;
                 this.comments.push(newComment);
-                this.main_comment_text_input = '';
-                this.popup_comment_text_input = '';
-                if (response.status === 201) {
-                    const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
-                    if (tweet) {
-                        tweet.comment_count += 1;
-                    }
-                }
+                tweet.comment_count++;
                 this.popupTriggers.CommentTrigger = false;
                 setTimeout(() => {
                     this.buttonDisabled = false;
@@ -863,24 +859,6 @@ export default{
 }
 </script>
 <style lang="scss" scoped>
-.warning-1 {
-    color: red;
-    font-size: 12px;
-}
-.tweets-container{
-    width:100%;
-    height:auto;
-    color:white;
-}
-.black-line{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    height:2px;
-    z-index:8;
-    background-color: black;
-}
 .top-bar{
     height:60px;
     width:100%;
@@ -915,24 +893,26 @@ export default{
     }
     .profile-top{
         height:100%;
-        width:auto;
+        width:100%;
         display:flex;
         flex-direction: column;
         padding:10px;
         padding: 10px 10px 0px 30px;
         box-sizing: border-box;
+        overflow: hidden;
         .title{
             width:100%;
             height:50%;
-            display:flex;
-            align-items: center;
             color:white;
-            justify-content: flex-start;
             box-sizing: border-box;
             font-weight: bold;
             font-size: 20px;
             margin:0;
             padding:0;
+            max-width:100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .tweet_count{
             width:100%;
@@ -1063,6 +1043,7 @@ export default{
             box-sizing: border-box;
             .name{
                 font-weight: bold;
+                overflow-wrap: anywhere;
                 font-size: 20px;
                 margin:0;
                 padding:0;
@@ -1078,6 +1059,7 @@ export default{
             font-size: 16px;
             margin:0;
             padding:0;
+            overflow-wrap: anywhere;
         }
         .join-date{
             color:#6A6F74;
@@ -1167,268 +1149,6 @@ export default{
         }
     }
 }
-.post-container{
-    padding-top:0px;
-    padding-bottom:80px;
-    width:100%;
-    height:auto;
-    display:flex;
-    flex-direction:column;
-    box-sizing: border-box;
-    .left-side{
-        width:50px;
-        height:100%;
-        display:flex;
-        flex-direction:column;
-        img{
-            z-index: 2;
-            width:50px;
-            height:50px;
-            border-radius: 50%;
-            background-color: white;
-        }
-    }
-    .no-posts{
-        width:100%;
-        height:auto;
-        display:flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        box-sizing: border-box;
-        padding:20px;
-        color:#6A6F74;
-        font-weight: bold;
-        font-size:18px;
-    }
-    .post{
-        width:100%;
-        min-height:auto;
-        display:flex;
-        flex-direction:column;
-        position:relative;
-        gap:0px;
-        box-sizing: border-box;
-        border-bottom: 1px solid #2F3336;
-        cursor:pointer;
-        .isretweet{
-            padding-left:15px;
-            height:25px;
-            font-size:14px;
-            color:#1da1f2;
-        }
-        .inner-post{
-            width:100%;
-            min-height:auto;
-            display:flex;
-            flex-direction:row;
-            gap:10px;
-            box-sizing: border-box;
-            padding:15px 10px 5px 15px;
-            cursor:pointer;
-        }
-        .right-side{
-            width:90%;
-            height:100%;
-            display:flex;
-            flex-direction:column;
-            box-sizing: border-box;
-            gap:5px;
-            .post-top{
-                width:100%;
-                height:auto;
-                display:flex;
-                flex-direction:column;
-                padding-left:5px;
-                .userinfo{
-                    width:100%;
-                    height:10px;
-                    display:flex;
-                    flex-direction:row;
-                    justify-content: flex-start;
-                    align-items: center;
-                    gap:7px;
-                    color:white;
-                    padding-top:2px;
-                    .username{
-                        margin:0;
-                        font-weight: bold;
-                        font-size: 17px;
-                        color:white;
-                    }
-                    .usertag{
-                        margin:0;
-                        font-size: 17px;
-                        color:#6A6F74;
-                    }
-                    .time-posted{
-                        margin:0;
-                        font-size: 17px;
-                        color:#6A6F74;
-                    }
-                }
-
-                .content-text{
-                    width:100%;
-                    height:auto;
-                    text-align: left;
-                    color:white;
-                    padding:0px;
-                    font-size:17px;
-                    word-wrap: break-word;
-                }
-
-            }
-            .content-img{
-                padding-left:5px;
-                width:auto;
-                height:auto;
-                display:flex;
-                justify-content: flex-start;
-                align-items: center;
-                box-sizing: border-box;
-                img{
-                    border-radius:15px;
-                    min-width:100%;
-                    max-height:100%;
-                    border:solid 1px #2F3336;
-                    background:none;
-                }
-            }
-            .bottom{
-                width:100%;
-                height:40px;
-                display:flex;
-                flex-direction: row;
-                justify-content: space-between;
-                color:#ffffff;
-                .post-btn-container{
-                    display:flex;
-                    flex-direction: row;
-                    align-items: center;
-                    justify-content: center;
-                    width:auto;
-                    height:100%;
-                    background: none;
-                    border-radius:50px;
-                    border:none;
-                    text-align: left;
-                    transition: all 0.3s;
-                    cursor:pointer;
-                    .post-btn-nr{
-                        color:#6A6F74;
-                        font-size:14px;
-                        padding-top:1px;
-                    }
-                }
-                .comment-btn:hover{
-                    .icon-container{
-                        background-color: rgba($color: #1D9BF0, $alpha: 0.2);
-                        .post-icon{
-                            color:#1D9BF0;
-                        }
-                    }
-                    .post-btn-nr{
-                        color:#1D9BF0;
-                    }
-                }
-                .heart-btn:hover{
-                    .icon-container{
-                        background-color: rgba($color: #F31C80, $alpha: 0.2);
-                        .post-icon{
-                            color:#F31C80;
-                        }
-                    }
-                    .post-btn-nr{
-                        color:#F31C80;
-                    }
-                }
-                .retweet-btn:hover{
-                    .icon-container{
-                        background-color: rgba($color: #00BA7C, $alpha: 0.2);
-                        .post-icon{
-                            color:#00BA7C;
-                        }
-                    }
-                    .post-btn-nr{
-                        color:#00BA7C;
-                    }
-                }
-                .bookmark-btn:hover{
-                    .icon-container{
-                        background-color: rgba($color: #ffe920, $alpha: 0.2);
-                        .post-icon{
-                            color:#ffe920;
-                        }
-                    }
-                    .post-btn-nr{
-                        color:#ffe920;
-                    }
-                }
-                .icon-container{
-                    height:40px;
-                    width:40px;
-                    background:none;
-                    border-radius:50%;
-                    border:none;
-                    display:flex;
-                    justify-content: center;
-                    align-items: center;
-                    cursor:pointer;
-                    .post-icon{
-                        font-size:20px;
-                        color:#71767B;
-                        --ionicon-stroke-width: 40px;
-                    }
-                    
-                }
-            }
-            .delete-btn{
-                height:25px;
-                width:25px;
-                background:none;
-                border-radius:50%;
-                border:none;
-                display:flex;
-                justify-content: center;
-                align-items: center;
-                padding:0;
-                cursor:pointer;
-                position:absolute;
-                right:5px;
-                top:5px;
-                .delete-icon{
-                    font-size:16px;
-                    color:#f11515;
-                    --ionicon-stroke-width: 30px;
-                    visibility: visible;
-                }
-                &:hover{
-                    background-color: rgba($color: #f11515, $alpha: 0.1);
-                }
-            }
-        }
-    }
-    .liked{
-        color:#F31C80 !important;
-    }
-    .retweeted{
-        color:#00BA7C !important;
-    }
-    .bookmarked{
-        color:#ffe920 !important;
-    }
-    .post-icon{
-        visibility: visible !important;
-    }
-    .top2{
-        display:none;
-    }
-    .post:hover{
-        background-color: #080808;
-    }
-}
-
 .verical-comment-line{
     position:absolute;
     bottom: 0px;
@@ -1446,263 +1166,6 @@ export default{
     left:5px;
     z-index:1;
     background-color: #211f1f;
-}
-
-.comment-container{
-    width:100%;
-    height:auto;
-    display:flex;
-    flex-direction:column;
-    box-sizing: border-box;
-    .comment{
-        width:100%;
-        min-height:auto;
-        display:flex;
-        flex-direction:row;
-        gap:10px;
-        box-sizing: border-box;
-        padding:15px 10px 5px 15px;
-        border-top: 1px solid #2F3336;
-        border-image: linear-gradient(90deg, transparent 4%,#2F3336 4%);
-        border-image-slice: 1;
-        justify-content: space-between;
-        position: relative;
-        cursor:pointer;
-        .left{
-            width:auto;
-            height:100%;
-            display:flex;
-            flex-direction:row;
-            gap:15px;
-            box-sizing: border-box;
-            img{
-                width:50px;
-                height:50px;
-                border-radius: 50%;
-                background-color: white;
-                z-index:2;
-            }
-            .content{
-                flex-grow: 1;
-                height:100%;
-                display:flex;
-                flex-direction: column;
-                box-sizing: border-box;
-                .userinfo{
-                    width:100%;
-                    height:10px;
-                    display:flex;
-                    flex-direction:row;
-                    justify-content: flex-start;
-                    align-items: center;
-                    gap:7px;
-                    color:white;
-                    padding-top:2px;
-                    .username{
-                        margin:0;
-                        font-weight: bold;
-                        font-size: 17px;
-                        color:white;
-                    }
-                    .usertag{
-                        margin:0;
-                        font-size: 17px;
-                        color:#6A6F74;
-                    }
-                    .time-posted{
-                        margin:0;
-                        font-size: 17px;
-                        color:#6A6F74;
-                    }
-                }
-                .content-text{
-                    height:auto;
-                    width:100%;
-                    text-align: left;
-                    color:white;
-                    padding:0px;
-                    font-size:17px;
-                    overflow-wrap: break-word;
-                }
-            }
-        }
-        .delete-btn{
-            height:25px;
-            width:25px;
-            background:none;
-            border-radius:50%;
-            border:none;
-            display:flex;
-            justify-content: center;
-            align-items: center;
-            padding:0;
-            cursor:pointer;
-            position:absolute;
-            right:5px;
-            top:5px;
-            .delete-icon{
-                font-size:16px;
-                color:#f11515;
-                --ionicon-stroke-width: 30px;
-                visibility: visible;
-            }
-            &:hover{
-                background-color: rgba($color: #f11515, $alpha: 0.1);
-            }
-        }
-    }
-}
-.comment-popup{
-    width:500px;
-    min-height: 300px;
-    display:flex;
-    flex-direction:column;
-    box-sizing: border-box;
-    justify-content: space-between;
-    padding:30px 0px 0px 0px;
-    box-sizing: border-box;
-    .top{
-        width:100%;
-        display:flex;
-        flex-direction: row;
-        box-sizing: border-box;
-        gap:15px;
-        padding:30px 35px 20px 20px;
-
-        .left-side-popup{
-            width:50px;
-            height:100%;
-            display:flex;
-            flex-direction:column;
-            box-sizing: border-box;
-            img{
-                width:50px;
-                height:50px;
-                border-radius: 50%;
-                background-color: white;
-            }
-        }
-        .right-side-popup{
-            width:90%;
-            height:100%;
-            display:flex;
-            flex-direction:column;
-            box-sizing: border-box;
-            .userinfo-popup{
-                width:100%;
-                height:20px;
-                display:flex;
-                flex-direction: row;
-                gap:5px;
-                .username{
-                    margin:0;
-                    font-weight: bold;
-                    font-size: 17px;
-                    color:white;
-                }
-                .usertag{
-                    margin:0;
-                    font-size: 17px;
-                    color:#6A6F74;
-                }
-            }
-            .tweet-input-container{
-                width:100%;
-                height:100%;
-                display:flex;
-                align-items: center;
-                justify-content: center;
-                padding-top: 10px;
-                padding-right:10px;
-                .tweet-input{
-                    width:100%;
-                    height:100%;
-                    background-color: #000000;
-                    color:#ffffff;
-                    resize: none;
-                    transition: height 0.2s;
-                    font-family: Arial, sans-serif;
-                    font-size: 22px;
-                    border:none;
-                    display:flex;
-                    align-items: center;
-                }
-                .tweet-input:focus{
-                    outline:none;
-                }
-            }
-        }
-    }
-
-    .bottom{
-        width:100%;
-        height:60px;
-        display:flex;
-        flex-direction: row;
-        justify-content: space-between;
-        border-top:1px solid #2F3336;
-        padding: 10px;
-        box-sizing: border-box;
-        .buttons{
-            display:flex;
-            flex-direction: row;
-            align-items: center;
-            gap:5px;
-            .tweet-btn{
-                height:40px;
-                width:40px;
-                background:none;
-                border-radius:50%;
-                border:none;
-                display:flex;
-                justify-content: center;
-                align-items: center;
-                cursor:pointer;
-                transition: all 0.3s;
-                .tweet-img-label{
-                    width:100%;
-                    height:100%;
-                    display:flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin: 0;
-                    padding: 0;
-                }
-                .create-tweet-icon{
-                    font-size:20px;
-                    color:#1D9BF0;
-                    --ionicon-stroke-width: 40px;
-                }
-            }
-            .tweet-btn:hover{
-                background-color: rgba($color: #1D9BF0, $alpha: 0.1);
-            }
-        }
-        .popup-button{
-            width:auto;
-            padding:20px;
-            height:auto;
-            display:flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            border-radius: 50px;
-            border:none;
-            background-color: #1D9BF0;
-            color:white;
-            font-size: medium;
-            font-weight: bold;
-            transition: all 0.3s;
-            cursor:pointer;
-        }
-        .popup-button:hover{
-            background-color: #1d8dd7;
-        }
-        .popup-button:disabled{
-            background-color: #0F4E78;
-            color:#808080;
-        }
-    }
 }
 .edit-popup{
     width:500px;
@@ -1766,7 +1229,6 @@ export default{
                 bottom: -60px;
                 left: 20px;
                 box-sizing: border-box;
-
                 .profile-img{
                     height:100%;
                     width:100%;
@@ -1801,6 +1263,7 @@ export default{
                     align-items: center;
                     margin: 0;
                     padding: 0;
+                    cursor:pointer;
                     .image-icon{
                         color:white;
                         font-size: 18px;
@@ -1943,12 +1406,11 @@ export default{
         overflow: hidden;
     }
 }
-
 @media (min-width: 500px) {
 }
 @media (max-width: 500px) {
 .top-bar{
-    height:50px;
+    height:auto;
     .back-icon{
         width:40px;
         height:40px;
@@ -2037,127 +1499,6 @@ export default{
         width:50px;
     }
 }
-.post-container{
-    .left-side, .post-top{
-            display:none !important;
-        }
-    .no-posts{
-        padding:15px;
-        font-size:13px;
-    }
-    .post{
-        gap:0px;
-        .isretweet{
-            padding-left:15px;
-            height:20px;
-            font-size:12px;
-        }
-        .inner-post{
-            gap:5px !important;
-            padding:15px 10px 5px 15px;
-
-        }
-        .right-side{
-            width:100% !important;
-            .top2{
-                width:100%;
-                height:auto;
-                display:flex;
-                flex-direction:row;
-                .person-image{
-                    width: 50px;
-                    height: auto;
-                    display:flex;
-                    align-items: center;
-                    align-items: flex-start;
-                    img{
-                        width:40px;
-                        height:40px;
-                        z-index:2;
-                        border-radius:50%;
-                        background-color: rgb(255, 255, 255);
-                    }
-                }
-                .info-content{
-                    width:100%;
-                    height:auto;
-                    display:flex;
-                    flex-direction:column;
-                    padding-left:5px;
-                    .userinfo{
-                        width:100%;
-                        height:10px;
-                        display:flex;
-                        flex-direction:row;
-                        justify-content: flex-start;
-                        align-items: center;
-                        gap:7px;
-                        color:white;
-                        padding-top:2px;
-                        .username{
-                            margin:0;
-                            font-weight: bold;
-                            font-size: 14px;
-                            color:white;
-                        }
-                        .usertag{
-                            margin:0;
-                            font-size: 14px;
-                            color:#6A6F74;
-                        }
-                        .time-posted{
-                            margin:0;
-                            font-size: 14px;
-                            color:#6A6F74;
-                        }
-                    }
-                    .content-text{
-                        width:100%;
-                        height:auto;
-                        text-align: left;
-                        color:white;
-                        padding:0px;
-                        font-size:14px;
-                    }
-                }
-            }
-            .content-img{
-                padding:0!important;
-            }
-            .bottom{
-                height:30px!important;
-                .post-btn-container{
-                    width:auto;
-                    height:100%;
-                    border-radius:50%;
-                    cursor:pointer;
-                    .post-btn-nr{
-                        color:#6A6F74;
-                        font-size:10px !important;
-                        padding-top:1px;
-                    }
-                }
-                .icon-container{
-                    height:30px;
-                    width:30px;
-                    background:none;
-                    border-radius:50%;
-                    border:none;
-                    display:flex;
-                    justify-content: center;
-                    align-items: center;
-                    cursor:pointer;
-                    .post-icon{
-                        font-size:18px;
-                        color:#71767B;
-                        --ionicon-stroke-width: 30px;
-                    }
-                    
-                }
-            }
-        }
-    }
-}
 .verical-comment-line{
     bottom: 0px;
     left:6px;
@@ -2169,101 +1510,6 @@ export default{
     width:30px;
     top:35px;
     left:6px;
-}
-.comment-container{
-    .comment{
-        width:100%;
-        min-height:auto;
-        gap:5px !important;
-        border-top: 1px solid #2F3336;
-        border-image: linear-gradient(90deg, transparent 6%,#2F3336 6%);
-        border-image-slice: 1;
-        .left{
-            width:auto;
-            height:100%;
-            gap:5px;
-            img{
-                width:40px;
-                height:40px;
-                border-radius: 50%;
-                background-color: white;
-            }
-            .content{
-                max-width: 80%;
-                height:100%;
-                .userinfo{
-                    width:100%;
-                    height:10px;
-                    gap:7px;
-                    padding-top:2px;
-                    .username{
-                        font-size: 15px;
-                    }
-                    .usertag{
-                        font-size: 15px;
-                    }
-                    .time-posted{
-                        font-size: 15px;
-                    }
-                }
-                .content-text{
-                    font-size:15px;
-                }
-            }
-        }
-    }
-}
-.comment-popup{
-    width:100% !important;
-    min-height: 250px;
-    padding:30px 0px 0px 0px;
-    box-sizing: border-box;
-    .top{
-        width:100%;
-        gap:5px;
-        padding:20px 15px 10px 10px;
-
-        .left-side-popup{
-            width:40px;
-            box-sizing: border-box;
-            img{
-                width:40px;
-                height:40px;
-            }
-        }
-        .right-side-popup{
-            gap:5px;
-            .userinfo-popup{
-                gap:5px;
-                .username{
-                    margin:0;
-                    font-size: 13px;
-                }
-                .usertag{
-                    margin:0;
-                    font-size: 13px;
-
-                }
-            }
-            .tweet-input-container{
-                padding:0;
-                padding-right:10px;
-                .tweet-input{
-                    font-size: 14px !important;
-                }
-            }
-        }
-    }
-    .bottom{
-        width:100%;
-        height:40px !important;
-        display:flex;
-        padding: 5px 10px;
-        .popup-button{
-            padding:12px;
-            font-size: 11px;
-        }
-    }
 }
 .edit-popup{
     width:100%;

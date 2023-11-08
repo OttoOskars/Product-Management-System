@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->get('user', [UserController::class, 'getUser'
 Route::middleware('auth:sanctum')->post('tweets', [TweetController::class, 'createTweet']);
 Route::middleware('auth:sanctum')->post('/create-comments', [CommentController::class, 'createComment']);
 
-Route::get('/get-user/{id}', [UserController::class, 'getUserById']);
+Route::middleware('auth:sanctum')->get('/get-user/{id}', [UserController::class, 'getUserById']);
 Route::post('updateName', [UserController::class, 'updateName']);
 Route::post('updateDesc', [UserController::class, 'updateDescription']);
 Route::post('updatePFP', [UserController::class, 'updateProfilePicture']);
