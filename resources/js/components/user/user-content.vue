@@ -277,6 +277,7 @@ import { ref, computed } from 'vue';
 import Popup from '../Popup.vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import store from '../../store';
 import axios from 'axios';
 import { mapState } from 'vuex';
 import 'cropperjs/dist/cropper.css';
@@ -702,8 +703,8 @@ export default{
                     const tweet = this.currentPosts.find((t) => t.TweetID === tweetId);
                     if (tweet) {
                         tweet.isLiked = false;
-                        this.like_count -= 1;
-                        if (this.loggedInUser === this.profileUser && this.postType === 'like') {
+                        tweet.like_count -= 1;
+                        if ( store.state.user.UserID === this.profileuser.UserID && this.postType === 'likes') {
                             const index = this.currentPosts.findIndex((t) => t.TweetID === tweetId);
                             if (index !== -1) {
                                 this.currentPosts.splice(index, 1);
