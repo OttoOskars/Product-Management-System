@@ -23,13 +23,15 @@
                     <div class="search-people">
                         <div class="input-wrap">
                             <!-- <input type="text" id="name-input" class="Edit-Input" autocomplete="on" maxlength="30" required> -->
-                            <input v-model="searchInput" @input="handleSearchInput" placeholder="Search usernames..." />
+                            <input v-model="searchInput" @input="handleSearchInput" class="Edit-Input" placeholder="Search usernames..." />
                             <!-- <label for="name-input"><ion-icon name="search-outline"></ion-icon>Search people</label> -->
                         </div>
 
-                        <ul>
-                            <li v-for="UserTag in users" :key="UserTag">{{ user.UserTag }}</li>
-                        </ul>
+                            <div class="person" v-for="Person in foundUsers" :key="Person.UserID">{{ Person.UserTag }}
+                                <!-- <div class="profile">
+                                    <img :src="Person.profilePicture" alt="Profile Picture" class="profile-picture">
+                                </div> -->
+                            </div>
                     </div>
              </div>
         </Popup>
@@ -43,6 +45,7 @@
 <script>
 import { ref } from 'vue';
 import Popup from '@/components/Popup.vue';
+import { mapState } from 'vuex';
 export default{
     name: 'Search',
     components: {
@@ -53,8 +56,12 @@ export default{
             isInputFocused: false,
             people: 3,
             searchInput: '',
-            UserTag: [],
+            users:[],
+            foundUsers: [],
         };
+    },
+    computed: {
+        ...mapState(['user']),
     },
     setup () {
         const popupTriggers = ref({
@@ -81,19 +88,31 @@ export default{
         openTweet(id) {
             console.log(id);
         },
-        handleSearchInput() {
-    if (this.searchInput.length > 0) {
-      this.$axios.get('/users/UserTag/' + this.searchInput)
+     handleSearchInput() {
+       if (this.searchInput.length > 0) {
+         this.foundUsers = this.users.filter(user => {
+           // Convert both searchInput and UserTag to lowercase
+           const searchInputLower = this.searchInput.toLowerCase();
+           const userTagLower = user.UserTag.toLowerCase();
+
+           return userTagLower.includes(searchInputLower);
+         });
+       } else {
+         this.foundUsers = [];
+       }
+     }
+
+
+    },
+    async mounted() {
+        await this.$store.dispatch('initializeApp');
+        this.$axios.get('/api/allusers')
         .then(response => {
-            this.UserTag = response.data.users.filter(user => user.UserTag.toLowerCase().startsWith(this.searchInput.toLowerCase()));
+            this.users = response.data;
         })
         .catch(error => {
             console.error(error);
         });
-    } else {
-        this.UserTag = [];
-    }
-        },
     },
 }
 
@@ -313,8 +332,16 @@ export default{
         }
 
 
+.person {
+    color: gray;
+    margin-left: 2%;
+    margin-top: 7%;
+    font-size:16px;
 
 
+
+
+}
 
 
 }
