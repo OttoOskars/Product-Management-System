@@ -2,6 +2,11 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import store from './store.js';
 
+const checkAuth = () => {
+  const token = localStorage.getItem('user_token');
+  return Boolean(token);
+};
+
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -9,6 +14,13 @@ const router = createRouter({
       path: '/',
       component: () => import('./components/login.vue'),
       meta: { requiresAuth: false },
+      beforeEnter: (to, from, next) => {
+        if (checkAuth()) {
+          next('/home');
+        } else {
+          next();
+        }
+      },
     },
     {
       path: '/home',
@@ -74,12 +86,17 @@ const router = createRouter({
   ],
 });
 
+// Navigation guard
 router.beforeEach((to, from, next) => {
-    if (to.meta.requiresAuth && !store.state.user) {
-      next('/');
-    } else {
+  if (to.meta.requiresAuth) {
+    if (checkAuth()) {
       next();
+    } else {
+      next('/');
     }
+  } else {
+    next();
+  }
 });
 
 export default router;

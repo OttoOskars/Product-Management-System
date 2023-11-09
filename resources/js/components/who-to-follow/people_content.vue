@@ -9,29 +9,54 @@
         </div>
 
         <div class="people-container">
-            <div class="person" v-for="user in users" :key="user.UserID">
+            <div class="person" v-for="person in users" :key="person.UserID">
                 <div class="user-info">
-                    <img :src="'/storage/' + user.ProfilePicture" class="person-img"> 
+                    <img :src="'/storage/' + person.ProfilePicture" class="person-img"> 
                     <div class="person-info">
-                        <p class="username">{{ user.Name }}</p>
-                        <p class="usertag">{{ user.UserTag }}</p>
+                        <p class="username">{{ person.Name }}</p>
+                        <p class="usertag">{{ person.UserTag }}</p>
                     </div>
                 </div>
-                <button class="follow-btn" @click="toggleFollowUnfollow(user.UserID)" :class="{ 'followed-btn': user.isFollowedByMe }">
-                    {{ user.isFollowedByMe ? 'Unfollow' : 'Follow' }}
+                <button  
+                    class="follow-button" 
+                    @click="toggleFollowUnfollow(person.UserID)"
+                    v-if="!(person.UserID === user.UserID)"
+                    :class="{
+                        'followed-button': person.isFollowedByMe,
+                        'unfollow-button': person.isFollowedByMe && isHovered[person.UserID]
+                    }"
+                    @mouseover="isHovered[person.UserID] = true"
+                    @mouseout="isHovered[person.UserID] = false">
+                    {{ followButtonLabel(person) }}
                 </button>
             </div>
         </div>
     </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 export default {
     name: 'Tweets',
     data: () => ({
         showTweetWindow: false,
         followed: false,
         users:[],
+        isHovered:  [],
     }),
+    computed: {
+        ...mapState(['user']),
+        followButtonLabel() {
+            return (person) => {
+                if (this.isHovered[person.UserID] && person.isFollowedByMe) {
+                    return 'Unfollow';
+                } else if (person.isFollowedByMe) {
+                    return 'Following';
+                } else {
+                    return 'Follow';
+                }
+            };
+        },
+    },
     methods: {
         goBack() {
             this.$router.go(-1);

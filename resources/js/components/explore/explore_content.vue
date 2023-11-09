@@ -1,5 +1,5 @@
 <template>
-    <div class="tweets-container">
+    <div class="content-container">
         <div class="black-line"></div>
         <div class="top-bar"> 
             <input 
@@ -88,7 +88,7 @@
         </div>
     </div>
     <Popup v-if="popupTriggers.CommentTrigger" :TogglePopup="() => TogglePopup('CommentTrigger')">
-        <div class="create-popup">
+        <div class="create-tweet-or-comment-popup">
             <div class="top">
                 <div class="left-side-popup">
                     <img  @click.stop="openProfile(i)">
@@ -182,21 +182,6 @@ export default{
 }
 </script>
 <style lang="scss" scoped>
-.tweets-container{
-    width:100%;
-    height:auto;
-    color:white;
-}
-.black-line{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    height:2px;
-    z-index:8;
-    background-color: black;
-}
-
 .top-bar{
     height:60px;
     width:100%;
@@ -246,7 +231,6 @@ export default{
         font-size: 24px;
     }
 }
-
 .title{
     width:100%;
     height:28px;

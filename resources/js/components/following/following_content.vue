@@ -261,57 +261,6 @@ export default {
                 }
             }
         }
-        .follow-button{
-            padding:10px 15px; 
-            display:flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            border-radius: 50px;
-            border:none;
-            background-color: white;
-            color:black;
-            font-size:15px;
-            font-weight: bold;
-            transition:all 0.3s;
-            cursor:pointer;
-            &:hover{
-                background-color: #D7DBDC;
-            }
-        }
-        .followed-button{
-            padding:10px 15px; 
-            display:flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            border-radius: 50px;
-            border:1px solid #6A6F74;
-            background-color: black;
-            color:white;
-            font-size:15px;
-            font-weight: bold;
-            transition:all 0.3s;
-            cursor:pointer;
-        }
-        .unfollow-button{
-            padding:10px 15px; 
-            display:flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            border-radius: 50px;
-            border:1px solid #e42020;
-            background-color: rgba($color: #e42020, $alpha: 0.4);
-            color:#e42020;
-            font-size:15px;
-            font-weight: bold;
-            transition:all 0.3s;
-            cursor:pointer;
-            &:hover{
-                background-color: rgba($color: #e42020, $alpha: 0.15);
-            }
-        }
     }
 }
 </style>

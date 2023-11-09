@@ -230,8 +230,6 @@ export default{
         }
     }
 }
-
-
 .title{
     width:100%;
     height:38px;
@@ -318,57 +316,6 @@ export default{
                 display:flex;
                 align-items: center;
                 justify-content: center;
-                .follow-button{
-                    padding:10px 15px; 
-                    display:flex;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                    border-radius: 50px;
-                    border:none;
-                    background-color: white;
-                    color:black;
-                    font-size:15px;
-                    font-weight: bold;
-                    transition:all 0.3s;
-                    cursor:pointer;
-                    &:hover{
-                        background-color: #D7DBDC;
-                    }
-                }
-                .followed-button{
-                    padding:10px 15px; 
-                    display:flex;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                    border-radius: 50px;
-                    border:1px solid #6A6F74;
-                    background-color: #16181C;
-                    color:white;
-                    font-size:15px;
-                    font-weight: bold;
-                    transition:all 0.3s;
-                    cursor:pointer;
-                }
-                .unfollow-button{
-                    padding:10px 15px; 
-                    display:flex;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                    border-radius: 50px;
-                    border:1px solid #e42020;
-                    background-color: rgba($color: #e42020, $alpha: 0.4);
-                    color:#e42020;
-                    font-size:15px;
-                    font-weight: bold;
-                    transition:all 0.3s;
-                    cursor:pointer;
-                    &:hover{
-                        background-color: rgba($color: #e42020, $alpha: 0.15);
-                    }
-                }
             }
         }
         .person:hover{
@@ -400,25 +347,17 @@ export default{
     }
 }
 @media (max-width: 1250px) {
+    .search-container{
+        width:400px;
+    }
     .who-to-follow{
-        width:300px;
+        width:100%;
     }
     .search-input-container{
-        width:300px;
+        width:100%;
     }
     .trends{
-        width:300px;
-    }
-}
-@media (max-width: 1100px) {
-    .who-to-follow{
-        width:300px;
-    }
-    .search-input-container{
-        width:300px;
-    }
-    .trends{
-        width:300px;
+        width:100%;
     }
 }
 </style>
