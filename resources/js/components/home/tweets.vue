@@ -252,6 +252,8 @@ export default{
                 const newTweet = response.data.tweet;
                 this.tweets.unshift(newTweet);
                 this.tweet_text_input = '';
+                const textarea = this.$refs.tweetInput;
+                textarea.style.height = 'auto';
                 this.tweetImage = null;
                 this.previewImage = null;
                 setTimeout(() => {
@@ -288,7 +290,7 @@ export default{
                     commentText: commentText,
                 });
                 const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
-                
+
                 tweet.comment_count++;
                 this.popupTriggers.CommentTrigger = false;
                 setTimeout(() => {

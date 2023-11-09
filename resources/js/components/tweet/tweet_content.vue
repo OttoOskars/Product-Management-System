@@ -232,6 +232,8 @@ export default {
                 this.tweet.comment_count++;
                 this.main_comment_text_input = '';
                 this.popup_comment_text_input = '';
+                const textarea = this.$refs.tweetInput;
+                textarea.style.height = 'auto';
                 this.popupTriggers.CommentTrigger = false;
                 setTimeout(() => {
                     this.buttonDisabled = false;
@@ -269,7 +271,7 @@ export default {
             const maxRows = 10;
             const textarea = this.$refs.tweetInput;
             textarea.style.height = 'auto';
-            const customLineHeight = 1.5; // Match the line-height value from your CSS
+            const customLineHeight = 1.5;
             const maxHeight = maxRows * customLineHeight * parseFloat(getComputedStyle(textarea).fontSize);
 
             if (textarea.scrollHeight <= maxHeight) {
@@ -289,7 +291,6 @@ export default {
             if (!tweet) {
                 return;
             }
-            
             if (tweet.isLiked) {
                 this.buttonDisabled = true;
                 this.unlikeTweet(tweet.TweetID);
@@ -306,13 +307,9 @@ export default {
         },
         async likeTweet(tweetID) {
             try {
-                // Send an API request to like the tweet by sending the tweetId
                 const response = await this.$axios.post(`/api/tweets/like`, { tweetId: tweetID });
-
                 console.log('Like Response:', response);
-
                 if (response.status === 201) {
-                    // Update the tweet's like status and count
                     const tweet = this.tweet;
                     if (tweet) {
                         tweet.isLiked = true;
@@ -430,7 +427,6 @@ export default {
                     const tweet = this.tweet;
                     if (tweet) {
                         tweet.isBookmarked = true;
-                        // tweet.like_count += 1;
                     }
                 }
             } catch (error) {
@@ -445,7 +441,6 @@ export default {
                     const tweet = this.tweet;
                     if (tweet) {
                         tweet.isBookmarked = false;
-                        // tweet.like_count -= 1;
                     }
                 }
             } catch (error) {
@@ -527,6 +522,12 @@ export default {
     height:35px;
     .title{
         font-size:17px !important;
+    }
+}
+.comment-container{
+    padding-bottom:110px;
+    .comment{
+        padding:10px 10px 15px 10px;
     }
 }
 }
