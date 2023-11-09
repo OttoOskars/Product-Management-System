@@ -17,9 +17,8 @@
                 <button class="next-btn">Next</button>
                 <div class="search-people">
                     <div class="input-wrap">
-                        <!-- <input type="text" id="name-input" class="Edit-Input" autocomplete="on" maxlength="30" required> -->
-                        <input v-model="searchInput" @input="handleSearchInput" class="Edit-Input" placeholder="Search usernames..." />
-                        <!-- <label for="name-input"><ion-icon name="search-outline"></ion-icon>Search people</label> -->
+                        <input v-model="searchInput" @input="handleSearchInput" class="Edit-Input" :class="{ 'focused': isInputFocused }" @focus="inputFocus" @blur="inputBlur" placeholder="Search usernames..." />
+                        <ion-icon name="search-outline" class="search-icon"></ion-icon>
                     </div>
                     <div class="people-container">
                         <div class="person" v-for="Person in foundUsers" :key="Person.UserID">
@@ -51,6 +50,7 @@ export default{
             searchInput: '',
             users:[],
             foundUsers: [],
+            isInputFocused: false,
         };
     },
     computed: {
@@ -71,17 +71,21 @@ export default{
         }
     },
     methods: {
+        inputFocus() {
+            this.isInputFocused = true;
+        },
+        inputBlur() {
+            this.isInputFocused = false;
+        },
         redirectTo(where) {
             this.$router.push(where);
         },
-
         openTweet(id) {
             console.log(id);
         },
         handleSearchInput() {
             if (this.searchInput.length > 0) {
                 this.foundUsers = this.users.filter(user => {
-                // Convert both searchInput and UserTag to lowercase
                 const searchInputLower = this.searchInput.toLowerCase();
                 const userTagLower = user.UserTag.toLowerCase();
 
@@ -245,59 +249,48 @@ export default{
         .search-people{
             padding-top:20px;
             .input-wrap{
-                border: none;
-                border-radius:6px;
-                font-family: Arial, sans-serif;
-                position:relative;
-                width:auto;
-                height: 60px;
-                box-sizing: border-box;
+                height:60px;
+                width:100%;
                 display:flex;
+                align-items: center;
+                background-color:rgba($color: #000000, $alpha: 0.8);
+                backdrop-filter: blur(5px);
+                position:sticky;
+                top:0;
+                z-index:99;
+                padding:0 20px;
+                box-sizing: border-box;
                 .Edit-Input{
-                    font-family: Arial, sans-serif;
-                    box-sizing:border-box;
-                    border: 1px solid #434343;
-                    color:#ffffff;
-                    padding: 20px 13px 5px 13px;
-                    outline:none;
-                    background: none;
-                    position:relative;
-                    display:flex;
-                    width:100%;
-                    height:100%;
-                    border-radius:6px;
-                    font-size:18px;
-                    resize: none;
-                    overflow: hidden;
-                    transition: 0.3s all;
-                    &:disabled{
-                        color:#808080;
-                    }
-                    &:focus{
-                        border:1px solid #1da1f2;
+                    width: 100%;
+                    height: 80%;
+                    border-radius: 50px;
+                    padding-left:60px;
+                    border:  1px solid transparent;
+                    background-color: #202327;
+                    position: relative;
+                    color:white;
+                    font-size: medium;
+                    &.focused {
+                        outline:none;
+                        background-color: black;
+                        border-color: #1D9BF0;
+                        box-shadow: 0 0 5px #1D9BF0;
                     }
                 }
-                // label{
-                //     font-size:18px;
-                //     color:#434343;
-                //     padding:5px;
-                //     position:absolute;
-                //     top:15px;
-                //     left:5px;
-                //     pointer-events: none;
-                //     transition: 0.3s all;
-                // }
-                // .Edit-Input:focus+label,
-                // .Edit-Input:disabled+label,
-                // .Edit-Input:valid+label{
-                //     font-size:16px;
-                //     top:5px;
-                //     left:7px;
-                //     padding:0 5px 0 5px;
-                // }
-                // .Edit-Input:focus+label{
-                //     color:#1da1f2;
-                // }
+                .Edit-Input:focus + .search-icon{
+                    color: #1D9BF0;
+                }
+                .Edit-Input::-webkit-input-placeholder {
+                    color: #71767B;
+                }
+                .search-icon {
+                    position: absolute;
+                    left: 40px;
+                    top: 50%;
+                    transform: translate(0, -50%);
+                    color: #71767B;
+                    font-size: 24px;
+                }
             }
             .people-container{
                 width:100%;
