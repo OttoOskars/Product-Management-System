@@ -288,6 +288,7 @@ export default{
                     commentText: commentText,
                 });
                 const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
+                
                 tweet.comment_count++;
                 this.popupTriggers.CommentTrigger = false;
                 setTimeout(() => {
