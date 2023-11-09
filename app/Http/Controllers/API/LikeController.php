@@ -41,7 +41,7 @@ class LikeController extends Controller
         $like->TweetID = $tweet->TweetID;
         $like->save();
 
-        return response()->json(['message' => 'Liked successfully', 'like' => $like], 201);
+        return response()->json(['message' => 'Liked successfully', 'like' => $like, 'tweet' => $tweet], 201);
     }
 
     public function unlikeTweet($tweetId)

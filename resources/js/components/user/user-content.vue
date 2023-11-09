@@ -53,7 +53,7 @@
         </div>
         <div class="post-container">
             <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID"  @click="openTweet(tweet.TweetID)">
-                <div class="isretweet" v-if="tweet.isRetweet">
+                <div class="isretweet" v-if="tweet.isRetweet && this.postType==='tweets'">
                     <p class="tweet-text"><span>{{ profileuser.UserTag }}</span> Reposted</p>
                 </div>
                 <div class="inner-post">
@@ -147,7 +147,7 @@
             <div class="create-tweet-or-comment-popup">
                 <div class="top">
                     <div class="left-side-popup">
-                        <img  @click="openProfile(user.UserTag)">
+                        <img :src="'/storage/' + user.ProfilePicture" @click="openProfile(user.UserTag)">
                     </div>
                     <div class="right-side-popup">
                         <div class="userinfo-popup">
@@ -155,7 +155,7 @@
                             <p class="usertag">{{ user.UserTag }}</p>
                         </div>
                         <div class="tweet-input-container">
-                            <textarea v-model="comment_text_input" id="tweet-input-comment" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
+                            <textarea v-model="comment_text_input" id="tweet-input-comment" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize('tweetInput')" ref="tweetInput" maxlength="255"></textarea>
                         </div>
                     </div>
                 </div>
@@ -207,7 +207,7 @@
                     </div>
                     <div class="edit-description">
                         <div class="textarea-wrap">
-                            <textarea id="desc-input" class="Edit-Textarea" rows="1" @input="autoSize" ref="DescInput" v-model="NewDescription" maxlength="255" required></textarea>
+                            <textarea id="desc-input" class="Edit-Textarea" rows="1" @input="autoSize('DescInput')" ref="DescInput" v-model="NewDescription" maxlength="255" required></textarea>
                             <label for="desc-input">Description</label>
                         </div>
                         <div v-if ="NameError" class="warning-1">{{ NameError }}</div>
@@ -516,9 +516,9 @@ export default{
         switchToLikes() {
             this.postType = 'likes';
         },
-        autoSize() {
+        autoSize(refName) {
             const maxRows = 8;
-            const textarea = this.$refs.DescInput;
+            const textarea = this.$refs[refName];
             textarea.style.height = 'auto';
             const customLineHeight = 1;
             const maxHeight = maxRows * customLineHeight * parseFloat(getComputedStyle(textarea).fontSize);
@@ -689,6 +689,9 @@ export default{
                     if (tweet) {
                         tweet.isLiked = true;
                         tweet.like_count += 1;
+/*                         if ( store.state.user.UserID === this.profileuser.UserID) {
+                            this.liked_tweets.unshift(tweet);
+                        } */
                     }
                 }
             } catch (error) {
@@ -704,12 +707,13 @@ export default{
                     if (tweet) {
                         tweet.isLiked = false;
                         tweet.like_count -= 1;
-                        if ( store.state.user.UserID === this.profileuser.UserID && this.postType === 'likes') {
-                            const index = this.currentPosts.findIndex((t) => t.TweetID === tweetId);
+                        /* Uncomment if you want to remove the tweet from liked_tweets */
+/*                         if ( store.state.user.UserID === this.profileuser.UserID) {
+                            const index = this.liked_tweets.findIndex((t) => t.TweetID === tweetId);
                             if (index !== -1) {
-                                this.currentPosts.splice(index, 1);
+                                this.liked_tweets.splice(index, 1);
                             }
-                        }
+                        } */
                     }
                 }
             } catch (error) {
@@ -753,6 +757,9 @@ export default{
                     if (tweet) {
                         tweet.isRetweeted = true;
                         tweet.retweet_count += 1;
+/*                         if ( store.state.user.UserID === this.profileuser.UserID) {
+                            this.tweets.unshift(tweet);
+                        } */
                     }
                 }
             } catch (error) {
@@ -770,6 +777,12 @@ export default{
                     if (tweet) {
                         tweet.isRetweeted = false;
                         tweet.retweet_count -= 1;
+/*                         if ( store.state.user.UserID === this.profileuser.UserID) {
+                            const index = this.tweets.findIndex((t) => t.TweetID === tweetId);
+                            if (index !== -1) {
+                                this.tweets.splice(index, 1);
+                            }
+                        } */
                     }
                 }
             } catch (error) {
