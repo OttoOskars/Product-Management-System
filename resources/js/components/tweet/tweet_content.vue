@@ -137,7 +137,7 @@
                     <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                     <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
                 </div>
-                <button class="popup-button" @click="createComment(tweetIdInPopup, comment_text_input)" :disabled="buttonDisabled">Comment</button>
+                <button class="popup-button" @click="createComment(tweetIdInPopup, popup_comment_text_input)" :disabled="buttonDisabled">Comment</button>
             </div>
         </div>
     </Popup>
