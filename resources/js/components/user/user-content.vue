@@ -996,6 +996,10 @@ export default{
             border:1px solid #6A6F74;
             border-radius: 50px;
             background-color: #000000;
+            cursor: pointer;
+            &:hover{
+                background-color:rgba($color: #202223, $alpha: 0.8);
+            }
         }
     }
     .profile-details{
@@ -1169,6 +1173,10 @@ export default{
         font-size: 14px;
         font-weight: bold;
         padding:8px 16px;
+        cursor: pointer;
+        &:hover{
+            background-color:rgba($color: #f2f2f2, $alpha: 0.8);
+        }
     }
     .content{
         width:100%;
