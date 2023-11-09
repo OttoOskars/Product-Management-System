@@ -251,6 +251,10 @@ export default{
         font-size: 14px;
         font-weight: bold;
         padding:8px 16px;
+        cursor: pointer;
+        &:hover{
+            background-color:rgba($color: #f2f2f2, $alpha: 0.8);
+        }
     }
 
     .input-wrap{
