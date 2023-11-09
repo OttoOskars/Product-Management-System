@@ -240,6 +240,8 @@ export default{
                 this.tweetImagenav = null;
                 this.previewImagenav = null;
                 this.popupTriggers.TweetTrigger = false;
+                const textarea = this.$refs.tweetInput;
+                textarea.style.height = 'auto';
                 this.getTweets('all');
                 setTimeout(() => {
                     this.buttonDisabled = false;

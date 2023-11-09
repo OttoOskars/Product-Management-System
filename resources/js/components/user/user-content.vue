@@ -646,6 +646,8 @@ export default{
                 const newComment = response.data.comment;
                 this.comments.push(newComment);
                 tweet.comment_count++;
+                const textarea = this.$refs.tweetInput;
+                textarea.style.height = 'auto';
                 this.popupTriggers.CommentTrigger = false;
                 setTimeout(() => {
                     this.buttonDisabled = false;
