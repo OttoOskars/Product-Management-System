@@ -703,7 +703,7 @@ export default{
                     if (tweet) {
                         tweet.isLiked = false;
                         this.like_count -= 1;
-                        if (this.postType === 'likes') {
+                        if (this.loggedInUser === this.profileUser && this.postType === 'like') {
                             const index = this.currentPosts.findIndex((t) => t.TweetID === tweetId);
                             if (index !== -1) {
                                 this.currentPosts.splice(index, 1);
