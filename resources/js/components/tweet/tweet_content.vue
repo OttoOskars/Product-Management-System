@@ -109,8 +109,8 @@
                         </div>
                     </div>
                 </div>
-                <button class="delete-btn" @click="deleteComment(comment.TweetID, comment.CommentID)" v-if="comment.user && comment.user.UserID === user.UserID">
-                        <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
+                <button class="delete-btn" @click.stop="deleteCommentTweetID = comment.TweetID; deleteCommentID = comment.CommentID; TogglePopup('DeleteTrigger2')" v-if="comment.user && comment.user.UserID === user.UserID">
+                    <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
                 </button>
             </div>
         </div>
@@ -127,7 +127,7 @@
                         <p class="usertag">{{ user.UserTag }}</p>
                     </div>
                     <div class="tweet-input-container">
-                        <textarea v-model="comment_text_input" id="tweet-input-comment" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
+                        <textarea v-model="popup_comment_text_input" id="tweet-input-comment" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
                     </div>
                 </div>
             </div>
@@ -137,7 +137,17 @@
                     <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                     <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
                 </div>
-                <button class="popup-button" @click="createComment(tweetIdInPopup, comment_text_input)" :disabled="buttonDisabled">Comment</button><!-- Izdomā kā comment poga nodos tweetID. -->
+                <button class="popup-button" @click="createComment(tweetIdInPopup, popup_comment_text_input)" :disabled="buttonDisabled">Comment</button><!-- Izdomā kā comment poga nodos tweetID. -->
+            </div>
+        </div>
+    </Popup>
+    <Popup v-if="popupTriggers.DeleteTrigger2" :TogglePopup="() => TogglePopup('DeleteTrigger2')">
+        <div class="delete-popup">
+            <h1 class="delete-title">Delete Comment</h1>
+            <p class="tweet-p">Are you sure you want to delete this comment?</p>
+            <div class="tweet-buttons">
+                <button class="cancel-button" @click="TogglePopup('DeleteTrigger2')">Cancel</button>
+                <button class="delete-button" @click="deleteComment(deleteCommentTweetID, deleteCommentID)">Delete</button>
             </div>
         </div>
     </Popup>
@@ -161,6 +171,8 @@ export default {
             main_comment_text_input: '',
             popup_comment_text_input: '',
             buttonDisabled: false,
+            deleteCommentTweetID: null,
+            deleteCommentID: null,
         };
     },
     created() {
@@ -172,6 +184,7 @@ export default {
         const popup_comment_text_input = ref('');
         const popupTriggers = ref({
             CommentTrigger: false,
+            DeleteTrigger2: false,
         });
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger]
@@ -227,9 +240,7 @@ export default {
             }
         },
         deleteComment(tweetID, commentID) {
-            if (confirm('Are you sure you want to delete this comment?')) {
-                this.performDeleteComment(tweetID, commentID);
-            }
+            this.performDeleteComment(tweetID, commentID);
         },
         async performDeleteComment(tweetID, commentID) {
             if (!commentID) {
@@ -241,6 +252,7 @@ export default {
                 this.comments = this.comments.filter((comment) => comment.CommentID !== commentID);
                 this.tweet.comment_count--;
                 this.fetchCommentsByTweet(tweetID);
+                this.popupTriggers.DeleteTrigger2 = false;
                 console.log(`Comment with ID ${commentID} deleted successfully.`);
             } catch (error) {
                 console.error('Error deleting comment:', error);
