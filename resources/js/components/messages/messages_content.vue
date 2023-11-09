@@ -4,7 +4,7 @@
             <div class="title">Messages</div>
             <div class="main-text">Welcome to your inbox!</div>
             <div class="under-text">Drop a line, share posts and more with private conversations between you and others on X. </div>
-            <button class="write-button">Write a message</button>
+            <button class="write-button" @click="TogglePopup('EditTrigger')">New message</button>
         </div>
         <div class="messages-right">
             <div class="right-text">Select a message</div>
@@ -24,7 +24,7 @@
                     <div class="people-container">
                         <div class="person" v-for="Person in foundUsers" :key="Person.UserID">
                             <div class="user-info">
-                                <img :src="'/storage/' + Person.ProfilePicture" class="person-img"> 
+                                <img :src="'/storage/' + Person.ProfilePicture" class="person-img">
                                 <div class="person-info">
                                     <p class="username">{{ Person.Name }}</p>
                                     <p class="usertag">{{ Person.UserTag }}</p>
