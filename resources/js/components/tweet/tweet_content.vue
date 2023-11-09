@@ -268,10 +268,10 @@ export default {
             console.log(tag);
         },
         autoSize() {
-            const maxRows = 10;
+            const maxRows = 8;
             const textarea = this.$refs.tweetInput;
             textarea.style.height = 'auto';
-            const customLineHeight = 1.5;
+            const customLineHeight = 1;
             const maxHeight = maxRows * customLineHeight * parseFloat(getComputedStyle(textarea).fontSize);
 
             if (textarea.scrollHeight <= maxHeight) {
