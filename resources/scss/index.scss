@@ -489,7 +489,7 @@ html,body {
         flex-direction:row;
         gap:10px;
         box-sizing: border-box;
-        padding:15px 10px 5px 15px;
+        padding:20px 10px 15px 15px;
         border-top: 1px solid #2F3336;
         border-image: linear-gradient(90deg, transparent 4%,#2F3336 4%);
         border-image-slice: 1;
@@ -837,6 +837,38 @@ html,body {
         }
     }
 }
+.follow-button{
+    padding:10px 15px; 
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 50px;
+    border:none;
+    background-color: white;
+    color:black;
+    font-size:15px;
+    font-weight: bold;
+    transition:all 0.3s;
+    cursor:pointer;
+    &:hover{
+        background-color: #D7DBDC;
+    }
+}
+.followed-button{
+    border:1px solid #6A6F74;
+    background-color: #16181C;
+    color:white;
+}
+.unfollow-button{
+    border:1px solid #e42020;
+    background-color: rgba($color: #e42020, $alpha: 0.4);
+    color:#e42020;
+    cursor:pointer;
+    &:hover{
+        background-color: rgba($color: #e42020, $alpha: 0.15);
+    }
+}
 @media (min-width: 500px) {
 }
 @media (max-width: 500px) {
@@ -1131,5 +1163,9 @@ html,body {
             font-size: 13px;
         }
     }
+}
+.follow-button{
+    padding:5px 10px;
+    font-size: 14px;
 }
 }
