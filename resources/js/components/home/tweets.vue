@@ -137,7 +137,7 @@
     </div>
 </template>
 <script>
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import Popup from '../Popup.vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
@@ -169,6 +169,7 @@ export default{
         if (store.state.isLoggedIn) {
             router.push('/home');
         }
+        
         const logoutUser = async () => {
             try {
                 await store.dispatch('logout');
@@ -282,13 +283,11 @@ export default{
             }
             try {
                 this.buttonDisabled = true;
-                const response = await this.$axios.post('/api/create-comments', {
+                await this.$axios.post('/api/create-comments', {
                     tweetId: tweetID,
                     commentText: commentText,
                 });
                 const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
-                const newComment = response.data.comment;
-                this.comments.push(newComment);
                 tweet.comment_count++;
                 this.popupTriggers.CommentTrigger = false;
                 setTimeout(() => {
@@ -364,7 +363,6 @@ export default{
                 console.error('Error liking the tweet:', error);
             }
         },
-
         async unlikeTweet(tweetId) {
             try {
                 const response = await this.$axios.delete(`/api/tweets/unlike/${tweetId}`);
@@ -423,7 +421,6 @@ export default{
                 console.error('Error retweeting the tweet:', error);
             }
         },
-
         async unretweetTweet(tweetId) {
             try {
                 const response = await this.$axios.delete(`/api/tweets/unretweet/${tweetId}`);
@@ -441,8 +438,6 @@ export default{
                 console.error('Error unretweetin the tweet:', error);
             }
         },
-
-
         toggleBookmark(tweetID) {
             if (this.buttonDisabled) {
                 return;
@@ -480,7 +475,6 @@ export default{
                 console.error('Error bookmarking the tweet:', error);
             }
         },
-
         async removeBookmark(tweetId) {
             try {
                 const response = await this.$axios.delete(`/api/tweets/unbookmark/${tweetId}`);
@@ -499,8 +493,8 @@ export default{
     },
     async mounted() {
         await this.$store.dispatch('initializeApp');
-        this.getTweets('all');
-        this.getTweets('following');
+        await this.getTweets('all');
+        await this.getTweets('following');
     },   
 }
 </script>
