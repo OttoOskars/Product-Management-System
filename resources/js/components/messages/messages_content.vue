@@ -1,11 +1,11 @@
 <template>
     <div class="messages-container">
         <div class="messages-main">
-            <div class="top-bar">
+            <div class="top-top">
                 <button class="back-icon" @click="goBack">
                     <ion-icon name="arrow-back-outline"></ion-icon>
                 </button>
-                <div class="messages-top" v-if="user">
+                <div class="top-top-top" v-if="user">
                     <p class="title">Messages</p>
                     <p class="user-tag">{{ user.UserTag }}</p>
                 </div>
@@ -133,68 +133,6 @@ export default{
         box-sizing: border-box;
         border-right: 1px solid #2F3336;
         border-left: 1px solid #2F3336;
-        .top-bar{
-            height:60px;
-            width:100%;
-            background-color:rgba($color: #000000, $alpha: 0.8);
-            border-bottom:solid 1px #2F3336;
-            position:sticky;
-            top:0;
-            z-index:9;
-            box-sizing: border-box;
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            padding:0 10px;
-            .back-icon{
-                display:flex;
-                align-items: center;
-                justify-content: center;
-                box-sizing: border-box;
-                width:40px;
-                height:40px;
-                border-radius: 50%;
-                border:none;
-                font-size:22px;
-                background:none;
-                color:white;
-                cursor:pointer;
-                transition: all 0.3s;
-                &:hover{
-                    background-color: rgba($color: #1a1a1a, $alpha: 1);
-                }
-            }
-            .messages-top{
-                height:100%;
-                width:auto;
-                display:flex;
-                flex-direction: column;
-                padding:10px;
-                padding: 10px 10px 0px 30px;
-                box-sizing: border-box;
-                .title{
-                    width:100%;
-                    height:50%;
-                    display:flex;
-                    align-items: center;
-                    justify-content: flex-start;
-                    box-sizing: border-box;
-                    font-weight: bold;
-                    font-size: 20px;
-                    margin:0;
-                    padding:0;
-                    color: white;
-                }
-                .user-tag{
-                    width:100%;
-                    height:50%;
-                    margin:0;
-                    padding:0;
-                    font-size: 15px;
-                    color:#6A6F74;
-                }
-            }
-        }
         .main-text{
             color: white;
             text-align:left;
