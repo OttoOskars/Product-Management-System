@@ -45,7 +45,6 @@
                         </button>
                     </div>
                 </div>
-                <!-- Add more users -->
             </div>
             <div class="show-more-container">
                 <button class="show-more-btn" @click="redirectTo('/people')">Show more</button>
@@ -54,10 +53,10 @@
         <div class="trends">
             <div class="title">Trending Latvia</div>
             <div class="trend-container">
-                <div class="trend"  v-for="trend in trends" :key="trend.id">
-                    <p class="trend-rank">{{ trend.rank }}. {{ trend.name }}</p>
-                    <p class="trend-name">{{ trend.title }}</p>
-                    <p class="trend-posts">{{ trend.posts }} posts</p>
+                <div class="trend"  v-for="i in trends" :key="i">
+                    <p class="trend-rank">1. News. Trending</p>
+                    <p class="trend-name">Skolā bumba</p>
+                    <p class="trend-posts">1232 posts</p>
                 </div>
             </div>
             <div class="show-more-container">
@@ -66,13 +65,8 @@
         </div>
     </div>
 </template>
-
 <script>
 import { ref } from 'vue';
-import Popup from '../Popup.vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
 import { mapState } from 'vuex';
 export default {
     name: 'Search',
@@ -80,8 +74,8 @@ export default {
         return {
             isInputFocused: false,
             search: '',
-            users: [], // Initialize as an empty array
-            trends: 6, // Initialize as an empty array
+            users: [],
+            trends: 6,
             isHovered: [],
         };
     },
@@ -100,7 +94,6 @@ export default {
         },
     },
     setup() {
-        // ...
     },
     methods: {
         inputFocus() {
@@ -137,7 +130,6 @@ export default {
                 console.error('Error following the user:', error);
             }
         },
-
         async handleUnfollow(userID) {
             try {
                 const response = await this.$axios.post(`/api/unfollow/${userID}`);
@@ -164,262 +156,4 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.search-container{
-    width:1/3 * 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    position: fixed;
-    box-sizing: border-box;
-    padding-left: 30px;
-    padding-right:10px;
-    padding-top: 10px;
-    border-left: solid 1px #2F3336;
-    background: none;
-    color: white;
-}
-.search-input-container {
-    width: 100%;
-    height: 60px;
-    position: sticky;
-    top: 0;
-    box-sizing: border-box;
-    z-index: 99;
-    padding: 5px 0 2px 0;
-    background-color: black;
-    display: flex;
-    align-items: center;
-    .search-input {
-        width: 100%;
-        height: 50px;
-        border-radius: 50px;
-        padding-left:60px;
-        border:  1px solid transparent;
-        background-color: #202327;
-        position: relative;
-        color:white;
-        font-size: medium;
-        &.focused {
-            outline:none;
-            background-color: black; /* Change input background when focused */
-            border-color: #1D9BF0; /* Change input border when focused */
-            box-shadow: 0 0 5px #1D9BF0;
-        }
-    }
-
-    .search-input:focus + .search-icon{
-        color: #1D9BF0;
-    }
-    .search-input::-webkit-input-placeholder {
-        color: #71767B;
-    }
-
-    .search-icon {
-        position: absolute;
-        left: 20px;
-        top: 50%;
-        transform: translate(0, -50%);
-        color: #71767B;
-        font-size: 24px;
-    }
-    .close-icon-btn{
-        position: absolute;
-        background:none;
-        border:none;
-        top: 50%;
-        right:7px;
-        transform: translate(0, -45%);
-        display:none;
-        cursor: pointer;
-        &.focused {
-            display:block;
-        }
-        .close-icon{
-            color: #1D9BF0;
-            font-size:30px;
-        }
-    }
-}
-.title{
-    width:100%;
-    height:38px;
-    display:flex;
-    align-items: center;
-    justify-content: flex-start;
-    box-sizing: border-box;
-    padding-left:20px;
-    padding-top:20px;
-    font-weight: bold;
-    font-size: x-large;
-}
-.who-to-follow{
-    width:100%;
-    height:auto;
-    background-color: #16181C;
-    display:flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    border-radius: 25px;
-    .people-container{
-        box-sizing: border-box;
-        padding-top:20px;
-        width:100%;
-        height:100%;
-        display:flex;
-        flex-direction: column;
-        .person{
-            box-sizing: border-box;
-            padding:10px 20px;
-            width:100%;
-            height:auto;
-            display:flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            transition:all 0.3s;
-            cursor:pointer;
-            .user{
-                width:auto;
-                height:100%;
-                display:flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: flex-start;
-                .user-img{
-                    width:auto;
-                    height:auto;
-                    display:flex;
-                    align-items: center;
-                    justify-content: center;
-                    img{
-                        width:50px;
-                        height:50px;
-                        border-radius:50%;
-                        background-color: #ffffff;
-                    }
-                }
-                .user-info{
-                    padding-left:10px;
-                    width:100%;
-                    height:100%;
-                    display:flex;
-                    flex-direction: column;
-                    align-items: flex-start;
-                    justify-content: center;
-                    gap:10px;
-                    .username{
-                        font-weight: bold;
-                        font-size: 14px;
-                        margin:0;
-                    }
-                    .usertag{
-                        color: #71767B;
-                        font-size: 14px;
-                        margin:0;
-                    }
-                }
-            }
-            .button-container{
-                width:auto;
-                height:100%;
-                display:flex;
-                align-items: center;
-                justify-content: center;
-            }
-        }
-        .person:hover{
-            background-color: #1D1F23;
-        }
-    }
-}
-
-.show-more-container{
-    width:100%;
-    height:auto;
-    .show-more-btn{
-        width:100%;
-        height:60px;
-        border-bottom-left-radius: 25px;
-        border-bottom-right-radius: 25px;
-        border:none;
-        display:flex;
-        align-items: center;
-        padding-left:25px;
-        background: none;
-        font-size:18px;
-        color:#1D9BF0;
-        cursor: pointer;
-        transition:all 0.3s;
-    }
-    .show-more-btn:hover{
-        background-color: #1D1F23;
-    }
-}
-.trends{
-    position:sticky;
-    top:80px;
-    width:100%;
-    height:auto;
-    background-color: #16181C;
-    display:flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    border-radius: 25px;
-    .trend-container{
-        width:100%;
-        height:100%;
-        display:flex;
-        flex-direction: column;
-        padding-top:20px;
-        box-sizing: border-box;
-        .trend{
-            width:100%;
-            height:auto;
-            display:flex;
-            flex-direction: column;
-            padding: 10px 20px;
-            box-sizing: border-box;
-            gap:5px;
-            justify-content: center;
-            align-items: flex-start;
-            cursor:pointer;
-            .trend-rank{
-                color: #6e767d;
-                font-size: 12px;
-                margin:0;
-            }
-            .trend-name{
-                color:white;
-                font-weight: bold;
-                font-size: 14px;
-                margin:0;
-            }
-            .trend-posts{
-                color: #6e767d;
-                font-size: 12px;
-                margin:0;
-            }
-
-        }
-        .trend:hover{
-            background-color: #1D1F23;
-        }
-    }
-    
-}
-@media (max-width: 1250px) {
-    .search-container{
-        width:400px;
-    }
-    .who-to-follow{
-        width:100%;
-    }
-    .search-input-container{
-        width:100%;
-    }
-    .trends{
-        width:100%;
-    }
-}
 </style>
