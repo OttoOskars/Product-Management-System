@@ -304,7 +304,7 @@ export default{
                 flex-direction:column;
                 box-sizing: border-box;
                 padding-top: 0px;
-                padding-bottom:100px;
+                padding-bottom: 0px;
                 &::-webkit-scrollbar{
                     width:4px;
                 }
