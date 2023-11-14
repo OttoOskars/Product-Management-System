@@ -28,7 +28,7 @@
                         <input v-model="searchInput" @input="handleSearchInput" class="Edit-Input" :class="{ 'focused': isInputFocused }" @focus="inputFocus" @blur="inputBlur" placeholder="Search usernames..." />
                         <ion-icon name="search-outline" class="search-icon"></ion-icon>
                     </div>
-                    <div class="people-container" :class="{ 'scrollable': foundUsers.length > 5 }">
+                    <div class="people-container" :class=" 'scrollable' ">
                         <div class="person" v-for="Person in foundUsers" :key="Person.UserID">
                             <div class="user-info">
                                 <img :src="'/storage/' + Person.ProfilePicture" class="person-img">
