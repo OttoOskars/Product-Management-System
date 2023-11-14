@@ -28,7 +28,7 @@
                         <input v-model="searchInput" @input="handleSearchInput" class="Edit-Input" :class="{ 'focused': isInputFocused }" @focus="inputFocus" @blur="inputBlur" placeholder="Search usernames..." />
                         <ion-icon name="search-outline" class="search-icon"></ion-icon>
                     </div>
-                    <div class="people-container" :class=" 'scrollable' ">
+                    <div class="people-container">
                         <div class="person" v-for="Person in foundUsers" :key="Person.UserID">
                             <div class="user-info">
                                 <img :src="'/storage/' + Person.ProfilePicture" class="person-img">
@@ -298,7 +298,7 @@ export default{
             }
             .people-container{
                 width:100%;
-                max-height: 350px;
+                max-height: 400px;
                 overflow-y: auto;
                 display:flex;
                 flex-direction:column;
@@ -319,9 +319,6 @@ export default{
                 }
                 &:disabled{
                     color:#808080;
-                }
-                .scrollable {
-                    overflow-y: auto;
                 }
                 .person{
                     width:100%;
