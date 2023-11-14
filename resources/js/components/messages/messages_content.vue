@@ -66,7 +66,7 @@ export default{
     },
     setup () {
         const popupTriggers = ref({
-            TweetTrigger: false,
+            EditTrigger: false,
         });
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger]
