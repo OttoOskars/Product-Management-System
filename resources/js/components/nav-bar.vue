@@ -5,49 +5,49 @@
                 <ion-icon name="logo-yahoo"></ion-icon>
             </div>
 
-            <button class="Home" @click="$router.push('/home')">
+            <button class="Home" :class="{ 'active': activeRoute === '/home' }" @click="$router.push('/home')">
                 <div class="button-content">
-                    <ion-icon class="button-icon" name="home-outline"></ion-icon>
+                    <ion-icon class="button-icon" :name="isHomeFilled ? 'home' : 'home-outline'"></ion-icon>
                     <span class="button-text">Home</span>
                 </div>
             </button>
 
-            <button class="Explore" @click="$router.push('/explore')">
+            <button class="Explore" :class="{ 'active': activeRoute === '/explore' }" @click="$router.push('/explore')">
                 <div class="button-content">
                     <ion-icon class="button-icon" name="search-outline"></ion-icon>
                     <span class="button-text">Explore</span>
                 </div>
             </button>
 
-            <button class="Notifications" @click="$router.push('/notifications')">
+            <button class="Notifications" :class="{ 'active': activeRoute === '/notifications' }" @click="$router.push('/notifications')">
                 <div class="button-content">
-                    <ion-icon class="button-icon" name="notifications-outline"></ion-icon>
+                    <ion-icon class="button-icon" :name="isNotificationsFilled ? 'notifications' : 'notifications-outline'"></ion-icon>
                     <span class="button-text">Notifications</span>
                 </div>
             </button>
 
-            <button class="Messages" @click="$router.push('/messages')">
+            <button class="Messages" :class="{ 'active': activeRoute === '/messages' }" @click="$router.push('/messages')">
                 <div class="button-content">
-                    <ion-icon class="button-icon" name="mail-outline"></ion-icon>
+                    <ion-icon class="button-icon" :name="isMessagesFilled ? 'mail' : 'mail-outline'"></ion-icon>
                     <span class="button-text">Messages</span>
                 </div>
             </button>
 
-            <button class="Bookmarks" @click="$router.push('/bookmarks')">
+            <button class="Bookmarks" :class="{ 'active': activeRoute === '/bookmarks' }" @click="$router.push('/bookmarks')">
                 <div class="button-content">
-                    <ion-icon class="button-icon" name="bookmark-outline"></ion-icon>
+                    <ion-icon class="button-icon" :name="isBookmarksFilled ? 'bookmark' : 'bookmark-outline'"></ion-icon>
                     <span class="button-text">Bookmarks</span>
                 </div>
             </button>
 
-            <button class="Profile" @click="openProfile(user.UserTag)">
+            <button class="Profile" :class="{ 'active': activeRoute.includes('/profile') }" @click="openProfile(user.UserTag)">
                 <div class="button-content">
-                    <ion-icon class="button-icon" name="person"></ion-icon>
+                    <ion-icon class="button-icon" :name="isProfileFilled ? 'person' : 'person-outline'"></ion-icon>
                     <span class="button-text">Profile</span>
                 </div>
             </button>
 
-            <button class="More" @click="$router.push('/more')">
+            <button class="More" :class="{ 'active': activeRoute === '/more' }" @click="$router.push('/more')">
                 <div class="button-content">
                     <ion-icon class="button-icon" name="ellipsis-horizontal-circle"></ion-icon>
                     <span class="button-text">More</span>
@@ -132,6 +132,12 @@ export default{
             tweets: [],
             isPopupVisible: false,
             buttonDisabled: false,
+            activeRoute: '',
+            isHomeFilled: false,
+            isNotificationsFilled: false,
+            isMessagesFilled: false,
+            isBookmarksFilled: false,
+            isProfileFilled: false,
         }
     },
     setup(){
@@ -252,9 +258,31 @@ export default{
             }
         },
     },
+    mounted() {
+        this.activeRoute = this.$route.path;
+        this.isHomeFilled = this.activeRoute.includes('/home');
+        this.isNotificationsFilled = this.activeRoute.includes('/notifications');
+        this.isMessagesFilled = this.activeRoute.includes('/messages');
+        this.isBookmarksFilled = this.activeRoute.includes('/bookmarks');
+        this.isProfileFilled = this.activeRoute.includes('/profile');
+
+        this.$router.afterEach((to) => {
+            this.activeRoute = to.path;
+            this.isHomeFilled = this.activeRoute.includes('/home');
+            this.isNotificationsFilled = this.activeRoute.includes('/notifications');
+            this.isMessagesFilled = this.activeRoute.includes('/messages');
+            this.isBookmarksFilled = this.activeRoute.includes('/bookmarks');
+            this.isProfileFilled = this.activeRoute.includes('/profile');
+        });
+    },
 }
 </script>
 <style lang="scss" scoped>
+.active {
+    .button-content{
+        color: #1D9BF0;
+    }
+}
 .navbar-container{
     width: 3/12*100%;
     height: 100vh;

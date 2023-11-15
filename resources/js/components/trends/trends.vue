@@ -59,7 +59,7 @@ export default {
         width:100px;
     }
     .search{
-        width:4/12*100%
+        width:400px;
     }
     .content{
         flex-grow: 1;

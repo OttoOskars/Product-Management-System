@@ -6,7 +6,7 @@
                 <ion-icon name="arrow-back-outline"></ion-icon>
             </button>
             <div class="profile-top">
-                <p class="title" v-if="followuser">{{ followuser.Name }} followers</p>
+                <p class="title" v-if="followuser">{{ followuser.Name + "'s" }} followers</p>
                 <p class="tweet_count">{{ followersList.length }} people</p>
             </div>
         </div>

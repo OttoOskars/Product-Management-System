@@ -3,7 +3,7 @@
         <div class="navbar">
             <NavBar></NavBar>
         </div>
-        <div class="notifications-info">
+        <div class="content">
             <Notifications></Notifications>
         </div>
         <div class="search">
@@ -37,58 +37,6 @@ export default {
     margin: 0 auto;
     display:flex;
     flex-direction: row;
-
-}
-
-.search{
-    min-height:100%;
-    width:4/12*100%;
-}
-.navbar{
-    width: 3/12*100%;
-
-}
-.notifications-info{
-    height:100%;
-    width:5/12*100%;
-
-}
-
-@media (max-width: 1250px) {
-    .navbar{
-        width:100px;
-    }
-    .notifications-info{
-        flex-grow: 1;
-    }
-    .search{
-        width:4/12*100%
-    }
-}
-@media (max-width: 1000px) {
-    .navbar{
-        width:100px;
-    }
-    .notifications-info{
-        flex-grow: 1;
-    }
-    .search{
-        display:none;
-    }
-}
-@media (max-width: 500px) {
-    .navbar{
-        width:100%;
-        position:fixed;
-        bottom:0;
-        z-index:99;
-    }
-    .notifications-info{
-        width:100%
-    }
-    .search{
-        display:none;
-    }
 }
 
 </style>

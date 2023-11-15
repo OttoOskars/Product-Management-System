@@ -1,7 +1,15 @@
 <template>
     <div class="messages-container">
         <div class="messages-main">
-            <div class="title">Messages</div>
+            <div class="top-top">
+                <button class="back-icon" @click="goBack">
+                    <ion-icon name="arrow-back-outline"></ion-icon>
+                </button>
+                <div class="top-top-top" v-if="user">
+                    <p class="title">Messages</p>
+                    <p class="user-tag">{{ user.UserTag }}</p>
+                </div>
+            </div>
             <div class="main-text">Welcome to your inbox!</div>
             <div class="under-text">Drop a line, share posts and more with private conversations between you and others on X. </div>
             <button class="write-button" @click="TogglePopup('EditTrigger')">New message</button>
@@ -17,9 +25,8 @@
                 <button class="next-btn">Next</button>
                 <div class="search-people">
                     <div class="input-wrap">
-                        <!-- <input type="text" id="name-input" class="Edit-Input" autocomplete="on" maxlength="30" required> -->
-                        <input v-model="searchInput" @input="handleSearchInput" class="Edit-Input" placeholder="Search usernames..." />
-                        <!-- <label for="name-input"><ion-icon name="search-outline"></ion-icon>Search people</label> -->
+                        <input v-model="searchInput" @input="handleSearchInput" class="Edit-Input" :class="{ 'focused': isInputFocused }" @focus="inputFocus" @blur="inputBlur" placeholder="Search usernames..." />
+                        <ion-icon name="search-outline" class="search-icon"></ion-icon>
                     </div>
                     <div class="people-container">
                         <div class="person" v-for="Person in foundUsers" :key="Person.UserID">
@@ -51,6 +58,7 @@ export default{
             searchInput: '',
             users:[],
             foundUsers: [],
+            isInputFocused: false,
         };
     },
     computed: {
@@ -58,7 +66,7 @@ export default{
     },
     setup () {
         const popupTriggers = ref({
-            TweetTrigger: false,
+            EditTrigger: false,
         });
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger]
@@ -71,17 +79,24 @@ export default{
         }
     },
     methods: {
+        goBack() {
+            this.$router.go(-1);
+        },
+        inputFocus() {
+            this.isInputFocused = true;
+        },
+        inputBlur() {
+            this.isInputFocused = false;
+        },
         redirectTo(where) {
             this.$router.push(where);
         },
-
         openTweet(id) {
             console.log(id);
         },
         handleSearchInput() {
             if (this.searchInput.length > 0) {
                 this.foundUsers = this.users.filter(user => {
-                // Convert both searchInput and UserTag to lowercase
                 const searchInputLower = this.searchInput.toLowerCase();
                 const userTagLower = user.UserTag.toLowerCase();
 
@@ -118,13 +133,6 @@ export default{
         box-sizing: border-box;
         border-right: 1px solid #2F3336;
         border-left: 1px solid #2F3336;
-        .title{
-            color:white;
-            padding:10px;
-            padding-left:20px;
-            font-size: 23px;
-            font-weight:bold;
-        }
         .main-text{
             color: white;
             text-align:left;
@@ -245,68 +253,73 @@ export default{
         .search-people{
             padding-top:20px;
             .input-wrap{
-                border: none;
-                border-radius:6px;
-                font-family: Arial, sans-serif;
-                position:relative;
-                width:auto;
-                height: 60px;
-                box-sizing: border-box;
+                height:60px;
+                width:100%;
                 display:flex;
+                align-items: center;
+                background-color:rgba($color: #000000, $alpha: 0.8);
+                backdrop-filter: blur(5px);
+                position:sticky;
+                top:0;
+                z-index:99;
+                padding:0 20px;
+                box-sizing: border-box;
                 .Edit-Input{
-                    font-family: Arial, sans-serif;
-                    box-sizing:border-box;
-                    border: 1px solid #434343;
-                    color:#ffffff;
-                    padding: 20px 13px 5px 13px;
-                    outline:none;
-                    background: none;
-                    position:relative;
-                    display:flex;
-                    width:100%;
-                    height:100%;
-                    border-radius:6px;
-                    font-size:18px;
-                    resize: none;
-                    overflow: hidden;
-                    transition: 0.3s all;
-                    &:disabled{
-                        color:#808080;
-                    }
-                    &:focus{
-                        border:1px solid #1da1f2;
+                    width: 100%;
+                    height: 80%;
+                    border-radius: 50px;
+                    padding-left:60px;
+                    border:  1px solid transparent;
+                    background-color: #202327;
+                    position: relative;
+                    color:white;
+                    font-size: medium;
+                    &.focused {
+                        outline:none;
+                        background-color: black;
+                        border-color: #1D9BF0;
+                        box-shadow: 0 0 5px #1D9BF0;
                     }
                 }
-                // label{
-                //     font-size:18px;
-                //     color:#434343;
-                //     padding:5px;
-                //     position:absolute;
-                //     top:15px;
-                //     left:5px;
-                //     pointer-events: none;
-                //     transition: 0.3s all;
-                // }
-                // .Edit-Input:focus+label,
-                // .Edit-Input:disabled+label,
-                // .Edit-Input:valid+label{
-                //     font-size:16px;
-                //     top:5px;
-                //     left:7px;
-                //     padding:0 5px 0 5px;
-                // }
-                // .Edit-Input:focus+label{
-                //     color:#1da1f2;
-                // }
+                .Edit-Input:focus + .search-icon{
+                    color: #1D9BF0;
+                }
+                .Edit-Input::-webkit-input-placeholder {
+                    color: #71767B;
+                }
+                .search-icon {
+                    position: absolute;
+                    left: 40px;
+                    top: 50%;
+                    transform: translate(0, -50%);
+                    color: #71767B;
+                    font-size: 24px;
+                }
             }
             .people-container{
                 width:100%;
-                height:auto;
+                max-height: 400px;
+                overflow-y: auto;
                 display:flex;
                 flex-direction:column;
                 box-sizing: border-box;
                 padding-top: 0px;
-                padding-bottom:100px;
+                padding-bottom: 0px;
+                &::-webkit-scrollbar{
+                    width:4px;
+                }
+                &::-webkit-scrollbar-thumb{
+                    background-color: #2F3336;
+                    border-radius: 5px;;
+                    border:none;
+                }
+                &::-webkit-scrollbar-track{
+                    background:none;
+                    border:none;
+                }
+                &:disabled{
+                    color:#808080;
+                }
                 .person{
                     width:100%;
                     height:70px;
@@ -320,6 +333,7 @@ export default{
                     transition: all 0.3s;
                     &:hover{
                         background-color: #080808;
+                        border-radius: 50px;
                     }
                     .user-info{
                         display:flex;
@@ -355,6 +369,105 @@ export default{
                     }
                 }
             }
+        }
+    }
+}
+@media (max-width: 1000px){
+    .messages-container{
+        display: flex;
+        flex-direction: column;
+        .messages-main{
+            height: 50%;
+            padding-bottom: 0px;
+            border-right: 0px;
+            border-left: 0px;
+            .main-text{
+                margin-left:4%;
+            }
+            .under-text{
+                padding-left: 4%;
+            }
+            .write-button{
+                margin-left: 4%;
+            }
+        }
+        .messages-right{
+            height: 50%;
+            border-right: 0px;
+            border-left: 0px;
+            padding-bottom: 0px;
+            justify-content: left;
+            .right-text{
+                margin-top: 15%;
+                padding-left: 4%;
+                justify-content: left;
+            }
+            .right-under-text{
+                padding-left: 4%;
+                justify-content: left;
+            }
+            .right-write-button{
+                margin-left: 4%;
+            }
+        }
+    }
+}
+@media (max-width: 700px){
+    .messages-container{
+        display: flex;
+        flex-direction: column;
+        .messages-main{
+            height: 50%;
+            padding-bottom: 0px;
+            border-right: 0px;
+            border-left: 0px;
+            .main-text{
+                font-size: 26px;
+                margin-top: 20%;
+                margin-left:4%;
+            }
+            .under-text{
+                font-size: 13px;
+                padding-left: 4%;
+                margin-top: 12px;
+            }
+            .write-button{
+                width: 150px;
+                margin-top: 30px;
+                margin-left: 4%;
+                font-size: 14px;
+                height: 45px;
+            }
+        }
+        .messages-right{
+            height: 50%;
+            border-right: 0px;
+            border-left: 0px;
+            padding-bottom: 0px;
+            justify-content: left;
+            .right-text{
+                font-size: 26px;
+                margin-top: 20%;
+                padding-left: 4%;
+                justify-content: left;
+            }
+            .right-under-text{
+                font-size: 13px;
+                padding-left: 4%;
+                padding-right: 4%;
+                margin-top: 12px;
+                justify-content: left;
+            }
+            .right-write-button{
+                width: 150px;
+                margin-top: 30px;
+                margin-left: 4%;
+                font-size: 14px;
+                height: 45px;
+            }
+        }
+        .edit-popup{
+            width: 100%;
         }
     }
 }
