@@ -233,14 +233,9 @@ export default{
             this.isInputFocused = false;
         },
         insertMention(user) {
-            console.log('Inserting Mention', user);
-
             const cursorPosition = this.tweetInputnav.value.selectionStart;
 
             const textarea = this.tweetInputnav;
-
-            console.log('Cursor Position:', cursorPosition);
-            console.log(textarea);
 
             if (!textarea) {
                 console.error("Textarea not found");
@@ -252,15 +247,10 @@ export default{
             const textBeforeCursor = textarea.value.substring(0, cursorPos);
             const textAfterCursor = textarea.value.substring(cursorPos);
 
-            console.log('Cursor Position:', cursorPos);
-            console.log('Text Before Cursor:', textBeforeCursor);
-            console.log('Text After Cursor:', textAfterCursor);
-
             this.tweet_text_inputnav = textBeforeCursor + mentionTag + textAfterCursor;
 
             this.TogglePopup('MentionTrigger');
 
-            // Use setSelectionRange on the ref to manipulate the cursor position
             textarea.setSelectionRange(cursorPosition + mentionTag.length, cursorPosition + mentionTag.length);
         },
         handleMentionInput() {
@@ -283,7 +273,7 @@ export default{
             const maxRows = 5;
             const textarea = this.$refs.tweetInputnav;
             textarea.style.height = 'auto';
-            const customLineHeight = 1; // Match the line-height value from your CSS
+            const customLineHeight = 1;
             const maxHeight = maxRows * customLineHeight * parseFloat(getComputedStyle(textarea).fontSize);
 
             if (textarea.scrollHeight <= maxHeight) {
@@ -301,7 +291,6 @@ export default{
         onImageChangenav(event) {
             this.tweetImagenav = event.target.files[0];
             if (this.tweetImagenav) {
-                // Create a URL for the selected image and set it as the preview
                 this.previewImagenav = URL.createObjectURL(this.tweetImagenav);
             } else {
                 this.previewImagenav = null;
@@ -317,7 +306,7 @@ export default{
                 }
             })
             .catch((error) => {
-            console.error(error);
+                console.error(error);
             });
         },
         async createTweetnav() {

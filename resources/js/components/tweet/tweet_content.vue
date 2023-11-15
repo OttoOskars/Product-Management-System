@@ -279,12 +279,9 @@ export default {
                 const userTag = target.getAttribute('data-usertag');
                 this.openProfile(userTag);
             } else {
-                console.log('Other click event');
             }
         },
         insertMention(user, inputType) {
-            console.log('Inserting Mention', user);
-
             const cursorPosition = inputType === 'main' ? this.mainInput.value.selectionStart : this.popupInput.value.selectionStart;
 
             const textarea = inputType === 'main' ? this.$refs.mainInput : this.$refs.popupInput;
@@ -299,10 +296,6 @@ export default {
             const textBeforeCursor = textarea.value.substring(0, cursorPos);
             const textAfterCursor = textarea.value.substring(cursorPos);
 
-            console.log('Cursor Position:', cursorPos);
-            console.log('Text Before Cursor:', textBeforeCursor);
-            console.log('Text After Cursor:', textAfterCursor);
-
             if (inputType === 'main') {
                 this.main_comment_text_input = textBeforeCursor + mentionTag + textAfterCursor;
             } else if (inputType === 'popup') {
@@ -314,7 +307,6 @@ export default {
             textarea.setSelectionRange(cursorPosition + mentionTag.length, cursorPosition + mentionTag.length);
         },
         handleMentionInput() {
-            console.log('Handling Mention Input');
             if (this.mentionSearch.length > 0) {
                 this.filteredUsers = this.users.filter(user => {
                     const searchInputLower = this.mentionSearch.toLowerCase();

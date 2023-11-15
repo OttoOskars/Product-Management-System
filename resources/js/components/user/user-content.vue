@@ -470,18 +470,12 @@ export default{
                 const userTag = target.getAttribute('data-usertag');
                 this.openProfile(userTag);
             } else {
-                console.log('Other click event');
             }
         },
         insertMention(user) {
-            console.log('Inserting Mention', user);
-
             const cursorPosition = this.commentInput.value.selectionStart;
 
             const textarea = this.commentInput;
-
-            console.log('Cursor Position:', cursorPosition);
-            console.log(textarea);
 
             if (!textarea) {
                 console.error("Textarea not found");
@@ -493,15 +487,10 @@ export default{
             const textBeforeCursor = textarea.value.substring(0, cursorPos);
             const textAfterCursor = textarea.value.substring(cursorPos);
 
-            console.log('Cursor Position:', cursorPos);
-            console.log('Text Before Cursor:', textBeforeCursor);
-            console.log('Text After Cursor:', textAfterCursor);
-
             this.comment_text_input = textBeforeCursor + mentionTag + textAfterCursor;
 
             this.TogglePopup('MentionTrigger');
 
-            // Use setSelectionRange on the ref to manipulate the cursor position
             textarea.setSelectionRange(cursorPosition + mentionTag.length, cursorPosition + mentionTag.length);
         },
         handleMentionInput() {

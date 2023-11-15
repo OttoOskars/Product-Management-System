@@ -287,23 +287,16 @@ export default{
         },
         handleMentionClick(event) {
             const target = event.target;
-            console.log('target:', target);
             if (target.classList.contains('mention-span')) {
                 const userTag = target.getAttribute('data-usertag');
                 this.openProfile(userTag);
             } else {
-                console.log('Other click event');
             }
         },
         insertMention(user, inputType) {
-            console.log('Inserting Mention', user);
-
             const cursorPosition = inputType === 'tweet' ? this.tweetInput.value.selectionStart : this.commentInput.value.selectionStart;
 
             const textarea = inputType === 'tweet' ? this.tweetInput : this.commentInput;
-
-            console.log('Cursor Position:', cursorPosition);
-            console.log(textarea);
 
             if (!textarea) {
                 console.error("Textarea not found");
@@ -315,10 +308,6 @@ export default{
             const textBeforeCursor = textarea.value.substring(0, cursorPos);
             const textAfterCursor = textarea.value.substring(cursorPos);
 
-            console.log('Cursor Position:', cursorPos);
-            console.log('Text Before Cursor:', textBeforeCursor);
-            console.log('Text After Cursor:', textAfterCursor);
-
             if (inputType === 'tweet') {
                 this.tweet_text_input = textBeforeCursor + mentionTag + textAfterCursor;
             } else if (inputType === 'comment') {
@@ -327,7 +316,6 @@ export default{
 
             this.TogglePopup('MentionTrigger');
 
-            // Use setSelectionRange on the ref to manipulate the cursor position
             textarea.setSelectionRange(cursorPosition + mentionTag.length, cursorPosition + mentionTag.length);
         },
         clearSearch() {
