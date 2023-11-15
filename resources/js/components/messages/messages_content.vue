@@ -203,7 +203,7 @@ export default{
             display: flex;
             margin-top: 10%;
             margin-left:6%;
-            margin-right:15%;
+            margin-right:15.5%;
         }
         .under-text{
             color:gray;

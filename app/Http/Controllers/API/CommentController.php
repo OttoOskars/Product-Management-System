@@ -7,28 +7,61 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Comment;
 use App\Models\Tweet;
+use App\Models\User;
+use App\Models\CommentMention;
 
 class CommentController extends Controller
 {
     public function createComment(Request $request)
     {
-        $user = auth()->user();
-        $tweetId = $request->input('tweetId');
-        $commentText = $request->input('commentText');
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        if (auth()->check()) {
+            $user = auth()->user();
+            $tweetId = $request->input('tweetId');
+            $tweet = Tweet::find($tweetId);
+            if (!$tweet) {
+                return response()->json(['message' => 'Tweet not found'], 404);
+            }
+            $comment = new Comment();
+            $commentText = $request->input('commentText');
+            if ($request->has('commentText')) {
+                $comment->CommentText = $request->input('commentText');
+                $mentions = $this->extractMentions($comment->CommentText);
+            }
+    
+/*             if ($request->hasFile('commentImage')) {
+                $image = $request->file('commentImage');
+                $path = $image->store('comment_pictures', 'public');
+                $comment->CommentImage = $path;
+            } */
+            $comment->UserID = $user->UserID;
+            $comment->TweetID = $tweet->TweetID;
+            $tweet->comments()->save($comment);
+            if (!empty($mentions)) {
+                foreach ($mentions as $mention) {
+                    $mentionModel = new CommentMention([
+                        'MentionedUserID' => $mention->UserID,
+                        'UserID' => $user->UserID,
+                    ]);
+                    $comment->comment_mentions()->save($mentionModel);
+                }
+            }
+            $comment->user = $user;
+            $comment->created_ago = 'now';
+            return response()->json(['message' => 'Comment created successfully', 'comment' => $comment], 201);
+        } else {
+            return response()->json(['error' => 'User not authenticated.'], 401);
         }
-        $tweet = Tweet::find($tweetId);
-        if (!$tweet) {
-            return response()->json(['message' => 'Tweet not found'], 404);
-        }
-        $comment = new Comment();
-        $comment->CommentText = $commentText;
-        $comment->UserID = $user->UserID;
-        $tweet->comments()->save($comment);
-        $comment->user = $user;
-        $comment->created_ago = 'now';
-        return response()->json(['message' => 'Comment created successfully', 'comment' => $comment], 201);
+    }
+
+    private function extractMentions($Text)
+    {
+        preg_match_all('/@(\w+)/u', $Text, $matches);
+    
+        $usernames = $matches[1];
+        $usernamesWithAtSymbol = array_map(function ($username) {
+            return '@' . $username;
+        }, $usernames);
+        return User::whereIn('UserTag', $usernamesWithAtSymbol)->get();
     }
 
     public function deleteComment($id)
@@ -37,6 +70,7 @@ class CommentController extends Controller
         if (!$comment) {
             return response()->json(['message' => 'Comment not found'], 404);
         }
+        $comment->comment_mentions()->delete();
         $comment->delete();
         return response()->json(['message' => 'Comment deleted successfully']);
     }

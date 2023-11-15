@@ -1,5 +1,5 @@
 <template>
-    <div class="tweets-container">
+    <div class="content-container">
         <div class="black-line"></div>
         <div class="top-bar">
             <button class="back-icon" @click="goBack">
@@ -10,25 +10,29 @@
 
         <div class="people-container">
             <div class="person" v-for="person in users" :key="person.UserID">
-                <div class="user-info">
-                    <img :src="'/storage/' + person.ProfilePicture" class="person-img"> 
-                    <div class="person-info">
+                <div class="user">
+                    <div class="user-img">
+                        <img @click.stop="openProfile(person.UserTag)" :src="'/storage/' + person.ProfilePicture" alt="" class="person-img"> 
+                    </div>
+                    <div class="user-info">
                         <p class="username">{{ person.Name }}</p>
                         <p class="usertag">{{ person.UserTag }}</p>
                     </div>
                 </div>
-                <button  
-                    class="follow-button" 
-                    @click="toggleFollowUnfollow(person.UserID)"
-                    v-if="!(person.UserID === user.UserID)"
-                    :class="{
-                        'followed-button': person.isFollowedByMe,
-                        'unfollow-button': person.isFollowedByMe && isHovered[person.UserID]
-                    }"
-                    @mouseover="isHovered[person.UserID] = true"
-                    @mouseout="isHovered[person.UserID] = false">
-                    {{ followButtonLabel(person) }}
-                </button>
+                <div class="button-container">
+                    <button  
+                        class="follow-button" 
+                        @click="toggleFollowUnfollow(person.UserID)"
+                        v-if="!(person.UserID === user.UserID)"
+                        :class="{
+                            'followed-button': person.isFollowedByMe,
+                            'unfollow-button': person.isFollowedByMe && isHovered[person.UserID]
+                        }"
+                        @mouseover="isHovered[person.UserID] = true"
+                        @mouseout="isHovered[person.UserID] = false">
+                        {{ followButtonLabel(person) }}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -149,81 +153,84 @@ export default {
     font-size: 22px;
 }
 
-
 .people-container{
-    width:100%;
-    height:auto;
-    display:flex;
-    flex-direction:column;
     box-sizing: border-box;
-    padding-top: 0px;
-    padding-bottom:100px;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction: column;
     .person{
-        width:100%;
-        height:70px;
-        display:flex;
-        flex-direction:row;
-        align-items: center;
-        justify-content: space-between;
         box-sizing: border-box;
-        padding: 40px 20px;
+        padding:10px 20px;
+        width:100%;
+        height:auto;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        transition:all 0.3s;
         cursor:pointer;
-        transition: all 0.3s;
-        &:hover{
-            background-color: #080808;
-        }
-
-        .user-info{
+        .user{
+            width:auto;
+            height:100%;
             display:flex;
-            flex-direction:row;
+            flex-direction: row;
             align-items: center;
             justify-content: flex-start;
             box-sizing: border-box;
-            gap:10px;
-            img{
-                width:50px;
-                height:50px;
-                border-radius:50%;
-                background-color: rgb(255, 255, 255);
-            }
-            .person-info{
+            .user-img{
+                width:auto;
+                height:auto;
                 display:flex;
-                flex-direction:column;
+                align-items: center;
+                justify-content: center;
+                img{
+                    width:50px;
+                    height:50px;
+                    border-radius:50%;
+                    background-color: #ffffff;
+                }
+            }
+            .user-info{
+                padding-left:10px;
+                width:100%;
+                height:100%;
+                display:flex;
+                flex-direction: column;
                 align-items: flex-start;
-                justify-content: flex-start;
-                gap:5px;
+                justify-content: center;
+                gap:7px;
                 .username{
-                    color: white;
+                    max-width:150px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
                     font-weight: bold;
                     font-size: 16px;
                     margin:0;
                 }
                 .usertag{
-                    color: #6e767d;
-                    font-size: 14px;
-                    margin: 0;
+                    max-width:150px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    color: #71767B;
+                    font-size: 16px;
+                    margin:0;
                 }
             }
         }
-        .follow-btn {
-            background-color: #1e87f9;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 20px;
-            cursor: pointer;
-            height: 40px;
-            width: 80px;
-            font-weight: bold;
+        .button-container{
+            width:auto;
+            height:100%;
+            display:flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .followed-btn {
-            background-color: white;
-            color:#1d9bf0
+        &:hover{
+            background-color: rgba($color: #1a1a1a, $alpha: 0.9);
         }
     }
 }
-
 
 .back-icon {
     display: flex;
@@ -239,120 +246,93 @@ export default {
     color: white;
     cursor: pointer;
     transition: all 0.3s;
-}
-
-.back-icon:hover {
-    background-color: rgba($color: #1a1a1a, $alpha: 0.9);
-
+    &:hover {
+        background-color: rgba($color: #1a1a1a, $alpha: 0.9);
+    }
 }
 @media (max-width: 500px) {
-    .top-bar{
-        height:35px;
-        width:100%;
-        .search-input {
-            width: 100%;
-            height: 80%;
-            border-radius: 50px;
-            padding-left:30px;
-            border:  1px solid transparent;
-            background-color: #202327;
-            position: relative;
-            color:white;
-            font-size: 13px;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 30px;
-            top: 50%;
-            transform: translate(0, -50%);
-            color: #71767B;
-            font-size: 16px;
-        }
+.top-bar{
+    height:35px;
+    width:100%;
+    .search-input {
+        width: 100%;
+        height: 80%;
+        border-radius: 50px;
+        padding-left:30px;
+        border:  1px solid transparent;
+        background-color: #202327;
+        position: relative;
+        color:white;
+        font-size: 13px;
     }
 
-    .title{
-        font-size:17px !important;
+    .search-icon {
+        position: absolute;
+        left: 30px;
+        top: 50%;
+        transform: translate(0, -50%);
+        color: #71767B;
+        font-size: 16px;
     }
-    .title2{
-        width:100%;
-        box-sizing: border-box;
-        height:70%;
-    }
-    .people-container{
-        width:100%;
-        height:auto;
-        display:flex;
-        flex-direction:column;
-        box-sizing: border-box;
-        padding-bottom:100px;
-        .person{
-            width:100%;
-            height:40px;
-            display:flex;
-            flex-direction:row;
-            align-items: center;
-            justify-content: space-between;
-            box-sizing: border-box;
-            padding: 30px 20px;
-            cursor:pointer;
-            transition: all 0.3s;
-            &:hover{
-                background-color: #080808;
-            }
+}
 
-            .user-info{
-                display:flex;
-                flex-direction:row;
-                align-items: center;
-                justify-content: flex-start;
-                box-sizing: border-box;
-                gap:10px;
+.title{
+    font-size:17px !important;
+}
+.title2{
+    width:100%;
+    box-sizing: border-box;
+    height:70%;
+}
+.people-container{
+    .person{
+        padding:10px 20px;
+        .user{
+            .user-img{
                 img{
                     width:40px;
                     height:40px;
-                    border-radius:50%;
-                    background-color: rgb(255, 255, 255);
-                }
-                .person-info{
-                    display:flex;
-                    flex-direction:column;
-                    align-items: flex-start;
-                    justify-content: flex-start;
-                    gap:5px;
-                    .username{
-                        color: white;
-                        font-weight: bold;
-                        font-size: 11px;
-                        margin:0;
-                    }
-                    .usertag{
-                        color: #6e767d;
-                        font-size: 11px;
-                        margin: 0;
-                    }
                 }
             }
-            .follow-btn {
-                background-color: #1e87f9;
-                color: #fff;
-                border: none;
-                border-radius: 20px;
+            .user-info{
                 display:flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                height: 30px;
-                width: 50px;
-                font-weight: bold;
-                font-size:11px;
-            }
-
-            .followed-btn {
-                background-color: white;
-                color:#1d9bf0
+                gap:5px;
+                .username{
+                    font-size: 14px;
+                }
+                .usertag{
+                    font-size: 14px;
+                }
             }
         }
     }
+}
+}
+@media (max-width: 375px) {
+.people-container{
+    .person{
+        padding:10px 20px;
+        .user{
+            .user-img{
+                img{
+                    width:40px;
+                    height:40px;
+                }
+            }
+            .user-info{
+                display:flex;
+                gap:5px;
+                .username{
+                    max-width:90px;
+                    font-size: 12px;
+                }
+                .usertag{
+                    max-width:90px;
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+}
 }
 </style>

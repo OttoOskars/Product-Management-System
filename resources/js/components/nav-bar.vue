@@ -105,9 +105,46 @@
                 <div class="buttons">
                     <button class="tweet-btn"><input type="file" accept="image/png, image/gif, image/jpeg, video/mp4,video/x-m4v,video/*" id="tweet-img-input-tweetnav" @change="onImageChangenav" hidden><label for="tweet-img-input-tweetnav" class="tweet-img-label"><ion-icon name="images-outline" class="create-tweet-icon"></ion-icon></label></button>
                     <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
-                    <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
+                    <button class="tweet-btn" @click.stop="TogglePopup('MentionTrigger', 'comment')"><ion-icon name="at-sharp" class="create-tweet-icon"></ion-icon></button>
                 </div>
                 <button class="popup-button"  @click="createTweetnav" :disabled="buttonDisabled">Post</button>
+            </div>
+        </div>
+    </Popup>
+    <Popup v-if="popupTriggers.MentionTrigger" :TogglePopup="() => TogglePopup('MentionTrigger')">
+        <div class="mention-popup">
+            <p class="title">Mention</p>
+            <div class="search-input-container">
+                <input 
+                    type="text"
+                    id="mention-input"
+                    class="search-input" 
+                    maxlength="30" 
+                    placeholder="Search"
+                    :class="{ 'focused': isInputFocused }"
+                    @input="handleMentionInput"
+                    @focus="inputFocus"
+                    @blur="inputBlur"
+                    v-model="mentionSearch"
+                >
+                <ion-icon name="search-outline" class="search-icon"></ion-icon>
+                <button class="close-icon-btn" :class="{ 'focused': isInputFocused }">
+                    <ion-icon name="close-circle-sharp" class="close-icon"></ion-icon>
+                </button>
+            </div>
+            <div class="user-suggestions">
+                <div class="user" v-for="user in filteredUsers" :key="user.UserID" @click="insertMention(user)">
+                    <div class="user-img">
+                        <img @click="openProfile(user.UserTag)" :src="'/storage/' + user.ProfilePicture">
+                    </div>
+                    <div class="user-info">
+                        <p class="username">{{ user.Name }}</p>
+                        <p class="usertag">{{ user.UserTag }}</p>
+                    </div>
+                </div>
+                <div class="no-users" v-if="filteredUsers.length === 0">
+                    <p>No users found 🌵</p>   
+                </div>
             </div>
         </div>
     </Popup>
@@ -129,9 +166,11 @@ export default{
     },
     data(){
         return {
+            users: [],
             tweets: [],
             isPopupVisible: false,
             buttonDisabled: false,
+            isInputFocused: false,
             activeRoute: '',
             isHomeFilled: false,
             isNotificationsFilled: false,
@@ -147,17 +186,22 @@ export default{
         const previewImagenav = ref(null);
         const router = useRouter();
         const store = useStore();
+        const mentionSearch = ref('');
+        const filteredUsers = ref([]);
+        const tweetInputnav = ref(null);
+
 
         const popupTriggers = ref({
             TweetTrigger: false,
+            MentionTrigger: false,
         });
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger]
-            tweet_text_inputnav.value='';
-            tweet_text_input.value = '';
             tweetImagenav.value=null;
             previewImagenav.value=null;
-            if (!popupTriggers.value[trigger]) {
+            if (trigger === 'MentionTrigger') {
+                mentionSearch.value = '';
+                filteredUsers.value = [];
             }
 		}
         const logoutUser = async () => {
@@ -176,9 +220,50 @@ export default{
             tweet_text_input,
             tweetImagenav,
             previewImagenav,
+            mentionSearch,
+            filteredUsers,
+            tweetInputnav,
         }
     },
     methods: {
+        inputFocus() {
+            this.isInputFocused = true;
+        },
+        inputBlur() {
+            this.isInputFocused = false;
+        },
+        insertMention(user) {
+            const cursorPosition = this.tweetInputnav.value.selectionStart;
+
+            const textarea = this.tweetInputnav;
+
+            if (!textarea) {
+                console.error("Textarea not found");
+                return;
+            }
+
+            const mentionTag = `${user.UserTag}`;
+            const cursorPos = textarea.selectionStart;
+            const textBeforeCursor = textarea.value.substring(0, cursorPos);
+            const textAfterCursor = textarea.value.substring(cursorPos);
+
+            this.tweet_text_inputnav = textBeforeCursor + mentionTag + textAfterCursor;
+
+            this.TogglePopup('MentionTrigger');
+
+            textarea.setSelectionRange(cursorPosition + mentionTag.length, cursorPosition + mentionTag.length);
+        },
+        handleMentionInput() {
+            if (this.mentionSearch.length > 0) {
+                this.filteredUsers = this.users.filter(user => {
+                    const searchInputLower = this.mentionSearch.toLowerCase();
+                    const userTagLower = user.UserTag.toLowerCase();
+                    return userTagLower.includes(searchInputLower);
+                });
+            } else {
+                this.filteredUsers = [];
+            }
+        },
         toggleProfilePopup() {
             this.isPopupVisible = !this.isPopupVisible;
             setTimeout(() => { this.isPopupVisible = false; }, 10000);
@@ -188,7 +273,7 @@ export default{
             const maxRows = 5;
             const textarea = this.$refs.tweetInputnav;
             textarea.style.height = 'auto';
-            const customLineHeight = 1; // Match the line-height value from your CSS
+            const customLineHeight = 1;
             const maxHeight = maxRows * customLineHeight * parseFloat(getComputedStyle(textarea).fontSize);
 
             if (textarea.scrollHeight <= maxHeight) {
@@ -206,7 +291,6 @@ export default{
         onImageChangenav(event) {
             this.tweetImagenav = event.target.files[0];
             if (this.tweetImagenav) {
-                // Create a URL for the selected image and set it as the preview
                 this.previewImagenav = URL.createObjectURL(this.tweetImagenav);
             } else {
                 this.previewImagenav = null;
@@ -222,7 +306,7 @@ export default{
                 }
             })
             .catch((error) => {
-            console.error(error);
+                console.error(error);
             });
         },
         async createTweetnav() {
@@ -246,7 +330,7 @@ export default{
                 this.tweetImagenav = null;
                 this.previewImagenav = null;
                 this.popupTriggers.TweetTrigger = false;
-                const textarea = this.$refs.tweetInput;
+                const textarea = this.tweetInputnav;
                 textarea.style.height = 'auto';
                 this.getTweets('all');
                 setTimeout(() => {
@@ -257,8 +341,20 @@ export default{
                 this.buttonDisabled = false;
             }
         },
+        getAllUsersMention() {
+        axios
+            .get('/api/all-users-mention')
+            .then(response => {
+                this.users = response.data;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        },
     },
-    mounted() {
+        
+    async mounted() {
+        this.getAllUsersMention();
         this.activeRoute = this.$route.path;
         this.isHomeFilled = this.activeRoute.includes('/home');
         this.isNotificationsFilled = this.activeRoute.includes('/notifications');

@@ -30,7 +30,7 @@
                                     <p class="time-posted">{{ tweet.created_ago }}</p>
                                 </div>
                                 <div class="content-text">
-                                    <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
+                                    <p v-if="tweet.TweetText" v-html="formatMentionText(tweet.TweetText)" @click.stop="handleMentionClick"></p>
                                 </div>
                             </div>
                         </div>
@@ -41,7 +41,7 @@
                                 <p class="time-posted">{{ tweet.created_ago }}</p>
                             </div>
                             <div class="content-text">
-                                <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
+                                <p v-if="tweet.TweetText" v-html="formatMentionText(tweet.TweetText)" @click.stop="handleMentionClick"></p>
                             </div>
                         </div>
                         <div class="content-img">
@@ -81,15 +81,15 @@
                     </div>
                     <div class="top">
                         <div class="tweet-input-container">
-                            <textarea v-model="main_comment_text_input" id="tweet-input" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
+                            <textarea v-model="main_comment_text_input" id="tweet-input" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize('mainInput')" ref="mainInput" maxlength="255"></textarea>
                         </div>
                     </div>
                     <div class="bottom">
                         <div class="buttons">
                             <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
-                            <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
+                            <button class="tweet-btn" @click.stop="TogglePopup('MentionTrigger', 'main')"><ion-icon name="at-sharp" class="create-tweet-icon"></ion-icon></button>
                         </div>
-                        <button class="post-button" @click="createComment(tweet.TweetID, main_comment_text_input)" :disabled="buttonDisabled">Reply</button>
+                        <button class="post-button" @click="createComment(tweet.TweetID, main_comment_text_input, mainInput)" :disabled="buttonDisabled">Reply</button>
                     </div>
                 </div>
             </div>
@@ -105,7 +105,7 @@
                             <p class="time-posted">{{ comment.created_ago }}</p>
                         </div>
                         <div class="content-text">
-                            <p>{{ comment.CommentText }}</p>
+                            <p v-if="comment.CommentText" v-html="formatMentionText(comment.CommentText)" @click.stop="handleMentionClick"></p>
                         </div>
                     </div>
                 </div>
@@ -127,7 +127,7 @@
                         <p class="usertag">{{ user.UserTag }}</p>
                     </div>
                     <div class="tweet-input-container">
-                        <textarea v-model="popup_comment_text_input" id="tweet-input-comment" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
+                        <textarea v-model="popup_comment_text_input" id="tweet-input-comment" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize('popupInput')" ref="popupInput" maxlength="255"></textarea>
                     </div>
                 </div>
             </div>
@@ -135,9 +135,9 @@
             <div class="bottom">
                 <div class="buttons">
                     <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
-                    <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
+                    <button class="tweet-btn" @click.stop="TogglePopup('MentionTrigger', 'popup')"><ion-icon name="at-sharp" class="create-tweet-icon"></ion-icon></button>
                 </div>
-                <button class="popup-button" @click="createComment(tweetIdInPopup, popup_comment_text_input)" :disabled="buttonDisabled">Comment</button>
+                <button class="popup-button" @click="createComment(tweetIdInPopup, popup_comment_text_input, popupInput)" :disabled="buttonDisabled">Comment</button>
             </div>
         </div>
     </Popup>
@@ -148,6 +148,43 @@
             <div class="tweet-buttons">
                 <button class="cancel-button" @click="TogglePopup('DeleteTrigger2')">Cancel</button>
                 <button class="delete-button" @click="deleteComment(deleteCommentTweetID, deleteCommentID)">Delete</button>
+            </div>
+        </div>
+    </Popup>
+    <Popup v-if="popupTriggers.MentionTrigger" :TogglePopup="() => TogglePopup('MentionTrigger')">
+        <div class="mention-popup">
+            <p class="title">Mention</p>
+            <div class="search-input-container">
+                <input 
+                    type="text"
+                    id="mention-input"
+                    class="search-input" 
+                    maxlength="30" 
+                    placeholder="Search"
+                    :class="{ 'focused': isInputFocused }"
+                    @input="handleMentionInput"
+                    @focus="inputFocus"
+                    @blur="inputBlur"
+                    v-model="mentionSearch"
+                >
+                <ion-icon name="search-outline" class="search-icon"></ion-icon>
+                <button class="close-icon-btn" :class="{ 'focused': isInputFocused }">
+                    <ion-icon name="close-circle-sharp" class="close-icon"></ion-icon>
+                </button>
+            </div>
+            <div class="user-suggestions">
+                <div class="user" v-for="user in filteredUsers" :key="user.UserID" @click="insertMention(user, mentionInputType)">
+                    <div class="user-img">
+                        <img @click="openProfile(user.UserTag)" :src="'/storage/' + user.ProfilePicture">
+                    </div>
+                    <div class="user-info">
+                        <p class="username">{{ user.Name }}</p>
+                        <p class="usertag">{{ user.UserTag }}</p>
+                    </div>
+                </div>
+                <div class="no-users" v-if="filteredUsers.length === 0">
+                    <p>No users found 🌵</p>   
+                </div>
             </div>
         </div>
     </Popup>
@@ -166,10 +203,11 @@ export default {
     },
     data() {
         return {
+            isInputFocused: false,
             tweet: null,
             comments: [],
-            main_comment_text_input: '',
-            popup_comment_text_input: '',
+            users: [],
+            filteredUsers: [],
             buttonDisabled: false,
             deleteCommentTweetID: null,
             deleteCommentID: null,
@@ -182,15 +220,22 @@ export default {
         const router = useRouter();
         const main_comment_text_input = ref('');
         const popup_comment_text_input = ref('');
+        const mainInput = ref(null);
+        const popupInput = ref(null);
+        const mentionSearch = ref('');
+        const mentionInputType = ref('main');
+        const filteredUsers = ref([]);
         const popupTriggers = ref({
             CommentTrigger: false,
             DeleteTrigger2: false,
+            MentionTrigger: false,
         });
-        const TogglePopup = (trigger) => {
-            popupTriggers.value[trigger] = !popupTriggers.value[trigger]
-            main_comment_text_input.value='';
-            popup_comment_text_input.value='';
-            if (!popupTriggers.value[trigger]) {
+        const TogglePopup = (trigger, source) => {
+            popupTriggers.value[trigger] = !popupTriggers.value[trigger];
+            if (trigger === 'MentionTrigger') {
+                mentionSearch.value = '';
+                filteredUsers.value = [];
+                mentionInputType.value = source;
             }
 		}
         return {
@@ -198,12 +243,86 @@ export default {
             TogglePopup,
             main_comment_text_input,
             popup_comment_text_input,
+            mainInput,
+            popupInput,
+            mentionSearch,
+            mentionInputType,
+            filteredUsers,
         }
     },
     computed: {
         ...mapState(['user']),
     },
     methods: {
+        formatMentionText(tweetText) {
+            const mentionRegex = /@([a-zA-Z0-9_]+)/g;
+            const parts = tweetText.split(mentionRegex);
+            return parts.map((part, index) => {
+                if (index % 2 === 1) {
+                    const userTag = part;
+                    const mentionedUser = this.users.find(user2 => {
+                        return user2.UserTag === `@${userTag}`;
+                    });
+                    if (mentionedUser) {
+                        return `<span class="mention-span" data-usertag="${mentionedUser.UserTag}">@${part}</span>`;
+                    } else {
+                        return part;
+                    }
+                } else {
+                    return part;
+                }
+            }).join('');
+        },
+        handleMentionClick(event) {
+            const target = event.target;
+            if (target.classList.contains('mention-span')) {
+                const userTag = target.getAttribute('data-usertag');
+                this.openProfile(userTag);
+            } else {
+            }
+        },
+        insertMention(user, inputType) {
+            const cursorPosition = inputType === 'main' ? this.mainInput.value.selectionStart : this.popupInput.value.selectionStart;
+
+            const textarea = inputType === 'main' ? this.$refs.mainInput : this.$refs.popupInput;
+
+            if (!textarea) {
+                console.error("Textarea not found");
+                return;
+            }
+
+            const mentionTag = `${user.UserTag}`;
+            const cursorPos = textarea.selectionStart;
+            const textBeforeCursor = textarea.value.substring(0, cursorPos);
+            const textAfterCursor = textarea.value.substring(cursorPos);
+
+            if (inputType === 'main') {
+                this.main_comment_text_input = textBeforeCursor + mentionTag + textAfterCursor;
+            } else if (inputType === 'popup') {
+                this.popup_comment_text_input = textBeforeCursor + mentionTag + textAfterCursor;
+            }
+
+            this.TogglePopup('MentionTrigger');
+
+            textarea.setSelectionRange(cursorPosition + mentionTag.length, cursorPosition + mentionTag.length);
+        },
+        handleMentionInput() {
+            if (this.mentionSearch.length > 0) {
+                this.filteredUsers = this.users.filter(user => {
+                    const searchInputLower = this.mentionSearch.toLowerCase();
+                    const userTagLower = user.UserTag.toLowerCase();
+                    return userTagLower.includes(searchInputLower);
+                });
+            } else {
+                this.filteredUsers = [];
+            }
+        },
+        inputFocus() {
+            this.isInputFocused = true;
+        },
+        inputBlur() {
+            this.isInputFocused = false;
+        },
         fetchCommentsByTweet(tweetID) {
             fetch(`api/comments/${tweetID}`)
             .then((response) => response.json())
@@ -214,7 +333,7 @@ export default {
                 console.error('Error fetching comments:', error);
             });
         },
-        async createComment(tweetID, commentText) {
+        async createComment(tweetID, commentText, ref) {
             if (this.buttonDisabled) {
                 return;
             }
@@ -232,8 +351,13 @@ export default {
                 this.tweet.comment_count++;
                 this.main_comment_text_input = '';
                 this.popup_comment_text_input = '';
-                const textarea = this.$refs.tweetInput;
-                textarea.style.height = 'auto';
+                const textarea1 = this.mainInput;
+                const textarea2 = this.popupInput;
+                if (textarea2){
+                    textarea2.style.height = 'auto';
+                }
+                textarea1.style.height = 'auto';
+
                 this.popupTriggers.CommentTrigger = false;
                 setTimeout(() => {
                     this.buttonDisabled = false;
@@ -267,9 +391,9 @@ export default {
             this.$router.push('/profile/' + NoSymbolTag);
             console.log(tag);
         },
-        autoSize() {
+        autoSize(ref) {
             const maxRows = 8;
-            const textarea = this.$refs.tweetInput;
+            const textarea = this.$refs[ref];
             textarea.style.height = 'auto';
             const customLineHeight = 1;
             const maxHeight = maxRows * customLineHeight * parseFloat(getComputedStyle(textarea).fontSize);
@@ -447,18 +571,35 @@ export default {
                 console.error('Error unbookmarking the tweet:', error);
             }
         },
+        getAllUsersMention() {
+        axios
+            .get('/api/all-users-mention')
+            .then(response => {
+                this.users = response.data;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        },
+        getTweet(TweetID) {
+        axios
+            .get('/api/tweetdata/' + TweetID)
+            .then(response => {
+                this.tweet = response.data.tweet;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        },
     },
     async mounted() {
         this.tweet = this.$route.params.tweet;
         await this.$store.dispatch('initializeApp');
-        this.$axios.get('/api/tweetdata/' + this.$route.params.tweetID)
-        .then(response => {
-            this.tweet = response.data.tweet;
-        })
-        .catch(error => {
-            console.error(error);
-        });
+        this.getTweet(this.$route.params.tweetID);
         this.fetchCommentsByTweet(this.$route.params.tweetID);
+        this.getAllUsersMention();
+        console.log(this.mainInput);
+        console.log(this.popupInput);
     }
 };
 </script>

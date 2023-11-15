@@ -12,25 +12,29 @@
         </div>
         <div class="people-container">
             <div class="person" v-for="person in followingList" :key="person.UserID">
-                <div class="user-info">
-                    <img @click.stop="openProfile(person.UserTag)" :src="'/storage/' + person.ProfilePicture" alt="" class="person-img">
-                    <div class="person-info">
+                <div class="user">
+                    <div class="user-img">
+                        <img @click.stop="openProfile(person.UserTag)" :src="'/storage/' + person.ProfilePicture" alt="" class="person-img"> 
+                    </div>
+                    <div class="user-info">
                         <p class="username">{{ person.Name }}</p>
                         <p class="usertag">{{ person.UserTag }}</p>
                     </div>
                 </div>
-                <button  
-                    class="follow-button" 
-                    @click="toggleFollowUnfollow(person.UserID)"
-                    v-if="!(person.UserID === user.UserID)"
-                    :class="{
-                        'followed-button': person.isFollowedByMe,
-                        'unfollow-button': person.isFollowedByMe && isHovered[person.UserID]
-                    }"
-                    @mouseover="isHovered[person.UserID] = true"
-                    @mouseout="isHovered[person.UserID] = false">
-                    {{ followButtonLabel(person) }}
-                </button>
+                <div class="button-container">
+                    <button  
+                        class="follow-button" 
+                        @click="toggleFollowUnfollow(person.UserID)"
+                        v-if="!(person.UserID === user.UserID)"
+                        :class="{
+                            'followed-button': person.isFollowedByMe,
+                            'unfollow-button': person.isFollowedByMe && isHovered[person.UserID]
+                        }"
+                        @mouseover="isHovered[person.UserID] = true"
+                        @mouseout="isHovered[person.UserID] = false">
+                        {{ followButtonLabel(person) }}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -208,59 +212,133 @@ export default {
     }
 }
 .people-container{
-    width:100%;
-    height:auto;
-    display:flex;
-    flex-direction:column;
     box-sizing: border-box;
-    padding-top: 0px;
-    padding-bottom:80px;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction: column;
     .person{
-        width:100%;
-        height:70px;
-        display:flex;
-        flex-direction:row;
-        align-items: center;
-        justify-content: space-between;
         box-sizing: border-box;
-        padding: 40px 20px;
+        padding:10px 20px;
+        width:100%;
+        height:auto;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        transition:all 0.3s;
         cursor:pointer;
-        transition: all 0.3s;
-        &:hover{
-            background-color: #080808;
-        }
-        .user-info{
+        .user{
+            width:auto;
+            height:100%;
             display:flex;
-            flex-direction:row;
+            flex-direction: row;
             align-items: center;
             justify-content: flex-start;
             box-sizing: border-box;
-            gap:10px;
-            img{
-                width:50px;
-                height:50px;
-                border-radius:50%;
-                background-color: rgb(255, 255, 255);
-            }
-            .person-info{
+            .user-img{
+                width:auto;
+                height:auto;
                 display:flex;
-                flex-direction:column;
+                align-items: center;
+                justify-content: center;
+                img{
+                    width:50px;
+                    height:50px;
+                    border-radius:50%;
+                    background-color: #ffffff;
+                }
+            }
+            .user-info{
+                padding-left:10px;
+                width:100%;
+                height:100%;
+                display:flex;
+                flex-direction: column;
                 align-items: flex-start;
-                justify-content: flex-start;
-                gap:5px;
+                justify-content: center;
+                gap:7px;
                 .username{
-                    color: white;
+                    max-width:150px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
                     font-weight: bold;
                     font-size: 16px;
                     margin:0;
                 }
                 .usertag{
-                    color: #6e767d;
+                    max-width:150px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    color: #71767B;
+                    font-size: 16px;
+                    margin:0;
+                }
+            }
+        }
+        .button-container{
+            width:auto;
+            height:100%;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+        }
+        &:hover{
+            background-color: rgba($color: #1a1a1a, $alpha: 0.9);
+        }
+    }
+}
+@media (max-width: 500px) {
+.people-container{
+    .person{
+        padding:10px 20px;
+        .user{
+            .user-img{
+                img{
+                    width:40px;
+                    height:40px;
+                }
+            }
+            .user-info{
+                display:flex;
+                gap:5px;
+                .username{
                     font-size: 14px;
-                    margin: 0;
+                }
+                .usertag{
+                    font-size: 14px;
                 }
             }
         }
     }
+}
+}
+@media (max-width: 375px) {
+.people-container{
+    .person{
+        padding:10px 20px;
+        .user{
+            .user-img{
+                img{
+                    width:40px;
+                    height:40px;
+                }
+            }
+            .user-info{
+                display:flex;
+                gap:5px;
+                .username{
+                    max-width:90px;
+                    font-size: 12px;
+                }
+                .usertag{
+                    max-width:90px;
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+}
 }
 </style>
