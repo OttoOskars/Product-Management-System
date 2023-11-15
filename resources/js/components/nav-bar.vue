@@ -419,7 +419,7 @@ export default{
         background-color:black;
         border:none;
         border-radius: 50px;
-        transition: all 0.3s;
+        transition: color 0.3s;
         cursor: pointer;
         &:hover{
             background-color: #1d1d1d;
@@ -650,8 +650,8 @@ export default{
         display:none !important;
     }
     .Tweet{
-        width:45px !important;
-        height:45px !important;
+        width:50px !important;
+        height:50px !important;
         position:fixed;
         right:12px;
         bottom:55px;

@@ -14,6 +14,7 @@ use App\Models\Bookmark;
 use App\Models\Mention;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\Paginator;
 
 class TweetController extends Controller
 {
@@ -70,7 +71,7 @@ class TweetController extends Controller
         }, $usernames);
         return User::whereIn('UserTag', $usernamesWithAtSymbol)->get();
     }
-    public function getTweets($type)
+    public function getTweets($type, $page)
     {
         if (auth()->check()) {
             $user = auth()->user();
@@ -111,8 +112,8 @@ class TweetController extends Controller
                             ->where('UserID', $user->UserID);
                     });
                 }
-    
-            $tweets = $query->get();
+            
+            $tweets = $query->paginate(5, ['*'], 'page', $page);
     
             foreach ($tweets as $tweet) {
                 $now = Carbon::now();
@@ -121,8 +122,10 @@ class TweetController extends Controller
                 $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
                 $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
             }
+            $totalPages = $tweets->lastPage();
+            Log::info($totalPages);
     
-            return response()->json(['tweets' => $tweets]);
+            return response()->json(['tweets' => $tweets, 'total_pages' => $totalPages]);
         } else {
             // Handle the case where the user is not authenticated.
             return response()->json(['error' => 'User not authenticated.'], 401);

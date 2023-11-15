@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="post-type">
-                <button @click="switchToTweets" class="post-type-btn" :class ="{ 'active-post-type': postType == 'tweets' }">For you<div class="active-line" :class ="{ 'active': postType == 'tweets' }"></div></button>
+                <button @click="switchToTweets" class="post-type-btn" :class ="{ 'active-post-type': postType == 'all' }">For you<div class="active-line" :class ="{ 'active': postType == 'tweets' }"></div></button>
                 <button @click="switchToFollowing" class="post-type-btn" :class ="{ 'active-post-type': postType == 'following_tweets' }">Following<div class="active-line" :class ="{ 'active': postType == 'following_tweets' }"></div></button>
             </div>
         </div>
@@ -191,10 +191,13 @@ export default{
             users: [],
             tweets: [],
             following_tweets: [],
-            postType: 'tweets',
+            postType: 'all',
             isPopupVisible: false,
             buttonDisabled:false,
             tweetIdInPopup: null,
+            currentPage: 1,
+            reachedLastPage: false,
+            loading: false,
         }
     },
     setup(){
@@ -253,10 +256,56 @@ export default{
     computed: {
         ...mapState(['user']),
         currentPosts() {
-            return this.postType === 'tweets' ? this.tweets : this.following_tweets;
+            return this.postType === 'all' ? this.tweets : this.following_tweets;
         },
     },
-    methods: {    
+    methods: {
+        handleScroll() {
+            if (this.reachedLastPage || this.loading) {
+                return;
+            }
+
+            const scrollY = window.scrollY;
+            const visibleHeight = window.innerHeight;
+            const pageHeight = document.documentElement.scrollHeight;
+
+            // Check if the user has scrolled to the bottom and there are more pages to load
+            if (scrollY + visibleHeight >= pageHeight - 200) {
+                this.loading = true; // Set loading flag to true to prevent multiple requests
+                this.loadMoreTweets();
+            }
+        },
+        async loadMoreTweets() {
+            try {
+                const response = await axios.get(`/api/tweets/${this.postType}/${this.currentPage}`);
+                
+                // Log the entire response data to the console
+                console.log('Full Response Data:', response);
+
+                const paginatedData = response.data;
+
+                if (Array.isArray(paginatedData.tweets.data)) {
+                    // Extract the array of tweets from the 'data' property
+                    const newTweets = paginatedData.tweets.data;
+
+                    // Append new tweets to the existing ones
+                    this.tweets = [...this.tweets, ...newTweets];
+                    this.currentPage++; // Increment page for the next load
+
+                    // Check if this is the last page
+                    if (this.currentPage == paginatedData.total_pages+1) {
+                        this.reachedLastPage = true;
+                        console.log('There are no more tweets to load.');
+                    }
+                } else {
+                    console.error('Invalid response format. Tweets should be an array.');
+                }
+            } catch (error) {
+                console.error('Error loading more tweets:', error);
+            } finally {
+                this.loading = false; // Set loading flag to false after the request is completed
+            }
+        },
         inputFocus() {
             this.isInputFocused = true;
         },
@@ -636,11 +685,14 @@ export default{
         },
     },
     async mounted() {
+        window.addEventListener('scroll', this.handleScroll);
         await this.$store.dispatch('initializeApp');
-        this.getTweets('all');
-        this.getTweets('following');
+        this.loadMoreTweets('all', this.currentPage);
         this.getAllUsersMention();
     },   
+    beforeDestroy() {
+        window.removeEventListener('scroll', this.handleScroll);
+    },
 }
 </script>
 <style lang="scss" scoped>
