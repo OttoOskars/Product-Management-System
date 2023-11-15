@@ -1,11 +1,11 @@
 <template>
     <div class="content-container">
         <div class="black-line"></div>
-        <div class="top-bar">
+        <div class="top-top">
             <button class="back-icon" @click="goBack">
                 <ion-icon name="arrow-back-outline"></ion-icon>
             </button>
-            <div class="bookmarks-top" v-if="user">
+            <div class="top-top-top" v-if="user">
                 <p class="title">Bookmarks</p>
                 <p class="user-tag">{{ user.UserTag }}</p>
             </div>
@@ -183,7 +183,6 @@ export default{
                 console.error(error);
             }
         };
-
         const popupTriggers = ref({
             CommentTrigger: false,
             ProfileTrigger: false,
@@ -207,9 +206,8 @@ export default{
         }
     },
     computed:{
-         ...mapState(['isLoggedIn', 'user']),
+        ...mapState(['isLoggedIn', 'user']),
     },
-
     methods: {
         inputFocus() {
             this.isInputFocused = true;
@@ -414,7 +412,6 @@ export default{
             if (tweet && tweet.user.UserTag === this.user.UserTag) {
                 return;
             }
-            
             if (tweet.isRetweeted) {
                 this.buttonDisabled = true;
                 this.unretweetTweet(tweet.TweetID);
@@ -526,99 +523,12 @@ export default{
             });
         },
     },
-
     async mounted() {
         await this.$store.dispatch('initializeApp');
         this.getTweets('bookmark');
         this.getUsersExceptYourself();
     },
 }
-
 </script>
-
 <style lang="scss" scoped>
-.top-bar{
-    height:60px;
-    width:100%;
-    background-color:rgba($color: #000000, $alpha: 0.8);
-    border-bottom:solid 1px #2F3336;
-    position:sticky;
-    top:0;
-    z-index:9;
-    box-sizing: border-box;
-    backdrop-filter: blur(5px);
-    display: flex;
-    align-items: center;
-    padding:0 10px;
-
-    .back-icon{
-        display:flex;
-        align-items: center;
-        justify-content: center;
-        box-sizing: border-box;
-        width:40px;
-        height:40px;
-        border-radius: 50%;
-        border:none;
-        font-size:22px;
-        background:none;
-        color:white;
-        cursor:pointer;
-        transition: all 0.3s;
-        &:hover{
-            background-color: rgba($color: #1a1a1a, $alpha: 1);
-        }
-    }
-    .bookmarks-top{
-        height:100%;
-        width:auto;
-        display:flex;
-        flex-direction: column;
-        padding:10px;
-        padding: 10px 10px 0px 30px;
-        box-sizing: border-box;
-        .title{
-            width:100%;
-            height:50%;
-            display:flex;
-            align-items: center;
-            justify-content: flex-start;
-            box-sizing: border-box;
-            font-weight: bold;
-            font-size: 20px;
-            margin:0;
-            padding:0;
-        }
-        .user-tag{
-            width:100%;
-            height:50%;
-            margin:0;
-            padding:0;
-            font-size: 15px;
-            color:#6A6F74;
-        }
-    }
-}
-@media (max-width: 500px){
-.top-bar{
-    height:50px;
-    .back-icon{
-        width:40px;
-        height:40px;
-        font-size:20px;
-    }
-    .bookmarks-top{
-        padding: 5px 5px 0px 25px;
-        .title{
-            font-size: 18px;
-        }
-        .user-tag{
-            font-size: 14px;
-        }
-    }
-}
-}
-
 </style>
-
-

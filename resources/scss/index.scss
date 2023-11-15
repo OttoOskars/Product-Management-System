@@ -18,7 +18,6 @@ html,body {
         border:none;
     }
 }
-
 .navbar{
     width: 3/12*100%;
     box-sizing: border-box;
@@ -33,7 +32,6 @@ html,body {
     width:5/12*100%;
     box-sizing: border-box;
 }
-
 @media (max-width: 1250px) {
     .navbar{
         width:100px;
@@ -70,7 +68,68 @@ html,body {
         width:100%
     }
 }
-
+.top-top{
+    height:60px;
+    width:100%;
+    background-color:rgba($color: #000000, $alpha: 0.8);
+    border-bottom:solid 1px #2F3336;
+    position:sticky;
+    top:0;
+    z-index:9;
+    box-sizing: border-box;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    padding:0 10px;
+    .back-icon{
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        width:40px;
+        height:40px;
+        border-radius: 50%;
+        border:none;
+        font-size:22px;
+        background:none;
+        color:white;
+        cursor:pointer;
+        transition: all 0.3s;
+        &:hover{
+            background-color: rgba($color: #1a1a1a, $alpha: 1);
+        }
+    }
+    .top-top-top{
+        height:100%;
+        width:auto;
+        display:flex;
+        flex-direction: column;
+        padding:10px;
+        padding: 10px 10px 0px 30px;
+        box-sizing: border-box;
+        .title{
+            width:100%;
+            height:50%;
+            display:flex;
+            align-items: center;
+            justify-content: flex-start;
+            box-sizing: border-box;
+            font-weight: bold;
+            font-size: 20px;
+            margin:0;
+            padding:0;
+            color: white;
+        }
+        .user-tag{
+            width:100%;
+            height:50%;
+            margin:0;
+            padding:0;
+            font-size: 15px;
+            color:#6A6F74;
+        }
+    }
+}
 .warning-1 {
     color: red;
     font-size: 12px;
@@ -113,6 +172,7 @@ html,body {
         flex-direction:row;
         box-sizing: border-box;
         padding:15px;
+        gap:10px;
         border-bottom: 1px solid #2F3336;
         .right-side{
             width:90%;
@@ -268,7 +328,6 @@ html,body {
                 border-radius: 15px;
             }
         }
-
     }
     .left-side{
         width:50px;
@@ -374,7 +433,6 @@ html,body {
                         white-space: nowrap;
                     }
                 }
-
                 .content-text{
                     width:100%;
                     height:auto;
@@ -489,7 +547,6 @@ html,body {
                         color:#71767B;
                         --ionicon-stroke-width: 40px;
                     }
-                    
                 }
             }
             .delete-btn{
@@ -537,7 +594,6 @@ html,body {
         background-color: #080808;
     }
 }
-
 @media (max-width: 1200px){
     .post{
         .right-side{
@@ -553,7 +609,6 @@ html,body {
     }
     
 }
-
 @media (max-width:650px){
     .post{
         .right-side{
@@ -568,7 +623,6 @@ html,body {
         }
     }
 }
-
 .comment-container{
     width:100%;
     height:auto;
@@ -704,7 +758,6 @@ html,body {
         box-sizing: border-box;
         gap:15px;
         padding:30px 35px 20px 20px;
-
         .left-side-popup{
             width:50px;
             height:100%;
@@ -795,7 +848,6 @@ html,body {
             }
         }
     }
-
     .bottom{
         width:100%;
         height:60px;
@@ -1005,7 +1057,6 @@ html,body {
                 box-shadow: 0 0 5px #1D9BF0;
             }
         }
-
         .search-input:focus + .search-icon{
             color: #1D9BF0;
         }
@@ -1172,7 +1223,6 @@ html,body {
                     font-size: 12px;
                     margin:0;
                 }
-    
             }
             .trend:hover{
                 background-color: #1D1F23;
@@ -1396,367 +1446,365 @@ html,body {
     }
 }
 @media (max-width: 500px) {
-.post-container{
-    .create-tweet-or-comment{
-        gap:5px;
-        padding:10px;
-        .right-side{
-            width:100%;
-            .replyinginfo{
-                .replying-to{
-                    font-size: 14px;
-                }
-                .profiletag{
-                    font-size: 14px;
-                }
-            }
-            .top{
-                .tweet-input-container{
-                    .tweet-input{
-                        font-size: 16px;
-                        padding:5px;
+    .post-container{
+        .create-tweet-or-comment{
+            gap:5px;
+            padding:10px;
+            .right-side{
+                width:100%;
+                .replyinginfo{
+                    .replying-to{
+                        font-size: 14px;
+                    }
+                    .profiletag{
+                        font-size: 14px;
                     }
                 }
-            }
-            .bottom{
-                height:30px;
-                .buttons{
-                    gap:5px;
-                    .tweet-btn{
-                        height:30px;
-                        width:30px;
-                        cursor:pointer;
-                        .create-tweet-icon{
-                            font-size:18px;
-                            color:#1D9BF0;
-                            --ionicon-stroke-width: 40px;
+                .top{
+                    .tweet-input-container{
+                        .tweet-input{
+                            font-size: 16px;
+                            padding:5px;
                         }
                     }
-                    .tweet-btn:hover{
-                        background-color: rgba($color: #1D9BF0, $alpha: 0.1);
-                    }
                 }
-                .post-button{
-                    padding:5px 15px;
-                    font-size: 14px;
+                .bottom{
+                    height:30px;
+                    .buttons{
+                        gap:5px;
+                        .tweet-btn{
+                            height:30px;
+                            width:30px;
+                            cursor:pointer;
+                            .create-tweet-icon{
+                                font-size:18px;
+                                color:#1D9BF0;
+                                --ionicon-stroke-width: 40px;
+                            }
+                        }
+                        .tweet-btn:hover{
+                            background-color: rgba($color: #1D9BF0, $alpha: 0.1);
+                        }
+                    }
+                    .post-button{
+                        padding:5px 15px;
+                        font-size: 14px;
+                    }
                 }
             }
         }
-    }
-    .left-side, .post-top{
-            display:none !important;
+        .left-side, .post-top{
+                display:none !important;
+            }
+        .no-posts{
+            padding:15px;
+            font-size:13px;
         }
-    .no-posts{
-        padding:15px;
-        font-size:13px;
-    }
-    .post{
-        gap:0px;
-        .isretweet{
-            padding-left:15px;
-            height:20px;
-            font-size:12px;
-        }
-        .inner-post{
-            padding:15px 10px 5px 10px;
+        .post{
+            gap:0px;
+            .isretweet{
+                padding-left:15px;
+                height:20px;
+                font-size:12px;
+            }
+            .inner-post{
+                padding:15px 10px 5px 10px;
 
-        }
-        .right-side{
-            width:100% !important;
-            .top2{
-                width:100%;
-                height:auto;
-                display:flex;
-                flex-direction:row;
-                .person-image{
-                    width: 50px;
-                    height: auto;
-                    display:flex;
-                    align-items: center;
-                    align-items: flex-start;
-                    img{
-                        width:40px;
-                        height:40px;
-                        z-index:2;
-                        border-radius:50%;
-                        background-color: rgb(255, 255, 255);
-                    }
-                }
-                .info-content{
+            }
+            .right-side{
+                width:100% !important;
+                .top2{
                     width:100%;
                     height:auto;
                     display:flex;
-                    flex-direction:column;
-                    padding-left:5px;
-                    gap:5px;
-                    box-sizing: border-box;
-                    overflow: hidden;
-                    white-space: normal;
+                    flex-direction:row;
+                    .person-image{
+                        width: 50px;
+                        height: auto;
+                        display:flex;
+                        align-items: center;
+                        align-items: flex-start;
+                        img{
+                            width:40px;
+                            height:40px;
+                            z-index:2;
+                            border-radius:50%;
+                            background-color: rgb(255, 255, 255);
+                        }
+                    }
+                    .info-content{
+                        width:100%;
+                        height:auto;
+                        display:flex;
+                        flex-direction:column;
+                        padding-left:5px;
+                        gap:5px;
+                        box-sizing: border-box;
+                        overflow: hidden;
+                        white-space: normal;
+                        .userinfo{
+                            width:100%;
+                            height:10px;
+                            display:flex;
+                            flex-direction:row;
+                            justify-content: flex-start;
+                            align-items: center;
+                            gap:5px;
+                            color:white;
+                            padding-top:2px;
+                            .username{
+                                max-width:40%;
+                                overflow: hidden;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                                margin:0;
+                                font-weight: bold;
+                                font-size: 14px;
+                                color:white;
+                            }
+                            .usertag{
+                                max-width:40%;
+                                overflow: hidden;
+                                white-space: nowrap;
+                                margin:0;
+                                font-size: 14px;
+                                color:#6A6F74;
+                            }
+                            .time-posted{
+                                max-width:20%;
+                                overflow: hidden;
+                                white-space: nowrap;
+                                margin:0;
+                                font-size: 14px;
+                                color:#6A6F74;
+                            }
+                        }
+                        .content-text{
+                            width:100%;
+                            height:auto;
+                            text-align: left;
+                            color:white;
+                            padding:0px;
+                            font-size:14px;
+                            p{
+                                margin:0;
+                                padding:0;
+                                overflow-wrap: break-word;
+                            }
+                        }
+                    }
+                }
+                .content-img{
+                    padding:0!important;
+                }
+                .bottom{
+                    height:30px!important;
+                    .post-btn-container{
+                        width:auto;
+                        height:100%;
+                        border-radius:50%;
+                        cursor:pointer;
+                        .post-btn-nr{
+                            color:#6A6F74;
+                            font-size:10px !important;
+                            padding-top:1px;
+                        }
+                    }
+                    .icon-container{
+                        height:30px;
+                        width:30px;
+                        background:none;
+                        border-radius:50%;
+                        border:none;
+                        display:flex;
+                        justify-content: center;
+                        align-items: center;
+                        cursor:pointer;
+                        .post-icon{
+                            font-size:18px;
+                            color:#71767B;
+                            --ionicon-stroke-width: 30px;
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+    .comment-container{
+        .comment{
+            width:100%;
+            min-height:auto;
+            gap:5px !important;
+            border-top: 1px solid #2F3336;
+            border-image: linear-gradient(90deg, transparent 6%,#2F3336 6%);
+            border-image-slice: 1;
+            .left{
+                gap:10px;
+                img{
+                    width:40px;
+                    height:40px;
+                    border-radius: 50%;
+                    background-color: white;
+                }
+                .content{
+                    max-width: 80%;
+                    height:100%;
                     .userinfo{
                         width:100%;
                         height:10px;
-                        display:flex;
-                        flex-direction:row;
-                        justify-content: flex-start;
-                        align-items: center;
-                        gap:5px;
-                        color:white;
+                        gap:7px;
                         padding-top:2px;
                         .username{
-                            max-width:40%;
-                            overflow: hidden;
-                            white-space: nowrap;
-                            text-overflow: ellipsis;
-                            margin:0;
-                            font-weight: bold;
-                            font-size: 14px;
-                            color:white;
+                            font-size: 13px;
                         }
                         .usertag{
-                            max-width:40%;
-                            overflow: hidden;
-                            white-space: nowrap;
-                            margin:0;
-                            font-size: 14px;
-                            color:#6A6F74;
+                            font-size: 13px;
                         }
                         .time-posted{
-                            max-width:20%;
-                            overflow: hidden;
-                            white-space: nowrap;
-                            margin:0;
-                            font-size: 14px;
-                            color:#6A6F74;
+                            font-size: 13px;
                         }
                     }
                     .content-text{
-                        width:100%;
-                        height:auto;
-                        text-align: left;
-                        color:white;
-                        padding:0px;
-                        font-size:14px;
-                        p{
-                            margin:0;
-                            padding:0;
-                            overflow-wrap: break-word;
-                        }
+                        font-size:13px;
                     }
-                }
-            }
-            .content-img{
-                padding:0!important;
-            }
-            .bottom{
-                height:30px!important;
-                .post-btn-container{
-                    width:auto;
-                    height:100%;
-                    border-radius:50%;
-                    cursor:pointer;
-                    .post-btn-nr{
-                        color:#6A6F74;
-                        font-size:10px !important;
-                        padding-top:1px;
-                    }
-                }
-                .icon-container{
-                    height:30px;
-                    width:30px;
-                    background:none;
-                    border-radius:50%;
-                    border:none;
-                    display:flex;
-                    justify-content: center;
-                    align-items: center;
-                    cursor:pointer;
-                    .post-icon{
-                        font-size:18px;
-                        color:#71767B;
-                        --ionicon-stroke-width: 30px;
-                    }
-                    
                 }
             }
         }
     }
-}
-.comment-container{
-    .comment{
-        width:100%;
-        min-height:auto;
-        gap:5px !important;
-        border-top: 1px solid #2F3336;
-        border-image: linear-gradient(90deg, transparent 6%,#2F3336 6%);
-        border-image-slice: 1;
-        .left{
-            gap:10px;
-            img{
+    .create-tweet-or-comment-popup{
+        width:100% !important;
+        min-height: 250px;
+        padding:30px 0px 0px 0px;
+        box-sizing: border-box;
+        .top{
+            width:100%;
+            gap:5px;
+            padding:20px 15px 10px 10px;
+            .left-side-popup{
                 width:40px;
-                height:40px;
-                border-radius: 50%;
-                background-color: white;
+                box-sizing: border-box;
+                img{
+                    width:40px;
+                    height:40px;
+                }
             }
-            .content{
-                max-width: 80%;
-                height:100%;
-                .userinfo{
-                    width:100%;
-                    height:10px;
-                    gap:7px;
-                    padding-top:2px;
+            .right-side-popup{
+                gap:5px;
+                .userinfo-popup{
+                    gap:5px;
                     .username{
+                        margin:0;
                         font-size: 13px;
                     }
                     .usertag{
+                        margin:0;
                         font-size: 13px;
-                    }
-                    .time-posted{
-                        font-size: 13px;
+
                     }
                 }
-                .content-text{
-                    font-size:13px;
+                .tweet-input-container{
+                    padding:0;
+                    padding-right:10px;
+                    .tweet-input{
+                        font-size: 14px !important;
+                    }
                 }
             }
         }
-    }
-}
-.create-tweet-or-comment-popup{
-    width:100% !important;
-    min-height: 250px;
-    padding:30px 0px 0px 0px;
-    box-sizing: border-box;
-    .top{
-        width:100%;
-        gap:5px;
-        padding:20px 15px 10px 10px;
-
-        .left-side-popup{
-            width:40px;
-            box-sizing: border-box;
-            img{
-                width:40px;
-                height:40px;
-            }
-        }
-        .right-side-popup{
-            gap:5px;
-            .userinfo-popup{
-                gap:5px;
-                .username{
-                    margin:0;
-                    font-size: 13px;
-                }
-                .usertag{
-                    margin:0;
-                    font-size: 13px;
-
-                }
-            }
-            .tweet-input-container{
-                padding:0;
-                padding-right:10px;
-                .tweet-input{
-                    font-size: 14px !important;
-                }
+        .bottom{
+            width:100%;
+            height:40px !important;
+            display:flex;
+            padding: 5px 10px;
+            .popup-button{
+                padding:12px;
+                font-size: 11px;
             }
         }
     }
-
-    .bottom{
-        width:100%;
-        height:40px !important;
-        display:flex;
-        padding: 5px 10px;
-        .popup-button{
-            padding:12px;
-            font-size: 11px;
+    .delete-popup{
+        width: 100%;
+        .delete-title{
+            font-size: 20px;
         }
-    }
-}
-.delete-popup{
-    width: 100%;
-    .delete-title{
-        font-size: 20px;
-    }
-    .tweet-p{
-        font-size: 13px;
-    }
-    .tweet-buttons{
-        .cancel-button, .delete-button{
+        .tweet-p{
             font-size: 13px;
         }
-    }
-}
-.follow-button{
-    padding:5px 10px;
-    font-size: 14px;
-}
-.mention-popup{
-    height:350px;
-    width:100%;
-    padding-top:30px;
-    padding-bottom:30px;
-    gap:5px;
-    .title{
-        padding-top:10px;
-        padding-left:15px;
-        font-size:18px;
-    }
-    .search-input-container {
-        height: 25px;
-        z-index: 99;
-        padding: 0px 15px;
-        .search-input {
-            padding-left:35px;
-            font-size: 14px;
-        }
-        .search-icon {
-            left: 25px;
-            top: 50%;
-            transform: translate(0, -55%);
-            font-size: 18px;
-        }
-        .close-icon-btn{
-            top: 50%;
-            right:20px;
-            transform: translateY(-45%);
-            .close-icon{
-                font-size:20px;
+        .tweet-buttons{
+            .cancel-button, .delete-button{
+                font-size: 13px;
             }
         }
     }
-    .user-suggestions{
-        .user{
-            height:100%;
-            padding: 5px 15px;
-            .user-img{
-                img{
-                    width:35px;
-                    height:35px;
+    .follow-button{
+        padding:5px 10px;
+        font-size: 14px;
+    }
+    .mention-popup{
+        height:350px;
+        width:100%;
+        padding-top:30px;
+        padding-bottom:30px;
+        gap:5px;
+        .title{
+            padding-top:10px;
+            padding-left:15px;
+            font-size:18px;
+        }
+        .search-input-container {
+            height: 25px;
+            z-index: 99;
+            padding: 0px 15px;
+            .search-input {
+                padding-left:35px;
+                font-size: 14px;
+            }
+            .search-icon {
+                left: 25px;
+                top: 50%;
+                transform: translate(0, -55%);
+                font-size: 18px;
+            }
+            .close-icon-btn{
+                top: 50%;
+                right:20px;
+                transform: translateY(-45%);
+                .close-icon{
+                    font-size:20px;
                 }
             }
-            .user-info{
-                padding-left:10px;
-                gap:2px;
-                .username{
-                    max-width:150px;
-                    font-size: 12px;
+        }
+        .user-suggestions{
+            .user{
+                height:100%;
+                padding: 5px 15px;
+                .user-img{
+                    img{
+                        width:35px;
+                        height:35px;
+                    }
                 }
-                .usertag{
-                    max-width:150px;
-                    font-size: 12px;
+                .user-info{
+                    padding-left:10px;
+                    gap:2px;
+                    .username{
+                        max-width:150px;
+                        font-size: 12px;
+                    }
+                    .usertag{
+                        max-width:150px;
+                        font-size: 12px;
+                    }
                 }
-            }
-        } 
+            } 
+        }
+        .no-users{
+            padding-left:15px;
+            font-size:14px;
+        }
+    
     }
-    .no-users{
-        padding-left:15px;
-        font-size:14px;
-    }
-
-}
 }
 @media (max-width: 375px) {
 .follow-button{

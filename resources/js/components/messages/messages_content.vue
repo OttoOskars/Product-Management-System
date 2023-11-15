@@ -1,7 +1,15 @@
 <template>
     <div class="messages-container">
         <div class="messages-main">
-            <div class="title">Messages</div>
+            <div class="top-top">
+                <button class="back-icon" @click="goBack">
+                    <ion-icon name="arrow-back-outline"></ion-icon>
+                </button>
+                <div class="top-top-top" v-if="user">
+                    <p class="title">Messages</p>
+                    <p class="user-tag">{{ user.UserTag }}</p>
+                </div>
+            </div>
             <div class="main-text">Welcome to your inbox!</div>
             <div class="under-text">Drop a line, share posts and more with private conversations between you and others on X. </div>
             <button class="write-button" @click="TogglePopup('EditTrigger')">New message</button>
@@ -58,7 +66,7 @@ export default{
     },
     setup () {
         const popupTriggers = ref({
-            TweetTrigger: false,
+            EditTrigger: false,
         });
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger]
@@ -71,6 +79,9 @@ export default{
         }
     },
     methods: {
+        goBack() {
+            this.$router.go(-1);
+        },
         inputFocus() {
             this.isInputFocused = true;
         },
@@ -122,13 +133,6 @@ export default{
         box-sizing: border-box;
         border-right: 1px solid #2F3336;
         border-left: 1px solid #2F3336;
-        .title{
-            color:white;
-            padding:10px;
-            padding-left:20px;
-            font-size: 23px;
-            font-weight:bold;
-        }
         .main-text{
             color: white;
             text-align:left;
@@ -137,7 +141,7 @@ export default{
             display: flex;
             margin-top: 10%;
             margin-left:6%;
-            margin-right:15%;
+            margin-right:15.5%;
         }
         .under-text{
             color:gray;
@@ -294,12 +298,28 @@ export default{
             }
             .people-container{
                 width:100%;
-                height:auto;
+                max-height: 400px;
+                overflow-y: auto;
                 display:flex;
                 flex-direction:column;
                 box-sizing: border-box;
                 padding-top: 0px;
-                padding-bottom:100px;
+                padding-bottom: 0px;
+                &::-webkit-scrollbar{
+                    width:4px;
+                }
+                &::-webkit-scrollbar-thumb{
+                    background-color: #2F3336;
+                    border-radius: 5px;;
+                    border:none;
+                }
+                &::-webkit-scrollbar-track{
+                    background:none;
+                    border:none;
+                }
+                &:disabled{
+                    color:#808080;
+                }
                 .person{
                     width:100%;
                     height:70px;
@@ -313,6 +333,7 @@ export default{
                     transition: all 0.3s;
                     &:hover{
                         background-color: #080808;
+                        border-radius: 50px;
                     }
                     .user-info{
                         display:flex;
@@ -348,6 +369,105 @@ export default{
                     }
                 }
             }
+        }
+    }
+}
+@media (max-width: 1000px){
+    .messages-container{
+        display: flex;
+        flex-direction: column;
+        .messages-main{
+            height: 50%;
+            padding-bottom: 0px;
+            border-right: 0px;
+            border-left: 0px;
+            .main-text{
+                margin-left:4%;
+            }
+            .under-text{
+                padding-left: 4%;
+            }
+            .write-button{
+                margin-left: 4%;
+            }
+        }
+        .messages-right{
+            height: 50%;
+            border-right: 0px;
+            border-left: 0px;
+            padding-bottom: 0px;
+            justify-content: left;
+            .right-text{
+                margin-top: 15%;
+                padding-left: 4%;
+                justify-content: left;
+            }
+            .right-under-text{
+                padding-left: 4%;
+                justify-content: left;
+            }
+            .right-write-button{
+                margin-left: 4%;
+            }
+        }
+    }
+}
+@media (max-width: 700px){
+    .messages-container{
+        display: flex;
+        flex-direction: column;
+        .messages-main{
+            height: 50%;
+            padding-bottom: 0px;
+            border-right: 0px;
+            border-left: 0px;
+            .main-text{
+                font-size: 26px;
+                margin-top: 20%;
+                margin-left:4%;
+            }
+            .under-text{
+                font-size: 13px;
+                padding-left: 4%;
+                margin-top: 12px;
+            }
+            .write-button{
+                width: 150px;
+                margin-top: 30px;
+                margin-left: 4%;
+                font-size: 14px;
+                height: 45px;
+            }
+        }
+        .messages-right{
+            height: 50%;
+            border-right: 0px;
+            border-left: 0px;
+            padding-bottom: 0px;
+            justify-content: left;
+            .right-text{
+                font-size: 26px;
+                margin-top: 20%;
+                padding-left: 4%;
+                justify-content: left;
+            }
+            .right-under-text{
+                font-size: 13px;
+                padding-left: 4%;
+                padding-right: 4%;
+                margin-top: 12px;
+                justify-content: left;
+            }
+            .right-write-button{
+                width: 150px;
+                margin-top: 30px;
+                margin-left: 4%;
+                font-size: 14px;
+                height: 45px;
+            }
+        }
+        .edit-popup{
+            width: 100%;
         }
     }
 }
