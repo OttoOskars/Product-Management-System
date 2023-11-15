@@ -22,14 +22,14 @@
         <Popup v-if="popupTriggers.EditTrigger" :TogglePopup="() => TogglePopup('EditTrigger')">
             <div class="edit-popup">
                 <p class="title-popup">New message</p>
-                <button class="next-btn">Next</button>
+                <button class="next-btn" :disabled="!foundUsers.some(Person => Person.personClicked)" @click="nextButtonClick">Next</button>
                 <div class="search-people">
                     <div class="input-wrap">
                         <input v-model="searchInput" @input="handleSearchInput" class="Edit-Input" :class="{ 'focused': isInputFocused }" @focus="inputFocus" @blur="inputBlur" placeholder="Search usernames..." />
                         <ion-icon name="search-outline" class="search-icon"></ion-icon>
                     </div>
                     <div class="people-container">
-                        <div class="person" v-for="Person in foundUsers" :key="Person.UserID">
+                        <div class="person" v-for="Person in foundUsers" :key="Person.UserID" @click="Person.personClicked = true; clickedPerson = Person.UserID" :class="{ 'highlighted': Person.UserID === clickedPerson }">
                             <div class="user-info">
                                 <img :src="'/storage/' + Person.ProfilePicture" class="person-img">
                                 <div class="person-info">
@@ -41,6 +41,34 @@
                     </div>
                 </div>
              </div>
+        </Popup>
+        <Popup v-if="popupTriggers.MessageTrigger" :TogglePopup="() => TogglePopup('MessageTrigger')">
+            <div class="message-popup" v-if="selectedUser">
+                <div class="title-messages">Write your message to:</div>
+                <div class="top">
+                    <div class="left-side-popup">
+                        <img @click.stop="openProfile(selectedUser.UserTag)" :src="'/storage/' + selectedUser.ProfilePicture">
+                    </div>
+                    <div class="right-side-popup">
+                        <div class="userinfo-popup">
+                            <p class="username">{{ selectedUser.Name }}</p>
+                            <p class="usertag">{{ selectedUser.UserTag }}</p>
+                        </div>
+                        <div class="message-input-container">
+                            <textarea class="message-input" rows="5" placeholder="Message..." maxlength="255"></textarea>
+                        </div>
+                        <div class="message-image-preview">
+                            <img :src="previewImagenav" v-if="previewImagenav">
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom">
+                    <div class="buttons">
+                        <button class="message-btn"><input type="file" accept="image/png, image/gif, image/jpeg, video/mp4,video/x-m4v,video/*" id="message-img-input" @change="onImageChangenav" hidden><label for="message-img-input" class="message-img-label"><ion-icon name="images-outline" class="create-message-icon"></ion-icon></label></button>
+                    </div>
+                    <button class="popup-button">Send</button>
+                </div>
+            </div>
         </Popup>
     </div>
 </template>
@@ -59,26 +87,60 @@ export default{
             users:[],
             foundUsers: [],
             isInputFocused: false,
+            personClicked: false,
+            clickedPerson: null,
+            selectedUser: null,
         };
     },
     computed: {
         ...mapState(['user']),
     },
     setup () {
+        const previewImagenav = ref(null);
+        const messageImagenav = ref(null);
         const popupTriggers = ref({
             EditTrigger: false,
+            MessageTrigger: false,
         });
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger]
+            previewImagenav.value=null;
+            messageImagenav.value=null;
             if (!popupTriggers.value[trigger]) {
             }
 		}
+        const handlePersonClick = (Person) => {
+            this.clickedPerson = Person.UserID;
+        };
         return {
             popupTriggers,
             TogglePopup,
+            previewImagenav,
+            messageImagenav,
+            handlePersonClick,
         }
     },
     methods: {
+        nextButtonClick() {
+            const selectedUser = this.foundUsers.find((user) => user.UserID === this.clickedPerson);
+            if (selectedUser) {
+                this.selectedUser = selectedUser;
+                this.TogglePopup('MessageTrigger');
+            }
+        },
+        onImageChangenav(event) {
+            this.messageImagenav = event.target.files[0];
+            if (this.messageImagenav) {
+                this.previewImagenav = URL.createObjectURL(this.messageImagenav);
+            } else {
+                this.previewImagenav = null;
+            }
+        },
+        openProfile(tag){
+            const NoSymbolTag = tag.replace(/^@/, '');
+            this.$router.push({ name: 'profile', params: { UserTag : NoSymbolTag } });
+            console.log(tag);
+        },
         goBack() {
             this.$router.go(-1);
         },
@@ -250,6 +312,24 @@ export default{
                 background-color:rgba($color: #f2f2f2, $alpha: 0.8);
             }
         }
+        .next-btn:disabled {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: auto;
+            height: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: gray;
+            border: none;
+            background-color: white;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 8px 16px;
+            cursor: default;
+        }
         .search-people{
             padding-top:20px;
             .input-wrap{
@@ -331,10 +411,6 @@ export default{
                     padding: 40px 20px;
                     cursor:pointer;
                     transition: all 0.3s;
-                    &:hover{
-                        background-color: #080808;
-                        border-radius: 50px;
-                    }
                     .user-info{
                         display:flex;
                         flex-direction:row;
@@ -367,6 +443,198 @@ export default{
                             }
                         }
                     }
+                }
+                .highlighted {
+                    border: 3px solid #1D9BF0;
+                    border-radius: 50px;
+                    box-shadow: 0 0 5px #1D9BF0;
+                }
+            }
+        }
+    }
+    .message-popup{
+        width:500px;
+        min-height: 300px;
+        display:flex;
+        flex-direction:column;
+        box-sizing: border-box;
+        justify-content: space-between;
+        padding:0px 0px 0px 0px;
+        box-sizing: border-box;
+        .title-messages{
+            color: white;
+            margin-left:20px;
+            padding-top:50px;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        .top{
+            width:100%;
+            display:flex;
+            flex-direction: row;
+            box-sizing: border-box;
+            gap:15px;
+            padding:20px 35px 10px 20px;
+            .left-side-popup{
+                width:50px;
+                height:100%;
+                display:flex;
+                flex-direction:column;
+                box-sizing: border-box;
+                img{
+                    width:50px;
+                    height:50px;
+                    border-radius: 50%;
+                    background-color: white;
+                    cursor: pointer;
+                }
+            }
+            .right-side-popup{
+                width:90%;
+                height:100%;
+                display:flex;
+                flex-direction:column;
+                box-sizing: border-box;
+                .userinfo-popup{
+                    width:100%;
+                    height:20px;
+                    display:flex;
+                    flex-direction: row;
+                    gap:5px;
+                    .username{
+                        margin:0;
+                        font-weight: bold;
+                        font-size: 17px;
+                        color:white;
+                        max-width:35%;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                    }
+                    .usertag{
+                        margin:0;
+                        font-size: 17px;
+                        color:#6A6F74;
+                        max-width:40%;
+                        overflow: hidden;
+                        white-space: nowrap;
+                    }
+                }
+                .message-input-container{
+                    width:100%;
+                    height:100%;
+                    display:flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding-top: 10px;
+                    padding-right:10px;
+                    .message-input{
+                        width:100%;
+                        height:100%;
+                        background-color: #000000;
+                        color:#ffffff;
+                        resize: none;
+                        transition: height 0.2s;
+                        font-family: Arial, sans-serif;
+                        font-size: 22px;
+                        border:none;
+                        display:flex;
+                        align-items: center;
+                        &::-webkit-scrollbar{
+                            width:4px;
+                        }
+                        &::-webkit-scrollbar-thumb{
+                            background-color: #2F3336;
+                            border-radius: 5px;;
+                            border:none;
+                        }
+                        &::-webkit-scrollbar-track{
+                            background:none;
+                            border:none;
+                        }
+                        &:focus{
+                            outline:none;
+                        }
+                    }
+                }
+                .message-image-preview{
+                    padding-top: 10px;
+                    img{
+                        max-width:100%;
+                        max-height:100%;
+                        border-radius: 15px;
+                    }
+                }
+            }
+        }
+        .bottom{
+            width:100%;
+            height:60px;
+            display:flex;
+            flex-direction: row;
+            justify-content: space-between;
+            border-top:1px solid #2F3336;
+            padding: 10px;
+            box-sizing: border-box;
+            .buttons{
+                display:flex;
+                flex-direction: row;
+                align-items: center;
+                gap:5px;
+                .message-btn{
+                    height:40px;
+                    width:40px;
+                    background:none;
+                    border-radius:50%;
+                    border:none;
+                    display:flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding:0;
+                    cursor:pointer;
+                    transition: all 0.3s;
+                    .message-img-label{
+                        width:100%;
+                        height:100%;
+                        display:flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .create-message-icon{
+                        font-size:20px;
+                        color:#1D9BF0;
+                        --ionicon-stroke-width: 40px;
+                        visibility: visible;
+                    }
+                }
+                .message-btn:hover{
+                    background-color: rgba($color: #1D9BF0, $alpha: 0.1);
+                }
+            }
+            .popup-button{
+                width:auto;
+                padding:20px;
+                height:auto;
+                display:flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                border-radius: 50px;
+                border:none;
+                background-color: #1D9BF0;
+                color:white;
+                font-size: medium;
+                font-weight: bold;
+                transition: all 0.3s;
+                cursor:pointer;
+                &:hover{
+                    background-color: #1d8dd7;
+                }
+                &:disabled{
+                    background-color: #0F4E78;
+                    color:#808080;
                 }
             }
         }
