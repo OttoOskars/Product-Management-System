@@ -352,9 +352,9 @@ export default{
                 this.buttonDisabled = false;
             }
         },
-        getUsersExceptYourself() {
+        getAllUsersMention() {
         axios
-            .get('/api/allusers')
+            .get('/api/all-users-mention')
             .then(response => {
                 this.users = response.data;
             })
@@ -365,7 +365,7 @@ export default{
     },
         
     async mounted() {
-        this.getUsersExceptYourself();
+        this.getAllUsersMention();
         this.activeRoute = this.$route.path;
         this.isHomeFilled = this.activeRoute.includes('/home');
         this.isNotificationsFilled = this.activeRoute.includes('/notifications');

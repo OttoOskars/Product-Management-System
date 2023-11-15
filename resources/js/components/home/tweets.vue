@@ -636,7 +636,7 @@ export default{
                 console.error('Error unbookmarking the tweet:', error);
             }
         },
-        getUsersExceptYourself() {
+        getAllUsersMention() {
         axios
             .get('/api/all-users-mention')
             .then(response => {
@@ -651,7 +651,7 @@ export default{
         await this.$store.dispatch('initializeApp');
         this.getTweets('all');
         this.getTweets('following');
-        this.getUsersExceptYourself();
+        this.getAllUsersMention();
     },   
 }
 </script>

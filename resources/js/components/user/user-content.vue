@@ -997,9 +997,9 @@ export default{
                 console.error(error);
             });
         },
-        getUsersExceptYourself() {
+        getAllUsersMention() {
         axios
-            .get('/api/allusers')
+            .get('/api/all-users-mention')
             .then(response => {
                 this.users = response.data;
             })
@@ -1019,7 +1019,7 @@ export default{
         this.getCommentedTweets(this.$route.params.UserTag);
         this.getSpecificUserTweets(this.$route.params.UserTag);
         this.getLikedTweets(this.$route.params.UserTag);
-        this.getUsersExceptYourself();
+        this.getAllUsersMention();
     },
 }
 </script>
