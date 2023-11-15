@@ -74,7 +74,7 @@
                                     <p class="time-posted">{{ tweet.created_ago }}</p>
                                 </div>
                                 <div class="content-text">
-                                    <p v-if="tweet.TweetText" v-html="formatMentionText(tweet.TweetText)" @click="handleMentionClick"></p>
+                                    <p v-if="tweet.TweetText" v-html="formatMentionText(tweet.TweetText)" @click.stop="handleMentionClick"></p>
                                 </div>
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                                 <p class="time-posted">{{ tweet.created_ago }}</p>
                             </div>
                             <div class="content-text">
-                                <p v-if="tweet.TweetText" v-html="formatMentionText(tweet.TweetText)" @click="handleMentionClick"></p>
+                                <p v-if="tweet.TweetText" v-html="formatMentionText(tweet.TweetText)" @click.stop="handleMentionClick"></p>
                             </div>
                         </div>
                         <div class="content-img">
@@ -129,7 +129,7 @@
                                     <p class="time-posted">{{ comment.created_ago }}</p>
                                 </div>
                                 <div class="content-text">
-                                    <p v-if="comment.CommentText" v-html="formatMentionText(comment.CommentText)" @click="handleMentionClick"></p>
+                                    <p v-if="comment.CommentText" v-html="formatMentionText(comment.CommentText)" @click.stop="handleMentionClick"></p>
                                 </div>
                             </div>
                         </div>
