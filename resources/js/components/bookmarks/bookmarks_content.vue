@@ -33,7 +33,7 @@
                                     <p class="time-posted">{{ tweet.created_ago }}</p>
                                 </div>
                                 <div class="content-text">
-                                    <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
+                                    <p v-if="tweet.TweetText" v-html="formatMentionText(tweet.TweetText)" @click="handleMentionClick"></p>
                                 </div>
                             </div>
                         </div>
@@ -44,7 +44,7 @@
                                 <p class="time-posted">{{ tweet.created_ago }}</p>
                             </div>
                             <div class="content-text">
-                                <p v-if="tweet.TweetText">{{ tweet.TweetText }}</p>
+                                <p v-if="tweet.TweetText" v-html="formatMentionText(tweet.TweetText)" @click="handleMentionClick"></p>
                             </div>
                         </div>
                         <div class="content-img">
@@ -87,7 +87,7 @@
                             <p class="usertag">{{ user.UserTag }}</p>
                         </div>
                         <div class="tweet-input-container">
-                            <textarea v-model="comment_text_input" id="tweet-input-comment" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize" ref="tweetInput" maxlength="255"></textarea>
+                            <textarea v-model="comment_text_input" id="tweet-input-comment" class="tweet-input" rows="1" placeholder="Post your reply" @input="autoSize('commentInput')" ref="commentInput" maxlength="255"></textarea>
                         </div>
                     </div>
                 </div>
@@ -95,9 +95,46 @@
                 <div class="bottom">
                     <div class="buttons">
                         <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
-                        <button class="tweet-btn"><ion-icon name="attach-outline" class="create-tweet-icon"></ion-icon></button>
+                        <button class="tweet-btn" @click.stop="TogglePopup('MentionTrigger')"><ion-icon name="at-sharp" class="create-tweet-icon"></ion-icon></button>
                     </div>
                     <button class="popup-button" @click="createComment(tweetIdInPopup, comment_text_input)" :disabled="buttonDisabled">Comment</button><!-- Izdomā kā comment poga nodos tweetID. -->
+                </div>
+            </div>
+        </Popup>
+        <Popup v-if="popupTriggers.MentionTrigger" :TogglePopup="() => TogglePopup('MentionTrigger')">
+            <div class="mention-popup">
+                <p class="title">Mention</p>
+                <div class="search-input-container">
+                    <input 
+                        type="text"
+                        id="mention-input"
+                        class="search-input" 
+                        maxlength="30" 
+                        placeholder="Search"
+                        :class="{ 'focused': isInputFocused }"
+                        @input="handleMentionInput"
+                        @focus="inputFocus"
+                        @blur="inputBlur"
+                        v-model="mentionSearch"
+                    >
+                    <ion-icon name="search-outline" class="search-icon"></ion-icon>
+                    <button class="close-icon-btn" :class="{ 'focused': isInputFocused }">
+                        <ion-icon name="close-circle-sharp" class="close-icon"></ion-icon>
+                    </button>
+                </div>
+                <div class="user-suggestions">
+                    <div class="user" v-for="user in filteredUsers" :key="user.UserID" @click="insertMention(user)">
+                        <div class="user-img">
+                            <img @click="openProfile(user.UserTag)" :src="'/storage/' + user.ProfilePicture">
+                        </div>
+                        <div class="user-info">
+                            <p class="username">{{ user.Name }}</p>
+                            <p class="usertag">{{ user.UserTag }}</p>
+                        </div>
+                    </div>
+                    <div class="no-users" v-if="filteredUsers.length === 0">
+                        <p>No users found 🌵</p>   
+                    </div>
                 </div>
             </div>
         </Popup>
@@ -117,18 +154,23 @@ export default{
     },
     data() {
         return {
+            users: [],
             tweets: [],
             comments: [],
             commentsByTweet: {},
             isPopupVisible: false,
             buttonDisabled:false,
             tweetIdInPopup: null,
+            isInputFocused: false,
         };
     },
     setup(){
         const comment_text_input = ref('');
         const router = useRouter();
         const store = useStore();
+        const commentInput = ref(null);
+        const mentionSearch = ref('');
+        const filteredUsers = ref([]);
 
         if (store.state.isLoggedIn) {
             router.push('/bookmarks');
@@ -145,11 +187,13 @@ export default{
         const popupTriggers = ref({
             CommentTrigger: false,
             ProfileTrigger: false,
+            MentionTrigger: false,
         });
         const TogglePopup = (trigger) => {
             popupTriggers.value[trigger] = !popupTriggers.value[trigger];
-            comment_text_input.value = '';
-            if (!popupTriggers.value[trigger]) {
+            if (trigger === 'MentionTrigger') {
+                mentionSearch.value = '';
+                filteredUsers.value = [];
             }
         };
         return {
@@ -157,6 +201,9 @@ export default{
             TogglePopup,
             logoutUser,
             comment_text_input,
+            commentInput,
+            mentionSearch,
+            filteredUsers,
         }
     },
     computed:{
@@ -164,8 +211,97 @@ export default{
     },
 
     methods: {
+        inputFocus() {
+            this.isInputFocused = true;
+        },
+        inputBlur() {
+            this.isInputFocused = false;
+        },
+        formatMentionText(tweetText) {
+            const mentionRegex = /@([a-zA-Z0-9_]+)/g;
+            const parts = tweetText.split(mentionRegex);
+            return parts.map((part, index) => {
+                if (index % 2 === 1) {
+                    const userTag = part;
+                    const mentionedUser = this.users.find(user2 => {
+                        return user2.UserTag === `@${userTag}`;
+                    });
+                    if (mentionedUser) {
+                        return `<span class="mention-span" data-usertag="${mentionedUser.UserTag}">@${part}</span>`;
+                    } else {
+                        return part;
+                    }
+                } else {
+                    return part;
+                }
+            }).join('');
+        },
+        handleMentionClick(event) {
+            const target = event.target;
+            if (target.classList.contains('mention-span')) {
+                const userTag = target.getAttribute('data-usertag');
+                this.openProfile(userTag);
+            } else {
+                console.log('Other click event');
+            }
+        },
+        insertMention(user) {
+            console.log('Inserting Mention', user);
+
+            const cursorPosition = this.commentInput.value.selectionStart;
+
+            const textarea = this.commentInput;
+
+            console.log('Cursor Position:', cursorPosition);
+            console.log(textarea);
+
+            if (!textarea) {
+                console.error("Textarea not found");
+                return;
+            }
+
+            const mentionTag = `${user.UserTag}`;
+            const cursorPos = textarea.selectionStart;
+            const textBeforeCursor = textarea.value.substring(0, cursorPos);
+            const textAfterCursor = textarea.value.substring(cursorPos);
+
+            console.log('Cursor Position:', cursorPos);
+            console.log('Text Before Cursor:', textBeforeCursor);
+            console.log('Text After Cursor:', textAfterCursor);
+
+            this.comment_text_input = textBeforeCursor + mentionTag + textAfterCursor;
+
+            this.TogglePopup('MentionTrigger');
+
+            // Use setSelectionRange on the ref to manipulate the cursor position
+            textarea.setSelectionRange(cursorPosition + mentionTag.length, cursorPosition + mentionTag.length);
+        },
+        handleMentionInput() {
+            if (this.mentionSearch.length > 0) {
+                this.filteredUsers = this.users.filter(user => {
+                    const searchInputLower = this.mentionSearch.toLowerCase();
+                    const userTagLower = user.UserTag.toLowerCase();
+                    return userTagLower.includes(searchInputLower);
+                });
+            } else {
+                this.filteredUsers = [];
+            }
+        },
         goBack() {
             this.$router.go(-1);
+        },
+        autoSize(ref) {
+            const maxRows = 8;
+            const textarea = this.$refs[ref];
+            textarea.style.height = 'auto';
+            const customLineHeight = 1;
+            const maxHeight = maxRows * customLineHeight * parseFloat(getComputedStyle(textarea).fontSize);
+
+            if (textarea.scrollHeight <= maxHeight) {
+                textarea.style.height = textarea.scrollHeight + 'px';
+            } else {
+                textarea.style.height = maxHeight + 'px';
+            }
         },
         getTweets(type) {
         axios
@@ -293,7 +429,6 @@ export default{
                 }, 1500);
             }
         },
-
         async retweetTweet(tweetID) {
             try {
                 const response = await axios.post(`/api/tweets/retweet`, { tweetId: tweetID });
@@ -311,7 +446,6 @@ export default{
                 console.error('Error retweeting the tweet:', error);
             }
         },
-
         async unretweetTweet(tweetId) {
             try {
                 const response = await axios.delete(`/api/tweets/unretweet/${tweetId}`);
@@ -366,7 +500,6 @@ export default{
                 console.error('Error bookmarking the tweet:', error);
             }
         },
-
         async removeBookmark(tweetId) {
             try {
                 const response = await this.$axios.delete(`/api/tweets/unbookmark/${tweetId}`);
@@ -382,11 +515,22 @@ export default{
                 console.error('Error unbookmarking the tweet:', error);
             }
         },
+        getUsersExceptYourself() {
+        axios
+            .get('/api/allusers')
+            .then(response => {
+                this.users = response.data;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        },
     },
 
     async mounted() {
         await this.$store.dispatch('initializeApp');
         this.getTweets('bookmark');
+        this.getUsersExceptYourself();
     },
 }
 

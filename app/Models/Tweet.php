@@ -37,6 +37,10 @@ class Tweet extends Model
     {
         return $this->hasMany(Bookmark::class, 'TweetID');
     }
+    public function mentions()
+    {
+        return $this->hasMany(Mention::class, 'TweetID');
+    }
     protected static function boot()
     {
         parent::boot();

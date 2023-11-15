@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use App\Models\Follow;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FollowController extends Controller
 {
@@ -42,30 +44,77 @@ class FollowController extends Controller
     {
         if (auth()->check()) {
             $user1 = auth()->user();
+    
             $topFollowedUsers = User::withCount('followers')
                 ->where('UserID', '!=', $user1->UserID) // Exclude the authenticated user
                 ->orderBy('followers_count', 'desc')
-                ->take(3)
                 ->get();
     
-            foreach ($topFollowedUsers as $user2) {
-                $user2->isFollowedByMe = $this->checkIfFollowedByUser($user1, $user2);
-                $user2->isFollowingMe = $this->checkIfFollowedByUser($user2, $user1);
-            }
+            $followed = collect();
+            $nonfollowed = collect();
     
-            return response()->json($topFollowedUsers);
+            foreach ($topFollowedUsers as $user) {
+                $user->isFollowedByMe = $this->checkIfFollowedByUser($user1, $user);
+                if ($this->checkIfFollowedByUser($user1, $user)){
+                    $followed->push($user);
+                } else {
+                    $nonfollowed->push($user);
+                }
+            }
+            Log::info($followed);
+            Log::info($nonfollowed);
+            $sortedUsers = $nonfollowed->concat($followed)->take(3);
+    
+            return response()->json($sortedUsers);
         } else {
             // Handle the case where the user is not authenticated.
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
-    public function getAllUsers()
+    public function getAllUsersMention()
     {
         if (auth()->check()) {
             $user1 = auth()->user();
-            $Users = User::withCount('followers')
+            
+            $Users = User::select('users.*')
+                ->selectSub(function ($query) use ($user1) {
+                    $query->selectRaw('count(*)')
+                        ->from('mentions')
+                        ->whereRaw("mentions.MentionedUserID = users.UserID AND mentions.UserID = $user1->UserID");
+                }, 'mentions_count')
+                ->selectSub(function ($query) use ($user1) {
+                    $query->selectRaw('count(*)')
+                        ->from('follows')
+                        ->whereRaw('(follows.FollowerID = users.UserID OR follows.FollowingID = users.UserID)');
+                }, 'followers_count')
                 ->where('UserID', '!=', $user1->UserID) // Exclude the authenticated user
-                ->orderBy('followers_count', 'desc')
+                ->orderByDesc(DB::raw("IF((SELECT COUNT(*) FROM follows WHERE (FollowerID = $user1->UserID AND FollowingID = users.UserID) OR (FollowingID = $user1->UserID AND FollowerID = users.UserID)) > 0, 1, 0)")) // Sort by being friends
+                ->get();
+    
+            foreach ($Users as $user2) {
+                $user2->isFollowedByMe = $this->checkIfFollowedByUser($user1, $user2);
+            }
+    
+            return response()->json($Users);
+        } else {
+            // Handle the case where the user is not authenticated.
+            return response()->json(['error' => 'User not authenticated.'], 401);
+        }
+    }
+    public function getAllUsersExceptMe()
+    {
+        if (auth()->check()) {
+            $user1 = auth()->user();
+            
+            $Users = User::select('users.*')
+                ->selectSub(function ($query) {
+                    $query->selectRaw('count(*)')
+                        ->from('follows')
+                        ->whereRaw('(follows.FollowerID = users.UserID OR follows.FollowingID = users.UserID)');
+                }, 'followers_count')
+                ->where('UserID', '!=', $user1->UserID) // Exclude the authenticated user
+                ->orderByDesc(DB::raw("IF((SELECT COUNT(*) FROM follows WHERE (FollowerID = $user1->UserID AND FollowingID = users.UserID) OR (FollowingID = $user1->UserID AND FollowerID = users.UserID)) > 0, 1, 0)")) // Sort by being friends
+                ->orderBy('followers_count', 'desc') // Sort by follower count in descending order
                 ->get();
     
             foreach ($Users as $user2) {

@@ -68,6 +68,25 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class, 'follows', 'FollowerID', 'FollowingID');
     }
+    
+    public function mentions()
+    {
+        return $this->hasMany(Mention::class, 'UserID');
+    }
+
+    public function mentionedInTweets()
+    {
+        return $this->hasMany(Mention::class, 'MentionedUserID');
+    }
+    public function comment_mentions()
+    {
+        return $this->hasMany(CommentMention::class, 'UserID');
+    }
+
+    public function mentionedInComments()
+    {
+        return $this->hasMany(CommentMention::class, 'MentionedUserID');
+    }
 
     public function tokens(): MorphMany
     {

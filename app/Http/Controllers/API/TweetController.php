@@ -11,6 +11,8 @@ use App\Models\Like;
 use App\Models\Retweet;
 use App\Models\User;
 use App\Models\Bookmark;
+use App\Models\Mention;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class TweetController extends Controller
@@ -23,6 +25,9 @@ class TweetController extends Controller
     
             if ($request->has('tweetText')) {
                 $tweet->TweetText = $request->input('tweetText');
+    
+                // Parse mentions and store them in the database
+                $mentions = $this->extractMentions($tweet->TweetText);
             }
     
             if ($request->hasFile('tweetImage')) {
@@ -30,8 +35,17 @@ class TweetController extends Controller
                 $path = $image->store('tweet_pictures', 'public');
                 $tweet->TweetImage = $path;
             }
-    
+
             $user->tweets()->save($tweet);
+            if (!empty($mentions)) {
+                foreach ($mentions as $mention) {
+                    $mentionModel = new Mention([
+                        'MentionedUserID' => $mention->UserID,
+                        'UserID' => $user->UserID,
+                    ]);
+                    $tweet->mentions()->save($mentionModel);
+                }
+            }
             $tweet->user = $user;
             $tweet->created_ago = 'now';
             $tweet->like_count = 0;
@@ -41,16 +55,21 @@ class TweetController extends Controller
             $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
             $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
     
-            return response()->json(['message' => 'Tweet created successfully', 'tweet' => $tweet], 201);
-    
-            $tweetCount = $tweets->count();
-    
-            return response()->json(['tweets' => $tweets, 'tweet_count' => $tweetCount]);
+            return response()->json(['message' => 'Tweet created successfully', 'tweet' => $tweet, 'mentions' => $mentions], 201);
         } else {
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
-
+    private function extractMentions($tweetText)
+    {
+        preg_match_all('/@(\w+)/u', $tweetText, $matches);
+    
+        $usernames = $matches[1];
+        $usernamesWithAtSymbol = array_map(function ($username) {
+            return '@' . $username;
+        }, $usernames);
+        return User::whereIn('UserTag', $usernamesWithAtSymbol)->get();
+    }
     public function getTweets($type)
     {
         if (auth()->check()) {
@@ -306,6 +325,7 @@ class TweetController extends Controller
         $tweet->retweets()->delete();
         $tweet->bookmarks()->delete();
         $tweet->comments()->delete();
+        $tweet->mentions()->delete();
         $tweet->delete();
 
 

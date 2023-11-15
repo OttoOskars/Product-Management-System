@@ -102,6 +102,9 @@ export default {
         inputBlur() {
             this.isInputFocused = false;
         },
+        clearSearch() {
+            this.search = '';
+        },
         redirectTo(where) {
             this.$router.push(where);
         },
