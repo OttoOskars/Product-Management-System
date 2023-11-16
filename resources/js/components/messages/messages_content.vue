@@ -55,7 +55,7 @@
                             <p class="usertag">{{ selectedUser ? selectedUser.UserTag : '' }}</p>
                         </div>
                         <div class="message-input-container">
-                            <textarea class="message-input" rows="5" placeholder="Message..." maxlength="255"></textarea>
+                            <textarea class="message-input" rows="1" @input="autoSize" ref="tweetInputnav" placeholder="Message..." maxlength="255"></textarea>
                         </div>
                         <div class="message-image-preview">
                             <img :src="previewImagenav" v-if="previewImagenav">
@@ -83,13 +83,8 @@ export default{
     },
     data() {
         return {
-            searchInput: '',
-            users:[],
-            foundUsers: [],
             isInputFocused: false,
             personClicked: false,
-            clickedPerson: null,
-            selectedUser: null,
         };
     },
     computed: {
@@ -102,6 +97,7 @@ export default{
         const users = ref([]);
         const clickedPerson = ref(null);
         const selectedUser = ref(null);
+        const tweetInputnav = ref(null);
         const popupTriggers = ref({
             EditTrigger: false,
             MessageTrigger: false,
@@ -169,6 +165,7 @@ export default{
             selectedUser,
             handleSearchInput,
             users,
+            tweetInputnav,
         }
     },
     methods: {
@@ -178,6 +175,19 @@ export default{
                 this.previewImagenav = URL.createObjectURL(this.messageImagenav);
             } else {
                 this.previewImagenav = null;
+            }
+        },
+        autoSize() {
+            const maxRows = 5;
+            const textarea = this.$refs.tweetInputnav;
+            textarea.style.height = 'auto';
+            const customLineHeight = 1;
+            const maxHeight = maxRows * customLineHeight * parseFloat(getComputedStyle(textarea).fontSize);
+
+            if (textarea.scrollHeight <= maxHeight) {
+                textarea.style.height = textarea.scrollHeight + 'px';
+            } else {
+                textarea.style.height = maxHeight + 'px';
             }
         },
         openProfile(tag){
@@ -477,16 +487,15 @@ export default{
                     }
                 }
                 .highlighted {
-                    border: 3px solid #1D9BF0;
+                    border: 2px solid #1D9BF0;
                     border-radius: 50px;
-                    box-shadow: 0 0 5px #1D9BF0;
                 }
             }
         }
     }
     .message-popup{
         width:500px;
-        min-height: 300px;
+        min-height: 270px;
         display:flex;
         flex-direction:column;
         box-sizing: border-box;
@@ -506,7 +515,7 @@ export default{
             flex-direction: row;
             box-sizing: border-box;
             gap:15px;
-            padding:20px 35px 10px 20px;
+            padding:10px 35px 10px 20px;
             .left-side-popup{
                 width:50px;
                 height:100%;
