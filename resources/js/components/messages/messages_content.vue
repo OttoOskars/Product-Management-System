@@ -12,17 +12,17 @@
             </div>
             <div class="main-text">Welcome to your inbox!</div>
             <div class="under-text">Drop a line, share posts and more with private conversations between you and others on X. </div>
-            <button class="write-button" @click="TogglePopup('EditTrigger')">New message</button>
+            <button class="write-button" @click="ToggleFirstPopup('EditTrigger')">New message</button>
         </div>
         <div class="messages-right">
             <div class="right-text">Select a message</div>
             <div class="right-under-text">Choose from your existing conversations, start a new one, or just keep swimming.</div>
-            <button class="right-write-button" @click="TogglePopup('EditTrigger')">New message</button>
+            <button class="right-write-button" @click="ToggleFirstPopup('EditTrigger')">New message</button>
         </div>
-        <Popup v-if="popupTriggers.EditTrigger" :TogglePopup="() => TogglePopup('EditTrigger')">
+        <Popup v-if="popupTriggers.EditTrigger" :TogglePopup="() => ToggleFirstPopup('EditTrigger')">
             <div class="edit-popup">
                 <p class="title-popup">New message</p>
-                <button class="next-btn" :disabled="!foundUsers.some(Person => Person.personClicked)" @click="nextButtonClick">Next</button>
+                <button class="next-btn" :disabled="!clickedPerson" @click="nextButtonClick">Next</button>
                 <div class="search-people">
                     <div class="input-wrap">
                         <input v-model="searchInput" @input="handleSearchInput" class="Edit-Input" :class="{ 'focused': isInputFocused }" @focus="inputFocus" @blur="inputBlur" placeholder="Search usernames..." />
@@ -42,7 +42,7 @@
                 </div>
              </div>
         </Popup>
-        <Popup v-if="popupTriggers.MessageTrigger" :TogglePopup="() => TogglePopup('MessageTrigger')">
+        <Popup v-if="popupTriggers.MessageTrigger" :TogglePopup="() => ToggleSecondPopup('MessageTrigger')">
             <div class="message-popup" v-if="selectedUser">
                 <div class="title-messages">Write your message to:</div>
                 <div class="top">
@@ -51,8 +51,8 @@
                     </div>
                     <div class="right-side-popup">
                         <div class="userinfo-popup">
-                            <p class="username">{{ selectedUser.Name }}</p>
-                            <p class="usertag">{{ selectedUser.UserTag }}</p>
+                            <p class="username">{{ selectedUser ? selectedUser.Name : 'No User Selected' }}</p>
+                            <p class="usertag">{{ selectedUser ? selectedUser.UserTag : '' }}</p>
                         </div>
                         <div class="message-input-container">
                             <textarea class="message-input" rows="5" placeholder="Message..." maxlength="255"></textarea>
@@ -73,7 +73,7 @@
     </div>
 </template>
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Popup from '../Popup.vue';
 import { mapState } from 'vuex';
 export default{
@@ -98,36 +98,80 @@ export default{
     setup () {
         const previewImagenav = ref(null);
         const messageImagenav = ref(null);
+        const searchInput = ref('');
+        const users = ref([]);
+        const clickedPerson = ref(null);
+        const selectedUser = ref(null);
         const popupTriggers = ref({
             EditTrigger: false,
             MessageTrigger: false,
         });
-        const TogglePopup = (trigger) => {
-            popupTriggers.value[trigger] = !popupTriggers.value[trigger]
-            previewImagenav.value=null;
-            messageImagenav.value=null;
-            if (!popupTriggers.value[trigger]) {
+        const foundUsers = computed(() => {
+            if (searchInput.value.length > 0) {
+                const searchInputLower = searchInput.value.toLowerCase();
+                return users.value.filter(user => {
+                    const userTagLower = user.UserTag.toLowerCase();
+                    return userTagLower.includes(searchInputLower);
+                });
+            } else {
+                return [];
             }
-		}
+        });
+        const resetFirstPopup = () => {
+            foundUsers.value = [];
+            searchInput.value = '';
+            clickedPerson.value = null;
+            selectedUser.value = null;
+        };
+        const ToggleFirstPopup = () => {
+            popupTriggers.value['EditTrigger'] = !popupTriggers.value['EditTrigger'];
+            if (!popupTriggers.value['EditTrigger']) {
+                resetFirstPopup();
+            }
+        };
+        const ToggleSecondPopup = () => {
+            popupTriggers.value['MessageTrigger'] = !popupTriggers.value['MessageTrigger'];
+            if (!popupTriggers.value['MessageTrigger']) {
+            }
+            previewImagenav.value = null;
+            messageImagenav.value = null;
+        };
+        const nextButtonClick = () => {
+            const selectedUserID = clickedPerson.value;
+            if (selectedUserID) {
+                const foundUser = foundUsers.value.find((user) => user.UserID === selectedUserID);
+                if (foundUser) {
+                    selectedUser.value = foundUser;
+                    ToggleSecondPopup();
+                }
+            }
+        };
         const handlePersonClick = (Person) => {
             this.clickedPerson = Person.UserID;
         };
+        const handleSearchInput = () => {
+            if (searchInput.value.length === 0) {
+                clickedPerson.value = null;
+            }
+        };
         return {
             popupTriggers,
-            TogglePopup,
+            ToggleFirstPopup,
+            ToggleSecondPopup,
+            nextButtonClick,
+            resetFirstPopup,
             previewImagenav,
             messageImagenav,
             handlePersonClick,
+            searchInput,
+            foundUsers,
+            clickedPerson,
+            selectedUser,
+            handleSearchInput,
+            users,
         }
     },
     methods: {
-        nextButtonClick() {
-            const selectedUser = this.foundUsers.find((user) => user.UserID === this.clickedPerson);
-            if (selectedUser) {
-                this.selectedUser = selectedUser;
-                this.TogglePopup('MessageTrigger');
-            }
-        },
         onImageChangenav(event) {
             this.messageImagenav = event.target.files[0];
             if (this.messageImagenav) {
@@ -155,18 +199,6 @@ export default{
         },
         openTweet(id) {
             console.log(id);
-        },
-        handleSearchInput() {
-            if (this.searchInput.length > 0) {
-                this.foundUsers = this.users.filter(user => {
-                const searchInputLower = this.searchInput.toLowerCase();
-                const userTagLower = user.UserTag.toLowerCase();
-
-                return userTagLower.includes(searchInputLower);
-                });
-            } else {
-                this.foundUsers = [];
-            }
         },
     },
     async mounted() {
