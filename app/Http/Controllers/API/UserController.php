@@ -251,7 +251,7 @@ class UserController extends Controller
         $message->SenderID = $user->UserID; // Set the sender ID
         $message->ReceiverID = $request->input('ReceiverID'); // Get the receiver ID from the request
         $message->Content = $request->input('Content'); // Get the message content from the request
-        $message->Image = $request->input('Image'); // Get the message content from the request
+        $message->Image = $request->file('Image'); // Get the message content from the request
 
         $message->save(); // Save the message
 

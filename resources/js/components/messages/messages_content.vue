@@ -75,7 +75,6 @@
                 <div class="title-messages">Received Messages from {{ selectedUser.Name }}</div>
                 <button class="see-messages-btn" @click="fetchReceivedMessages">See Messages</button>
                 <div v-for="(message, index) in receivedMessages" :key="index" class="received-message">
-                    <!-- Customize the structure as needed for each received message -->
                     <p>{{ message.content }}</p>
                     <p>Sent at: {{ message.timestamp }}</p>
                 </div>
@@ -87,6 +86,7 @@
 import { ref, computed } from 'vue';
 import Popup from '../Popup.vue';
 import { mapState } from 'vuex';
+import axios from 'axios';
 export default{
     name: 'Search',
     components: {
@@ -96,8 +96,7 @@ export default{
         return {
             isInputFocused: false,
             personClicked: false,
-            receivedMessages: [],
-            
+            // receivedMessages: [],
         };
     },
     computed: {
@@ -111,6 +110,7 @@ export default{
         const clickedPerson = ref(null);
         const selectedUser = ref(null);
         const tweetInputnav = ref(null);
+        const receivedMessages = ref([]);
         const popupTriggers = ref({
             EditTrigger: false,
             MessageTrigger: false,
@@ -146,9 +146,29 @@ export default{
             previewImagenav.value = null;
             messageImagenav.value = null;
         };
-        const ToggleThirdPopup = () => {
+        let fetchReceivedMessages = null;
+
+        const setReceivedMessages = (messages) => {
+            receivedMessages.value = messages;
+        };
+        const ToggleThirdPopup = async () => {
             popupTriggers.value['MessageTrigger2'] = !popupTriggers.value['MessageTrigger2'];
-            if (!popupTriggers.value['MessageTrigger2']) {
+            if (popupTriggers.value['MessageTrigger2'] && fetchReceivedMessages) {
+                await fetchReceivedMessages();
+                popupTriggers.value['MessageTrigger2'] = true;
+            }
+        };
+        fetchReceivedMessages = async () => {
+            try {
+                const response = await axios.get(`/api/user-messages`);
+                const { received_messages } = response.data;
+
+                setReceivedMessages(received_messages.map(message => ({
+                    content: message.Content,
+                    timestamp: message.created_at,
+                })));
+            } catch (error) {
+                console.error('Error fetching received messages:', error);
             }
         };
         const nextButtonClick = () => {
@@ -173,6 +193,7 @@ export default{
             popupTriggers,
             ToggleFirstPopup,
             ToggleSecondPopup,
+            fetchReceivedMessages,
             ToggleThirdPopup,
             nextButtonClick,
             resetFirstPopup,
@@ -186,6 +207,7 @@ export default{
             handleSearchInput,
             users,
             tweetInputnav,
+            receivedMessages,
         }
     },
     methods: {
@@ -234,9 +256,12 @@ export default{
             if (!this.selectedUser || !this.tweetInputnav) return;
 
             const formData = new FormData();
-            formData.append('UserID', this.selectedUser.UserID);
-            formData.append('Content', this.tweetInputnav.trim());
-            formData.append('Image', this.messageImagenav);
+            formData.append('ReceiverID', this.selectedUser.UserID);
+            const content = this.tweetInputnav ? this.tweetInputnav.value.trim() : '';
+            formData.append('Content', content);
+            if (this.messageImagenav && this.messageImagenav[0]) {
+                formData.append('Image', this.messageImagenav[0]);
+            }
 
             try {
                 const response = await this.$axios.post('/api/send-message', formData, {
@@ -247,6 +272,10 @@ export default{
 
                 // Assuming the response contains the newly sent message data
                 const sentMessage = response.data;
+
+                if (!this.selectedUser.messages) {
+                    this.selectedUser.messages = []; // Initialize if it's not defined
+                }
 
                 // Update UI to display the sent message
                 // This might involve updating a list of messages for the selected user
@@ -261,23 +290,23 @@ export default{
             // Handle error - show error message or take appropriate action
             }
         },
-        async fetchReceivedMessages() {
-            // Assuming there's a method to fetch received messages for a user
-            try {
-                (this.selectedUser.UserID)
+        // async fetchReceivedMessages() {
+        //     try {
+        //         // Assuming there's a method to fetch received messages for a user
+        //         const response = await this.$axios.get(`/api/user-messages`);
+        //         const { received_messages } = response.data; // Assuming the response contains received messages data
 
-                // Upon successfully fetching messages, update receivedMessages array
-                // For example, receivedMessages should be updated with the response data:
-                this.receivedMessages = [
-                // Array of received message objects with content and timestamp
-                    { content: 'Received message content', timestamp: 'Received time' },
-                // More messages...
-                ];
-            } catch (error) {
-                console.error('Error fetching received messages:', error);
-                // Handle error - show error message or take appropriate action
-            }
-        },
+        //         // Upon successfully fetching messages, update receivedMessages array
+        //         // For example, receivedMessages should be updated with the response data:
+        //         this.receivedMessages = received_messages.map(message => ({
+        //             content: message.Content,
+        //             timestamp: message.created_at // Assuming 'created_at' holds the timestamp
+        //         }));
+        //     } catch (error) {
+        //         console.error('Error fetching received messages:', error);
+        //         // Handle error - show error message or take appropriate action
+        //     }
+        // },
     },
     async mounted() {
         await this.$store.dispatch('initializeApp');
