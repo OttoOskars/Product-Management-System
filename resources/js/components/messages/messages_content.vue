@@ -12,17 +12,17 @@
             </div>
             <div class="main-text">Welcome to your inbox!</div>
             <div class="under-text">Drop a line, share posts and more with private conversations between you and others on X. </div>
-            <button class="write-button" @click="TogglePopup('EditTrigger')">New message</button>
+            <button class="write-button" @click="ToggleFirstPopup('EditTrigger')">New message</button>
         </div>
         <div class="messages-right">
             <div class="right-text">Select a message</div>
             <div class="right-under-text">Choose from your existing conversations, start a new one, or just keep swimming.</div>
-            <button class="right-write-button" @click="TogglePopup('EditTrigger')">New message</button>
+            <button class="right-write-button" @click="ToggleThirdPopup('MessageTrigger2')">New message</button>
         </div>
-        <Popup v-if="popupTriggers.EditTrigger" :TogglePopup="() => TogglePopup('EditTrigger')">
+        <Popup v-if="popupTriggers.EditTrigger" :TogglePopup="() => ToggleFirstPopup('EditTrigger')">
             <div class="edit-popup">
                 <p class="title-popup">New message</p>
-                <button class="next-btn" :disabled="!foundUsers.some(Person => Person.personClicked)" @click="nextButtonClick">Next</button>
+                <button class="next-btn" :disabled="!clickedPerson" @click="nextButtonClick">Next</button>
                 <div class="search-people">
                     <div class="input-wrap">
                         <input v-model="searchInput" @input="handleSearchInput" class="Edit-Input" :class="{ 'focused': isInputFocused }" @focus="inputFocus" @blur="inputBlur" placeholder="Search usernames..." />
@@ -42,7 +42,7 @@
                 </div>
              </div>
         </Popup>
-        <Popup v-if="popupTriggers.MessageTrigger" :TogglePopup="() => TogglePopup('MessageTrigger')">
+        <Popup v-if="popupTriggers.MessageTrigger" :TogglePopup="() => ToggleSecondPopup('MessageTrigger')">
             <div class="message-popup" v-if="selectedUser">
                 <div class="title-messages">Write your message to:</div>
                 <div class="top">
@@ -51,11 +51,11 @@
                     </div>
                     <div class="right-side-popup">
                         <div class="userinfo-popup">
-                            <p class="username">{{ selectedUser.Name }}</p>
-                            <p class="usertag">{{ selectedUser.UserTag }}</p>
+                            <p class="username">{{ selectedUser ? selectedUser.Name : 'No User Selected' }}</p>
+                            <p class="usertag">{{ selectedUser ? selectedUser.UserTag : '' }}</p>
                         </div>
                         <div class="message-input-container">
-                            <textarea class="message-input" rows="5" placeholder="Message..." maxlength="255"></textarea>
+                            <textarea class="message-input" rows="1" @input="autoSize" ref="tweetInputnav" placeholder="Message..." maxlength="255"></textarea>
                         </div>
                         <div class="message-image-preview">
                             <img :src="previewImagenav" v-if="previewImagenav">
@@ -66,14 +66,25 @@
                     <div class="buttons">
                         <button class="message-btn"><input type="file" accept="image/png, image/gif, image/jpeg, video/mp4,video/x-m4v,video/*" id="message-img-input" @change="onImageChangenav" hidden><label for="message-img-input" class="message-img-label"><ion-icon name="images-outline" class="create-message-icon"></ion-icon></label></button>
                     </div>
-                    <button class="popup-button">Send</button>
+                    <button class="popup-button" @click="sendMessage">Send</button>
+                </div>
+            </div>
+        </Popup>
+        <Popup v-if="popupTriggers.MessageTrigger2" :TogglePopup="() => ToggleThirdPopup('MessageTrigger2')">
+            <div class="received-messages-popup" v-if="selectedUser">
+                <div class="title-messages">Received Messages from {{ selectedUser.Name }}</div>
+                <button class="see-messages-btn" @click="fetchReceivedMessages">See Messages</button>
+                <div v-for="(message, index) in receivedMessages" :key="index" class="received-message">
+                    <!-- Customize the structure as needed for each received message -->
+                    <p>{{ message.content }}</p>
+                    <p>Sent at: {{ message.timestamp }}</p>
                 </div>
             </div>
         </Popup>
     </div>
 </template>
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Popup from '../Popup.vue';
 import { mapState } from 'vuex';
 export default{
@@ -83,13 +94,10 @@ export default{
     },
     data() {
         return {
-            searchInput: '',
-            users:[],
-            foundUsers: [],
             isInputFocused: false,
             personClicked: false,
-            clickedPerson: null,
-            selectedUser: null,
+            receivedMessages: [],
+            
         };
     },
     computed: {
@@ -98,42 +106,108 @@ export default{
     setup () {
         const previewImagenav = ref(null);
         const messageImagenav = ref(null);
+        const searchInput = ref('');
+        const users = ref([]);
+        const clickedPerson = ref(null);
+        const selectedUser = ref(null);
+        const tweetInputnav = ref(null);
         const popupTriggers = ref({
             EditTrigger: false,
             MessageTrigger: false,
+            MessageTrigger2: false,
         });
-        const TogglePopup = (trigger) => {
-            popupTriggers.value[trigger] = !popupTriggers.value[trigger]
-            previewImagenav.value=null;
-            messageImagenav.value=null;
-            if (!popupTriggers.value[trigger]) {
+        const foundUsers = computed(() => {
+            if (searchInput.value.length > 0) {
+                const searchInputLower = searchInput.value.toLowerCase();
+                return users.value.filter(user => {
+                    const userTagLower = user.UserTag.toLowerCase();
+                    return userTagLower.includes(searchInputLower);
+                });
+            } else {
+                return [];
             }
-		}
+        });
+        const resetFirstPopup = () => {
+            foundUsers.value = [];
+            searchInput.value = '';
+            clickedPerson.value = null;
+            selectedUser.value = null;
+        };
+        const ToggleFirstPopup = () => {
+            popupTriggers.value['EditTrigger'] = !popupTriggers.value['EditTrigger'];
+            if (!popupTriggers.value['EditTrigger']) {
+                resetFirstPopup();
+            }
+        };
+        const ToggleSecondPopup = () => {
+            popupTriggers.value['MessageTrigger'] = !popupTriggers.value['MessageTrigger'];
+            if (!popupTriggers.value['MessageTrigger']) {
+            }
+            previewImagenav.value = null;
+            messageImagenav.value = null;
+        };
+        const ToggleThirdPopup = () => {
+            popupTriggers.value['MessageTrigger2'] = !popupTriggers.value['MessageTrigger2'];
+            if (!popupTriggers.value['MessageTrigger2']) {
+            }
+        };
+        const nextButtonClick = () => {
+            const selectedUserID = clickedPerson.value;
+            if (selectedUserID) {
+                const foundUser = foundUsers.value.find((user) => user.UserID === selectedUserID);
+                if (foundUser) {
+                    selectedUser.value = foundUser;
+                    ToggleSecondPopup();
+                }
+            }
+        };
         const handlePersonClick = (Person) => {
             this.clickedPerson = Person.UserID;
         };
+        const handleSearchInput = () => {
+            if (searchInput.value.length === 0) {
+                clickedPerson.value = null;
+            }
+        };
         return {
             popupTriggers,
-            TogglePopup,
+            ToggleFirstPopup,
+            ToggleSecondPopup,
+            ToggleThirdPopup,
+            nextButtonClick,
+            resetFirstPopup,
             previewImagenav,
             messageImagenav,
             handlePersonClick,
+            searchInput,
+            foundUsers,
+            clickedPerson,
+            selectedUser,
+            handleSearchInput,
+            users,
+            tweetInputnav,
         }
     },
     methods: {
-        nextButtonClick() {
-            const selectedUser = this.foundUsers.find((user) => user.UserID === this.clickedPerson);
-            if (selectedUser) {
-                this.selectedUser = selectedUser;
-                this.TogglePopup('MessageTrigger');
-            }
-        },
         onImageChangenav(event) {
             this.messageImagenav = event.target.files[0];
             if (this.messageImagenav) {
                 this.previewImagenav = URL.createObjectURL(this.messageImagenav);
             } else {
                 this.previewImagenav = null;
+            }
+        },
+        autoSize() {
+            const maxRows = 5;
+            const textarea = this.$refs.tweetInputnav;
+            textarea.style.height = 'auto';
+            const customLineHeight = 1;
+            const maxHeight = maxRows * customLineHeight * parseFloat(getComputedStyle(textarea).fontSize);
+
+            if (textarea.scrollHeight <= maxHeight) {
+                textarea.style.height = textarea.scrollHeight + 'px';
+            } else {
+                textarea.style.height = maxHeight + 'px';
             }
         },
         openProfile(tag){
@@ -156,16 +230,52 @@ export default{
         openTweet(id) {
             console.log(id);
         },
-        handleSearchInput() {
-            if (this.searchInput.length > 0) {
-                this.foundUsers = this.users.filter(user => {
-                const searchInputLower = this.searchInput.toLowerCase();
-                const userTagLower = user.UserTag.toLowerCase();
+        async sendMessage() {
+            if (!this.selectedUser || !this.tweetInputnav) return;
 
-                return userTagLower.includes(searchInputLower);
+            const formData = new FormData();
+            formData.append('UserID', this.selectedUser.UserID);
+            formData.append('Content', this.tweetInputnav.trim());
+            formData.append('Image', this.messageImagenav);
+
+            try {
+                const response = await this.$axios.post('/api/send-message', formData, {
+                    headers: {
+                    'Content-Type': 'multipart/form-data',
+                    },
                 });
-            } else {
-                this.foundUsers = [];
+
+                // Assuming the response contains the newly sent message data
+                const sentMessage = response.data;
+
+                // Update UI to display the sent message
+                // This might involve updating a list of messages for the selected user
+                // or adding the sent message directly to the UI
+                // Example:
+                this.selectedUser.messages.push(sentMessage);
+
+                // Close the message popup after sending the message
+                this.ToggleSecondPopup();
+            } catch (error) {
+            console.error('Error sending message:', error);
+            // Handle error - show error message or take appropriate action
+            }
+        },
+        async fetchReceivedMessages() {
+            // Assuming there's a method to fetch received messages for a user
+            try {
+                (this.selectedUser.UserID)
+
+                // Upon successfully fetching messages, update receivedMessages array
+                // For example, receivedMessages should be updated with the response data:
+                this.receivedMessages = [
+                // Array of received message objects with content and timestamp
+                    { content: 'Received message content', timestamp: 'Received time' },
+                // More messages...
+                ];
+            } catch (error) {
+                console.error('Error fetching received messages:', error);
+                // Handle error - show error message or take appropriate action
             }
         },
     },
@@ -445,16 +555,15 @@ export default{
                     }
                 }
                 .highlighted {
-                    border: 3px solid #1D9BF0;
+                    border: 2px solid #1D9BF0;
                     border-radius: 50px;
-                    box-shadow: 0 0 5px #1D9BF0;
                 }
             }
         }
     }
     .message-popup{
         width:500px;
-        min-height: 300px;
+        min-height: 270px;
         display:flex;
         flex-direction:column;
         box-sizing: border-box;
@@ -474,7 +583,7 @@ export default{
             flex-direction: row;
             box-sizing: border-box;
             gap:15px;
-            padding:20px 35px 10px 20px;
+            padding:10px 35px 10px 20px;
             .left-side-popup{
                 width:50px;
                 height:100%;
@@ -637,6 +746,23 @@ export default{
                     color:#808080;
                 }
             }
+        }
+    }
+    .received-messages-popup{
+        width:500px;
+        min-height: 270px;
+        display:flex;
+        flex-direction:column;
+        box-sizing: border-box;
+        justify-content: space-between;
+        padding:0px 0px 0px 0px;
+        box-sizing: border-box;
+        .title-messages{
+            color: white;
+            margin-left:20px;
+            padding-top:50px;
+            font-weight: bold;
+            font-size: 22px;
         }
     }
 }

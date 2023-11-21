@@ -3,6 +3,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Messages;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -239,5 +240,32 @@ class UserController extends Controller
         ];
 
         return response()->json($response);
+    }
+
+    public function sendMessage(Request $request)
+    {
+        $user = Auth::user(); // Get the authenticated user
+
+        // Assuming you pass ReceiverID and Content in the request
+        $message = new Messages();
+        $message->SenderID = $user->UserID; // Set the sender ID
+        $message->ReceiverID = $request->input('ReceiverID'); // Get the receiver ID from the request
+        $message->Content = $request->input('Content'); // Get the message content from the request
+        $message->Image = $request->input('Image'); // Get the message content from the request
+
+        $message->save(); // Save the message
+
+        return response()->json(['success' => true, 'message' => 'Message sent successfully']);
+    }
+
+    public function getUserMessages()
+    {
+        $user = Auth::user(); // Get the authenticated user
+
+        // Retrieve messages sent and received by the user
+        $sentMessages = $user->messagesSent()->get();
+        $receivedMessages = $user->messagesReceived()->get();
+
+        return response()->json(['sent_messages' => $sentMessages, 'received_messages' => $receivedMessages]);
     }
 }

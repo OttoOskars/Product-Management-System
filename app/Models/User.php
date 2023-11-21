@@ -88,6 +88,16 @@ class User extends Authenticatable
         return $this->hasMany(CommentMention::class, 'MentionedUserID');
     }
 
+    public function messagesSent()
+    {
+        return $this->hasMany(Messages::class, 'SenderID');
+    }
+
+    public function messagesReceived()
+    {
+        return $this->hasMany(Messages::class, 'ReceiverID');
+    }
+
     public function tokens(): MorphMany
     {
         return $this->morphMany(PersonalAccessToken::class, 'tokenable');
