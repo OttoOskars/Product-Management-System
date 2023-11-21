@@ -31,9 +31,9 @@ Route::middleware('auth:sanctum')->get('/tweet_type/{type}/{page}', [TweetContro
 Route::middleware('auth:sanctum')->get('/user_tweets/{userTag}/{type}/{page}', [TweetController::class, 'getUserTweetsByType']);
 
 
-Route::middleware('auth:sanctum')->get('/user-tweets/{userTag}', [TweetController::class, 'getUserTweets']);
+/* Route::middleware('auth:sanctum')->get('/user-tweets/{userTag}', [TweetController::class, 'getUserTweets']);
 Route::middleware('auth:sanctum')->get('/liked-tweets/{userTag}', [TweetController::class, 'getUserLikedTweets']);
-Route::middleware('auth:sanctum')->get('/commented-tweets/{userTag}', [TweetController::class, 'getUserCommentedTweets']);
+Route::middleware('auth:sanctum')->get('/commented-tweets/{userTag}', [TweetController::class, 'getUserCommentedTweets']); */
 Route::middleware('auth:sanctum')->get('/tweetdata/{id}', [TweetController::class, 'getTweetData']);
 Route::delete('/tweets/{id}',[TweetController::class, 'deleteTweet']);
 
