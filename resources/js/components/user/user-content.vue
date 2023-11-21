@@ -332,6 +332,28 @@ export default{
             deleteCommentTweetID: null,
             deleteCommentID: null,
             isInputFocused: false,
+            comments: [],
+            loading: false,
+            scrollPositions: {
+                tweets: 0,
+                likes: 0,
+                replies: 0,
+            },
+            currentPage: {
+                tweets: 1,
+                likes: 1,
+                replies: 1,
+            },
+            reachedLastPage: {
+                tweets: false,
+                likes: false,
+                replies: false,
+            },
+            tweets: {
+                tweets: [],
+                likes: [],
+                replies: [],
+            },
         }
     },
     computed:{
@@ -347,98 +369,174 @@ export default{
                 }
             };
         },
+        currentPosts() {
+            if (this.postType === 'tweets') {
+                return this.tweets.tweets;
+            }
+            if (this.postType === 'likes') {
+                return this.tweets.likes;
+            }
+            if (this.postType === 'replies') {
+                return this.tweets.replies;
+            }
+            return [];
+        }
     },
     setup() {
-    const tweet_count = ref(0);
-    const like_count = ref(0);
-    const reply_count = ref(0);
-    const tweets = ref([]);
-    const liked_tweets = ref([]);
-    const replies = ref([]);
-    const comments = ref([]);
-    const profileuser = ref(null);
-    const postType = ref('tweets');
-    const comment_text_input = ref('');
-    const NewBannerImage = ref(null);
-    const NewProfileImage = ref(null);
-    const NewName = ref('');
-    const NewDescription = ref('');
-    const commentInput = ref(null);
-    const mentionSearch = ref('');
-    const filteredUsers = ref([]);
-    const popupTriggers = ref({
-        CommentTrigger: false,
-        EditTrigger: false,
-        BannerTrigger: false,
-        PFPTrigger: false,
-        DeleteTrigger: false,
-        DeleteTrigger2: false,
-        MentionTrigger: false,
-    });
+        const tweet_count = ref(0);
+        const like_count = ref(0);
+        const reply_count = ref(0);
+        const profileuser = ref(null);
+        const postType = ref('tweets');
+        const comment_text_input = ref('');
+        const NewBannerImage = ref(null);
+        const NewProfileImage = ref(null);
+        const NewName = ref('');
+        const NewDescription = ref('');
+        const commentInput = ref(null);
+        const mentionSearch = ref('');
+        const filteredUsers = ref([]);
+        const popupTriggers = ref({
+            CommentTrigger: false,
+            EditTrigger: false,
+            BannerTrigger: false,
+            PFPTrigger: false,
+            DeleteTrigger: false,
+            DeleteTrigger2: false,
+            MentionTrigger: false,
+        });
 
-    const router = useRouter();
-    const store = useStore();
+        const router = useRouter();
+        const store = useStore();
 
-    const currentPosts = computed(() => {
-        if (postType.value === 'tweets') {
-            return tweets.value;
+        const logoutUser = async () => {
+        try {
+            await store.dispatch('logout');
+            router.push('/');
+        } catch (error) {
+            console.error(error);
         }
-        if (postType.value === 'likes') {
-            return liked_tweets.value;
-        }
-        if (postType.value === 'replies') {
-            return replies.value;
-        }
-        
-        return [];
-    });
+        };
 
-    const logoutUser = async () => {
-      try {
-        await store.dispatch('logout');
-        router.push('/');
-      } catch (error) {
-        console.error(error);
-      }
-    };
+        const TogglePopup = (trigger) => {
+            if (trigger === 'EditTrigger') {
+                NewName.value= profileuser.value.Name;
+                NewDescription.value= profileuser.value.Description;
+            }
+            popupTriggers.value[trigger] = !popupTriggers.value[trigger];
+            if (trigger === 'MentionTrigger') {
+                mentionSearch.value = '';
+                filteredUsers.value = [];
+            }
+        };
 
-    const TogglePopup = (trigger) => {
-        if (trigger === 'EditTrigger') {
-            NewName.value= profileuser.value.Name;
-            NewDescription.value= profileuser.value.Description;
-        }
-        popupTriggers.value[trigger] = !popupTriggers.value[trigger];
-        if (trigger === 'MentionTrigger') {
-            mentionSearch.value = '';
-            filteredUsers.value = [];
-        }
-    };
-
-    return {
-      tweet_count,
-      like_count,
-      reply_count,
-      tweets,
-      liked_tweets,
-      replies,
-      comments,
-      profileuser,
-      postType,
-      comment_text_input,
-      NewBannerImage,
-      NewProfileImage,
-      NewName,
-      NewDescription,
-      currentPosts,
-      popupTriggers,
-      TogglePopup,
-      logoutUser,
-      commentInput,
-      mentionSearch,
-      filteredUsers,
-    };
-  },
+        return {
+            tweet_count,
+            like_count,
+            reply_count,
+            profileuser,
+            postType,
+            comment_text_input,
+            NewBannerImage,
+            NewProfileImage,
+            NewName,
+            NewDescription,
+            popupTriggers,
+            TogglePopup,
+            logoutUser,
+            commentInput,
+            mentionSearch,
+            filteredUsers,
+        };
+    },
     methods: {
+        switchToTweets() {
+            this.postType = 'tweets';
+            window.scrollTo(0, this.scrollPositions.tweets);
+        },
+        switchToReplies() {
+            this.postType = 'replies';
+            window.scrollTo(0, this.scrollPositions.replies);
+        },
+        switchToLikes() {
+            this.postType = 'likes';
+            window.scrollTo(0, this.scrollPositions.likes);
+        },
+        handleScroll() {
+            if (this.reachedLastPage[this.postType] || this.loading) {
+                return;
+            }
+            const scrollY = window.scrollY;
+            const visibleHeight = window.innerHeight;
+            const pageHeight = document.documentElement.scrollHeight;
+
+            // Save the scroll position for the current post type
+            this.scrollPositions[this.postType] = scrollY;
+
+            // Check if the user has scrolled to the bottom and there are more pages to load
+            if (scrollY + visibleHeight >= pageHeight - 200) {
+                console.log('User has scrolled to the bottom of the page');
+                this.loading = true;
+                this.loadTweets(this.postType, this.currentPage[this.postType]);
+            }
+        },
+        async loadTweets(type) {
+            if (this.reachedLastPage[type]) {
+                return;
+            }
+            try {
+                if (this.currentPage[type] === 1) {
+                    this.tweets[type] = [];
+                }
+
+                const newTweets = await this.loadMoreTweets(type, this.currentPage[type]);
+                this.tweets[type] = this.tweets[type].filter(existingTweet => !newTweets.some(newTweet => newTweet.TweetID === existingTweet.TweetID));
+
+                this.tweets[type] = [...this.tweets[type], ...newTweets];
+                this.loading = false;
+            } catch (error) {
+                console.error('Error loading tweets:', error);
+            }
+        },
+        async loadMoreTweets(type, page) {
+            console.log('Loading more tweets:', type, page);
+
+            try {
+                const response = await axios.get(`/api/user_tweets/${this.$route.params.UserTag}/${type}/${page}`);
+                console.log('Full Response Data:', response);
+
+                if (response.data.tweet_count) {
+                    this.tweet_count = response.data.tweet_count
+                }
+                if (response.data.liked_tweet_count) {
+                    this.like_count = response.data.liked_tweet_count
+                }
+                if (response.data.commented_tweet_count) {
+                    this.reply_count = response.data.commented_tweet_count
+                }
+
+                const paginatedData = response.data;
+
+                if (Array.isArray(paginatedData.tweets.data)) {
+                    const newTweets = paginatedData.tweets.data;
+
+                    this.currentPage[type]++;
+
+                    if (this.currentPage[type] >= paginatedData.total_pages+1) {
+                        this.reachedLastPage[type] = true;
+                        console.log('There are no more tweets to load for', type);
+                    }
+                    console.log('New tweets:', newTweets);
+                    return newTweets;
+                } else {
+                    console.error('Invalid response format. Tweets should be an array.');
+                }
+            } catch (error) {
+                console.error('Error loading more tweets:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
         inputFocus() {
             this.isInputFocused = true;
         },
@@ -612,15 +710,6 @@ export default{
         },
         goBack() {
             this.$router.go(-1);
-        },
-        switchToTweets() {
-            this.postType = 'tweets';
-        },
-        switchToReplies() {
-            this.postType = 'replies';
-        },
-        switchToLikes() {
-            this.postType = 'likes';
         },
         autoSize(ref) {
             const maxRows = 8;
@@ -1005,10 +1094,14 @@ export default{
     async mounted() {
         await this.$store.dispatch('initializeApp');
         this.getUserInfo(this.$route.params.UserTag);
-        this.getCommentedTweets(this.$route.params.UserTag);
-        this.getSpecificUserTweets(this.$route.params.UserTag);
-        this.getLikedTweets(this.$route.params.UserTag);
+        this.loadTweets('tweets')
+        this.loadTweets('likes')
+        this.loadTweets('replies')
         this.getAllUsersMention();
+        window.addEventListener('scroll', this.handleScroll);
+    },
+    beforeDestroy() {
+        window.removeEventListener('scroll', this.handleScroll);
     },
 }
 </script>

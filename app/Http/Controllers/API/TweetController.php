@@ -123,7 +123,6 @@ class TweetController extends Controller
                 $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
             }
             $totalPages = $tweets->lastPage();
-            Log::info($totalPages);
     
             return response()->json(['tweets' => $tweets, 'total_pages' => $totalPages]);
         } else {
@@ -131,17 +130,47 @@ class TweetController extends Controller
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
-    public function getUserLikedTweets($userTag)
+
+    public function getUserTweetsByType($userTag, $type, $page)
     {
         if (auth()->check()) {
             $user = auth()->user();
             $tag = '@' . ltrim($userTag, '@');
             $user2 = User::where('UserTag', $tag)->first();
+    
             if (!$user2) {
                 return response()->json(['message' => 'User not found'], 404);
             }
+    
             $userID = $user2->UserID;
     
+            switch ($type) {
+                case 'replies':
+                    $tweets = $this->getUserCommentedTweets($userID, $user2, $page);
+                    break;
+    
+                case 'likes':
+                    $tweets = $this->getUserLikedTweets($userID, $page);
+                    break;
+    
+                case 'tweets':
+                    $tweets = $this->getUserTweets($userID, $user2, $page);
+                    break;
+
+                default:
+                    return response()->json(['error' => 'Invalid tweet type.'], 400);
+            }
+
+            return $tweets;
+        } else {
+            // Handle the case where the user is not authenticated.
+            return response()->json(['error' => 'User not authenticated.'], 401);
+        }
+    }
+    public function getUserLikedTweets($userID, $page)
+    {
+        if (auth()->check()) {
+            $user = auth()->user();
             $tweets = Tweet::with('user')
                 ->join('likes', function($join) use ($userID) {
                     $join->on('tweets.TweetID', '=', 'likes.TweetID')
@@ -168,8 +197,9 @@ class TweetController extends Controller
                         ->whereColumn('retweets.TweetID', 'tweets.TweetID');
                 }, 'retweet_count')
                 ->orderByRaw('IF(likes.created_at IS NOT NULL, likes.created_at, tweets.created_at) DESC');
-    
-            $tweets = $tweets->get();
+
+            $liked_tweet_count = $tweets->count();
+            $tweets = $tweets->paginate(5, ['*'], 'page', $page);
     
             foreach ($tweets as $tweet) {
                 $now = Carbon::now();
@@ -178,25 +208,18 @@ class TweetController extends Controller
                 $tweet->isRetweeted = $this->checkIfRetweetedByUser($tweet, $user);
                 $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
             }
+            $totalPages = $tweets->lastPage();
     
-            return response()->json(['tweets' => $tweets, 'tweet_count' => $tweets->count()]);
+            return response()->json(['tweets' => $tweets, 'liked_tweet_count' => $liked_tweet_count, 'total_pages' => $totalPages]);
         } else {
             // Handle the case where the user is not authenticated.
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
-    public function getUserCommentedTweets($userTag)
+    public function getUserCommentedTweets($userID, $user2, $page)
     {
         if (auth()->check()) {
             $user = auth()->user();
-            $tag = '@' . ltrim($userTag, '@');
-            $user2 = User::where('UserTag', $tag)->first();
-    
-            if (!$user2) {
-                return response()->json(['message' => 'User not found'], 404);
-            }
-    
-            $userID = $user2->UserID;
     
             $tweets = Tweet::with(['user', 'comments' => function ($query) use ($userID) {
                 $query->where('UserID', $userID)->orderBy('created_at', 'desc');;
@@ -220,8 +243,11 @@ class TweetController extends Controller
                     ->selectRaw('COUNT(*)')
                     ->whereColumn('retweets.TweetID', 'tweets.TweetID');
             }, 'retweet_count')
-            ->orderBy('tweets.created_at', 'desc')
-            ->get();
+            ->orderBy('tweets.created_at', 'desc');
+
+
+            $commented_tweet_count = $tweets->count();
+            $tweets=$tweets->paginate(5, ['*'], 'page', $page);
 
             foreach ($tweets as $tweet) {
                 $now = Carbon::now();
@@ -233,21 +259,17 @@ class TweetController extends Controller
                     $comment->created_ago = $this->formatTimeAgo($comment->created_at, $now);
                 }
             }
+            $totalPages = $tweets->lastPage();
     
-            $tweetCount = $tweets->count();
-    
-            return response()->json(['tweets' => $tweets, 'tweet_count' => $tweetCount]);
+            return response()->json(['tweets' => $tweets, 'commented_tweet_count' => $commented_tweet_count, 'total_pages' => $totalPages]);
         } else {
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
-    public function getUserTweets($userTag)
+    public function getUserTweets($userID, $user2, $page)
     {
         if (auth()->check()) {
             $user = auth()->user();
-            $tag = '@' . ltrim($userTag, '@');
-            $user2 = User::where('UserTag', $tag)->first();
-            $userID = $user2->UserID;
     
             $tweets = Tweet::with('user')
                 ->leftJoin('retweets', function($join) use ($userID) {
@@ -281,8 +303,9 @@ class TweetController extends Controller
                         ->whereColumn('retweets.TweetID', 'tweets.TweetID');
                 }, 'retweet_count')
                 ->orderByRaw('IF(retweets.created_at IS NOT NULL, retweets.created_at, tweets.created_at) DESC');
-    
-            $tweets = $tweets->get();
+
+            $tweet_count = $tweets->count();
+            $tweets=$tweets->paginate(5, ['*'], 'page', $page);
     
             foreach ($tweets as $tweet) {
                 $now = Carbon::now();
@@ -292,7 +315,9 @@ class TweetController extends Controller
                 $tweet->isBookmarked = $this->checkIfBookmarkedByUser($tweet, $user);
             }
     
-            return response()->json(['tweets' => $tweets, 'tweet_count' => $tweets->count()]);
+            $totalPages = $tweets->lastPage();
+    
+            return response()->json(['tweets' => $tweets, 'tweet_count' => $tweet_count, 'total_pages' => $totalPages]);
         } else {
             // Handle the case where the user is not authenticated.
             return response()->json(['error' => 'User not authenticated.'], 401);

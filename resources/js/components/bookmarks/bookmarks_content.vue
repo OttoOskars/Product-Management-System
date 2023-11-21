@@ -162,6 +162,10 @@ export default{
             buttonDisabled:false,
             tweetIdInPopup: null,
             isInputFocused: false,
+            loading:false,
+            reachedLastPage: false,
+            currentPage: 1,
+            scrollPositions:0,
         };
     },
     setup(){
@@ -209,6 +213,71 @@ export default{
         ...mapState(['isLoggedIn', 'user']),
     },
     methods: {
+        handleScroll() {
+            if (this.reachedLastPage || this.loading) {
+                return;
+            }
+            const scrollY = window.scrollY;
+            const visibleHeight = window.innerHeight;
+            const pageHeight = document.documentElement.scrollHeight;
+
+            // Save the scroll position for the current post type
+            this.scrollPositions = scrollY;
+
+            // Check if the user has scrolled to the bottom and there are more pages to load
+            if (scrollY + visibleHeight >= pageHeight - 200) {
+                console.log('User has scrolled to the bottom of the page');
+                this.loading = true;
+                this.loadTweets('bookmark', this.currentPage);
+            }
+        },
+        async loadTweets(type) {
+            if (this.reachedLastPage) {
+                return;
+            }
+            try {
+                if (this.currentPage === 1) {
+                    this.tweets = [];
+                }
+
+                const newTweets = await this.loadMoreTweets(type, this.currentPage);
+                this.tweets = this.tweets.filter(existingTweet => !newTweets.some(newTweet => newTweet.TweetID === existingTweet.TweetID));
+
+                this.tweets = [...this.tweets, ...newTweets];
+                this.loading = false;
+            } catch (error) {
+                console.error('Error loading tweets:', error);
+            }
+        },
+        async loadMoreTweets(type, page) {
+            console.log('Loading more tweets:', type, page);
+
+            try {
+                const response = await axios.get(`/api/tweet_type/${type}/${page}`);
+                console.log('Full Response Data:', response);
+
+                const paginatedData = response.data;
+
+                if (Array.isArray(paginatedData.tweets.data)) {
+                    const newTweets = paginatedData.tweets.data;
+
+                    this.currentPage++;
+
+                    if (this.currentPage >= paginatedData.total_pages+1) {
+                        this.reachedLastPage = true;
+                        console.log('There are no more tweets to load for', type);
+                    }
+                    console.log('New tweets:', newTweets);
+                    return newTweets;
+                } else {
+                    console.error('Invalid response format. Tweets should be an array.');
+                }
+            } catch (error) {
+                console.error('Error loading more tweets:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
         inputFocus() {
             this.isInputFocused = true;
         },
@@ -513,9 +582,13 @@ export default{
         },
     },
     async mounted() {
+        window.addEventListener('scroll', this.handleScroll);
         await this.$store.dispatch('initializeApp');
-        this.getTweets('bookmark');
+        this.loadTweets('bookmark');
         this.getAllUsersMention();
+    },
+    beforeDestroy() {
+        window.removeEventListener('scroll', this.handleScroll);
     },
 }
 </script>
