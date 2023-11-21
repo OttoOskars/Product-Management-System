@@ -58,3 +58,6 @@ Route::middleware('auth:sanctum')->get('/get-user-tag/{tag}', [UserController::c
 
 Route::middleware('auth:sanctum')->post('tweets/bookmark', [BookmarkController::class, 'createBookmark']);
 Route::middleware('auth:sanctum')->delete('tweets/unbookmark/{tweetId}', [BookmarkController::class, 'removeBookmark']);
+
+Route::middleware('auth:sanctum')->post('/send-message', [UserController::class, 'sendMessage']);
+Route::middleware('auth:sanctum')->get('/user-messages', [UserController::class, 'getUserMessages']);

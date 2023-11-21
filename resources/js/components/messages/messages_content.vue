@@ -17,7 +17,7 @@
         <div class="messages-right">
             <div class="right-text">Select a message</div>
             <div class="right-under-text">Choose from your existing conversations, start a new one, or just keep swimming.</div>
-            <button class="right-write-button" @click="ToggleFirstPopup('EditTrigger')">New message</button>
+            <button class="right-write-button" @click="ToggleThirdPopup('MessageTrigger2')">New message</button>
         </div>
         <Popup v-if="popupTriggers.EditTrigger" :TogglePopup="() => ToggleFirstPopup('EditTrigger')">
             <div class="edit-popup">
@@ -66,7 +66,18 @@
                     <div class="buttons">
                         <button class="message-btn"><input type="file" accept="image/png, image/gif, image/jpeg, video/mp4,video/x-m4v,video/*" id="message-img-input" @change="onImageChangenav" hidden><label for="message-img-input" class="message-img-label"><ion-icon name="images-outline" class="create-message-icon"></ion-icon></label></button>
                     </div>
-                    <button class="popup-button">Send</button>
+                    <button class="popup-button" @click="sendMessage">Send</button>
+                </div>
+            </div>
+        </Popup>
+        <Popup v-if="popupTriggers.MessageTrigger2" :TogglePopup="() => ToggleThirdPopup('MessageTrigger2')">
+            <div class="received-messages-popup" v-if="selectedUser">
+                <div class="title-messages">Received Messages from {{ selectedUser.Name }}</div>
+                <button class="see-messages-btn" @click="fetchReceivedMessages">See Messages</button>
+                <div v-for="(message, index) in receivedMessages" :key="index" class="received-message">
+                    <!-- Customize the structure as needed for each received message -->
+                    <p>{{ message.content }}</p>
+                    <p>Sent at: {{ message.timestamp }}</p>
                 </div>
             </div>
         </Popup>
@@ -85,6 +96,8 @@ export default{
         return {
             isInputFocused: false,
             personClicked: false,
+            receivedMessages: [],
+            
         };
     },
     computed: {
@@ -101,6 +114,7 @@ export default{
         const popupTriggers = ref({
             EditTrigger: false,
             MessageTrigger: false,
+            MessageTrigger2: false,
         });
         const foundUsers = computed(() => {
             if (searchInput.value.length > 0) {
@@ -132,6 +146,11 @@ export default{
             previewImagenav.value = null;
             messageImagenav.value = null;
         };
+        const ToggleThirdPopup = () => {
+            popupTriggers.value['MessageTrigger2'] = !popupTriggers.value['MessageTrigger2'];
+            if (!popupTriggers.value['MessageTrigger2']) {
+            }
+        };
         const nextButtonClick = () => {
             const selectedUserID = clickedPerson.value;
             if (selectedUserID) {
@@ -154,6 +173,7 @@ export default{
             popupTriggers,
             ToggleFirstPopup,
             ToggleSecondPopup,
+            ToggleThirdPopup,
             nextButtonClick,
             resetFirstPopup,
             previewImagenav,
@@ -209,6 +229,54 @@ export default{
         },
         openTweet(id) {
             console.log(id);
+        },
+        async sendMessage() {
+            if (!this.selectedUser || !this.tweetInputnav) return;
+
+            const formData = new FormData();
+            formData.append('UserID', this.selectedUser.UserID);
+            formData.append('Content', this.tweetInputnav.trim());
+            formData.append('Image', this.messageImagenav);
+
+            try {
+                const response = await this.$axios.post('/api/send-message', formData, {
+                    headers: {
+                    'Content-Type': 'multipart/form-data',
+                    },
+                });
+
+                // Assuming the response contains the newly sent message data
+                const sentMessage = response.data;
+
+                // Update UI to display the sent message
+                // This might involve updating a list of messages for the selected user
+                // or adding the sent message directly to the UI
+                // Example:
+                this.selectedUser.messages.push(sentMessage);
+
+                // Close the message popup after sending the message
+                this.ToggleSecondPopup();
+            } catch (error) {
+            console.error('Error sending message:', error);
+            // Handle error - show error message or take appropriate action
+            }
+        },
+        async fetchReceivedMessages() {
+            // Assuming there's a method to fetch received messages for a user
+            try {
+                (this.selectedUser.UserID)
+
+                // Upon successfully fetching messages, update receivedMessages array
+                // For example, receivedMessages should be updated with the response data:
+                this.receivedMessages = [
+                // Array of received message objects with content and timestamp
+                    { content: 'Received message content', timestamp: 'Received time' },
+                // More messages...
+                ];
+            } catch (error) {
+                console.error('Error fetching received messages:', error);
+                // Handle error - show error message or take appropriate action
+            }
         },
     },
     async mounted() {
@@ -678,6 +746,23 @@ export default{
                     color:#808080;
                 }
             }
+        }
+    }
+    .received-messages-popup{
+        width:500px;
+        min-height: 270px;
+        display:flex;
+        flex-direction:column;
+        box-sizing: border-box;
+        justify-content: space-between;
+        padding:0px 0px 0px 0px;
+        box-sizing: border-box;
+        .title-messages{
+            color: white;
+            margin-left:20px;
+            padding-top:50px;
+            font-weight: bold;
+            font-size: 22px;
         }
     }
 }
