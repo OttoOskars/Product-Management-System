@@ -10,8 +10,8 @@
                 </div>
             </div>
             <div class="post-type">
-                <button @click="switchToTweets" class="post-type-btn" :class ="{ 'active-post-type': postType == 'all' }">For you<div class="active-line" :class ="{ 'active': postType == 'tweets' }"></div></button>
-                <button @click="switchToFollowing" class="post-type-btn" :class ="{ 'active-post-type': postType == 'following_tweets' }">Following<div class="active-line" :class ="{ 'active': postType == 'following_tweets' }"></div></button>
+                <button @click="switchToTweets" class="post-type-btn" :class ="{ 'active-post-type': postType == 'all' }">For you<div class="active-line" :class ="{ 'active': postType == 'all' }"></div></button>
+                <button @click="switchToFollowing" class="post-type-btn" :class ="{ 'active-post-type': postType == 'following' }">Following<div class="active-line" :class ="{ 'active': postType == 'following' }"></div></button>
             </div>
         </div>
         <div class="post-container">
@@ -190,14 +190,29 @@ export default{
             isInputFocused: false,
             users: [],
             tweets: [],
+            all_tweets: [],
             following_tweets: [],
             postType: 'all',
             isPopupVisible: false,
             buttonDisabled:false,
             tweetIdInPopup: null,
-            currentPage: 1,
-            reachedLastPage: false,
             loading: false,
+            scrollPositions: {
+                all: 0,
+                following: 0,
+            },
+            currentPage: {
+                all: 1,
+                following: 1,
+            },
+            reachedLastPage: {
+                all: false,
+                following: false,
+            },
+            tweets: {
+                all: [],
+                following: [],
+            },
         }
     },
     setup(){
@@ -212,9 +227,6 @@ export default{
         const commentInput = ref(null);
         const mentionInputType = ref('tweet');
         const filteredUsers = ref([]);
-        if (store.state.isLoggedIn) {
-            router.push('/home');
-        }
         
         const logoutUser = async () => {
             try {
@@ -256,54 +268,81 @@ export default{
     computed: {
         ...mapState(['user']),
         currentPosts() {
-            return this.postType === 'all' ? this.tweets : this.following_tweets;
+            return this.postType === 'all' ? this.tweets.all : this.tweets.following;
         },
     },
     methods: {
+        switchToTweets() {
+            this.postType = 'all';
+            window.scrollTo(0, this.scrollPositions.all);
+        },
+        switchToFollowing() {
+            this.postType = 'following';
+            window.scrollTo(0, this.scrollPositions.following);
+        },
         handleScroll() {
-            if (this.reachedLastPage || this.loading) {
+            if (this.reachedLastPage[this.postType] || this.loading) {
                 return;
             }
-
             const scrollY = window.scrollY;
             const visibleHeight = window.innerHeight;
             const pageHeight = document.documentElement.scrollHeight;
 
+            // Save the scroll position for the current post type
+            this.scrollPositions[this.postType] = scrollY;
+
             // Check if the user has scrolled to the bottom and there are more pages to load
             if (scrollY + visibleHeight >= pageHeight - 200) {
-                this.loading = true; // Set loading flag to true to prevent multiple requests
-                this.loadMoreTweets();
+                console.log('User has scrolled to the bottom of the page');
+                this.loading = true;
+                this.loadTweets(this.postType, this.currentPage[this.postType]);
             }
         },
-        async loadMoreTweets() {
+        async loadTweets(type, page) {
+            if (this.reachedLastPage[type]) {
+                return;
+            }
             try {
-                const response = await axios.get(`/api/tweets/${this.postType}/${this.currentPage}`);
-                
-                // Log the entire response data to the console
+                if (this.currentPage[type] === 1) {
+                    this.tweets[type] = [];
+                }
+
+                const newTweets = await this.loadMoreTweets(type, this.currentPage[type]);
+                this.tweets[type] = this.tweets[type].filter(existingTweet => !newTweets.some(newTweet => newTweet.TweetID === existingTweet.TweetID));
+
+                this.tweets[type] = [...this.tweets[type], ...newTweets];
+                this.loading = false;
+            } catch (error) {
+                console.error('Error loading tweets:', error);
+            }
+        },
+        async loadMoreTweets(type, page) {
+            console.log('Loading more tweets:', type, page);
+
+            try {
+                const response = await axios.get(`/api/tweet_type/${type}/${page}`);
                 console.log('Full Response Data:', response);
 
                 const paginatedData = response.data;
 
                 if (Array.isArray(paginatedData.tweets.data)) {
-                    // Extract the array of tweets from the 'data' property
                     const newTweets = paginatedData.tweets.data;
 
-                    // Append new tweets to the existing ones
-                    this.tweets = [...this.tweets, ...newTweets];
-                    this.currentPage++; // Increment page for the next load
+                    this.currentPage[type]++;
 
-                    // Check if this is the last page
-                    if (this.currentPage == paginatedData.total_pages+1) {
-                        this.reachedLastPage = true;
-                        console.log('There are no more tweets to load.');
+                    if (this.currentPage[type] >= paginatedData.total_pages+1) {
+                        this.reachedLastPage[type] = true;
+                        console.log('There are no more tweets to load for', type);
                     }
+                    console.log('New tweets:', newTweets);
+                    return newTweets;
                 } else {
                     console.error('Invalid response format. Tweets should be an array.');
                 }
             } catch (error) {
                 console.error('Error loading more tweets:', error);
             } finally {
-                this.loading = false; // Set loading flag to false after the request is completed
+                this.loading = false;
             }
         },
         inputFocus() {
@@ -425,7 +464,7 @@ export default{
                     },
                 });
                 const newTweet = response.data.tweet;
-                this.tweets.unshift(newTweet);
+                this.tweets.all.unshift(newTweet);
                 this.tweet_text_input = '';
                 this.comment_text_input = '';
                 const textarea = this.tweetInput;
@@ -480,12 +519,6 @@ export default{
                 console.error('Error creating comment:', error);
                 this.buttonDisabled = false;
             }
-        },
-        switchToTweets() {
-            this.postType = 'tweets';
-        },
-        switchToFollowing() {
-            this.postType = 'following_tweets';
         },
         autoSize(ref) {
             const maxRows = 8;
@@ -687,8 +720,9 @@ export default{
     async mounted() {
         window.addEventListener('scroll', this.handleScroll);
         await this.$store.dispatch('initializeApp');
-        this.loadMoreTweets('all', this.currentPage);
         this.getAllUsersMention();
+        this.loadTweets('following');
+        this.loadTweets('all');
     },   
     beforeDestroy() {
         window.removeEventListener('scroll', this.handleScroll);
