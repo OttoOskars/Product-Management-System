@@ -268,7 +268,6 @@ export default{
             this.isPopupVisible = !this.isPopupVisible;
             setTimeout(() => { this.isPopupVisible = false; }, 10000);
         },
-
         autoSize() {
             const maxRows = 5;
             const textarea = this.$refs.tweetInputnav;
@@ -296,19 +295,6 @@ export default{
                 this.previewImagenav = null;
             }
         },
-        getTweets(type) {
-        axios
-            .get(`/api/tweets/${type}`)
-            .then((response) => {
-                this[type + '_tweets'] = response.data.tweets;
-                if (type === 'all') {
-                    this.tweets = response.data.tweets;
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-        },
         async createTweetnav() {
             if (this.buttonDisabled) {
                 return;
@@ -332,7 +318,6 @@ export default{
                 this.popupTriggers.TweetTrigger = false;
                 const textarea = this.tweetInputnav;
                 textarea.style.height = 'auto';
-                this.getTweets('all');
                 setTimeout(() => {
                     this.buttonDisabled = false;
                 }, 2000);

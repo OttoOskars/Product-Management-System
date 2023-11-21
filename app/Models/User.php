@@ -98,6 +98,16 @@ class User extends Authenticatable
         return $this->hasMany(Messages::class, 'ReceiverID');
     }
 
+    public function notificationsSent()
+    {
+        return $this->hasMany(Notifications::class, 'SenderID');
+    }
+
+    public function notificationsReceived()
+    {
+        return $this->hasMany(Notifications::class, 'ReceiverID');
+    }
+
     public function tokens(): MorphMany
     {
         return $this->morphMany(PersonalAccessToken::class, 'tokenable');

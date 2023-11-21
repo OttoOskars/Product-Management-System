@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Retweet;
 use App\Models\Tweet;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 
 class RetweetController extends Controller
@@ -38,6 +39,17 @@ class RetweetController extends Controller
         $retweet->UserID = $user->UserID;
         $retweet->TweetID = $tweet->TweetID;
         $retweet->save();
+        if ($tweet->UserID != $user->UserID) {
+            $notification = new Notification([
+                'SenderID' => $user->UserID,
+                'ReceiverID' => $tweet->UserID,
+                'NotificationType' => 'retweet',
+                'NotificationText' => ' retweeted your tweet',
+                'NotificationLink' => '/tweet/' . $tweet->TweetID,
+                'Read' => false,
+            ]);
+            $notification->save();
+        }
 
         return response()->json(['message' => 'Retweeted successfully', 'retweet' => $retweet], 201);
     }

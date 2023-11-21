@@ -12,6 +12,7 @@ use App\Models\Retweet;
 use App\Models\User;
 use App\Models\Bookmark;
 use App\Models\Mention;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\Paginator;
@@ -45,6 +46,17 @@ class TweetController extends Controller
                         'UserID' => $user->UserID,
                     ]);
                     $tweet->mentions()->save($mentionModel);
+                    if ($mention->UserID != $user->UserID){
+                        $notification = new Notification([
+                            'SenderID' => $user->UserID,
+                            'ReceiverID' => $mention->UserID,
+                            'NotificationType' => 'mention',
+                            'NotificationText' => ' mentioned you in a tweet',
+                            'NotificationLink' => '/tweet/' . $tweet->TweetID,
+                            'Read' => false,
+                        ]);
+                        $notification->save();
+                    }
                 }
             }
             $tweet->user = $user;
