@@ -40,8 +40,16 @@ class NotificationController extends Controller
             $notification->created_ago = $this->formatTimeAgo($notification->created_at, Carbon::now());
             $notification->sender = User::find($notification->SenderID);
         }
+        $notification_count = $notifications->where('Read', false)->count();
     
-        return response()->json(['notifications' => $notifications]);
+        return response()->json(['notifications' => $notifications, 'notification_count' => $notification_count]);
+    }
+    public function getUnreadNotificationCount()
+    {
+        $user = Auth::user();
+        $unreadCount = $user->notificationsReceived()->where('Read', false)->count();
+
+        return response()->json(['unreadCount' => $unreadCount]);
     }
 
     public function markSelectedAsReadNotifications(Request $request){

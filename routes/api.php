@@ -66,6 +66,8 @@ Route::middleware('auth:sanctum')->delete('tweets/unbookmark/{tweetId}', [Bookma
 Route::middleware('auth:sanctum')->post('/send-message', [UserController::class, 'sendMessage']);
 Route::middleware('auth:sanctum')->get('/user-messages', [UserController::class, 'getUserMessages']);
 
+
 Route::middleware('auth:sanctum')->get('/get-notifications/{type}', [NotificationController::class, 'getNotifications']);
+Route::middleware('auth:sanctum')->get('/get-unread-notification-count', [NotificationController::class, 'getUnreadNotificationCount']);
 Route::middleware('auth:sanctum')->post('/delete-selected-notifications', [NotificationController::class, 'deleteSelectedNotifications']);
 Route::middleware('auth:sanctum')->post('/mark-selected-as-read-notifications', [NotificationController::class, 'markSelectedAsReadNotifications']);

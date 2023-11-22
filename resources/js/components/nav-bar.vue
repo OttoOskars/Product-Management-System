@@ -21,7 +21,10 @@
 
             <button class="Notifications" :class="{ 'active': activeRoute === '/notifications' }" @click="$router.push('/notifications')">
                 <div class="button-content">
-                    <ion-icon class="button-icon" :name="isNotificationsFilled ? 'notifications' : 'notifications-outline'"></ion-icon>
+                    <div class="icon-container">
+                        <ion-icon class="button-icon" :name="isNotificationsFilled ? 'notifications' : 'notifications-outline'"></ion-icon>
+                        <div class="notification-count" v-if="unreadNotificationsCount > 0">{{ unreadNotificationsCount }}</div>
+                    </div>
                     <span class="button-text">Notifications</span>
                 </div>
             </button>
@@ -177,6 +180,7 @@ export default{
             isMessagesFilled: false,
             isBookmarksFilled: false,
             isProfileFilled: false,
+            unreadNotificationsCount: 0,
         }
     },
     setup(){
@@ -336,10 +340,21 @@ export default{
                 console.error(error);
             });
         },
+        getUnreadNotificationCount(){
+        axios
+            .get('/api/get-unread-notification-count')
+            .then(response => {
+                this.unreadNotificationsCount = response.data.unreadCount;
+            })
+            .catch(error => {
+                console.error(error);
+            })
+        }
     },
         
     async mounted() {
         this.getAllUsersMention();
+        this.getUnreadNotificationCount();
         this.activeRoute = this.$route.path;
         this.isHomeFilled = this.activeRoute.includes('/home');
         this.isNotificationsFilled = this.activeRoute.includes('/notifications');
@@ -359,11 +374,6 @@ export default{
 }
 </script>
 <style lang="scss" scoped>
-.active {
-    .button-content{
-        color: #1D9BF0;
-    }
-}
 .navbar-container{
     width: 3/12*100%;
     height: 100vh;
@@ -420,6 +430,27 @@ export default{
             }
             .button-text{
                 font-size:18px;
+            }
+        }
+    }
+    .Notifications{
+        .icon-container{
+            position:relative;
+            width:auto;
+            height:auto;
+            .notification-count{
+                position:absolute;
+                bottom:0px;
+                right:-4px;
+                background-color: #1d9bf0;
+                border-radius: 50%;
+                font-size:14px;
+                width:15px;
+                height:15px;
+                color:white;
+                display:flex;
+                align-items: center;
+                justify-content: center;
             }
         }
     }
@@ -535,6 +566,18 @@ export default{
             border-bottom-left-radius: 25px;
             border-bottom-right-radius: 25px;
         }
+    }
+}
+
+.active {
+    .button-content{
+        color: #1D9BF0;
+        .icon-container{
+        .notification-count{
+            background-color: white;
+            color:#1d9bf0;
+        }
+    }
     }
 }
 @media (max-width: 1250px) {

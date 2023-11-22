@@ -12,9 +12,21 @@
                 </div>
             </div>
             <div class="noti-type">
-                <button @click="switchToAll" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'all' }">All<div class="active-line" :class ="{ 'active': notiType == 'all' }"></div></button>
-                <button @click="switchToVerified" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'verified' }">Verified<div class="active-line" :class ="{ 'active': notiType == 'verified' }"></div></button>
-                <button @click="switchToMentions" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'mentions' }">Mentions<div class="active-line" :class ="{ 'active': notiType == 'mentions' }"></div></button>
+                <button @click="switchToAll" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'all' }">
+                    All
+                    <div class="active-line" :class ="{ 'active': notiType == 'all' }"></div>
+                    <div class="noti-count" v-if="all_count > 0">{{ all_count }}</div>
+                </button>
+                <button @click="switchToVerified" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'verified' }">
+                    Verified
+                    <div class="active-line" :class ="{ 'active': notiType == 'verified' }"></div>
+                    <!-- <div class="noti-count" v-if="all_count > 0">{{ all_count }}</div> -->
+                </button>
+                <button @click="switchToMentions" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'mentions' }">
+                    Mentions
+                    <div class="active-line" :class ="{ 'active': notiType == 'mentions' }"></div>
+                    <div class="noti-count" v-if="mentions_count > 0">{{ mentions_count }}</div>
+                </button>
             </div>
             <div class="notification-buttons">
                 <button @click="selectAll" class="noti-btn">Select all</button>
@@ -68,6 +80,8 @@ export default{
             isMarkReadActive: false,
             isMarkUnreadActive: false,
             selectedNotifications: [],
+            all_count: 0,
+            mentions_count: 0,
         };
     },
     computed: {
@@ -155,6 +169,7 @@ export default{
                 this.selectedNotifications = [];
                 // Refresh notifications
                 this.getUserNotifications(this.notiType);
+                this[this.notiType+'_count'] = response.data.notification_count;
                 })
                 .catch((error) => {
                 console.error(error);
@@ -174,6 +189,7 @@ export default{
                     this.selectedNotifications = [];
                     // Refresh notifications
                     this.getUserNotifications(this.notiType);
+                    this[this.notiType+'_count'] = response.data.notification_count;
                 })
                 .catch((error) => {
                     console.error(error);
@@ -205,6 +221,7 @@ export default{
             .get('/api/get-notifications/' + type)
             .then(response => {
                 this.notifications[type] = response.data.notifications;
+                this[type+'_count'] = response.data.notification_count;
             })
             .catch(error => {
                 console.error(error);
@@ -275,6 +292,21 @@ export default{
             &.active{
                 display:block;
             }
+        }
+        .noti-count{
+            position:absolute;
+            bottom:50%;
+            transform: translateY(50%);
+            left: 10px;
+            background-color: #1d9bf0;
+            border-radius: 50%;
+            font-size:14px;
+            width:20px;
+            height:20px;
+            color:white;
+            display:flex;
+            align-items: center;
+            justify-content: center;
         }
     }
     .notification-buttons{
