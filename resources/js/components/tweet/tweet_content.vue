@@ -598,8 +598,6 @@ export default {
         this.getTweet(this.$route.params.tweetID);
         this.fetchCommentsByTweet(this.$route.params.tweetID);
         this.getAllUsersMention();
-        console.log(this.mainInput);
-        console.log(this.popupInput);
     }
 };
 </script>

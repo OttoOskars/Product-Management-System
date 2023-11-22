@@ -43,7 +43,7 @@
             <div class="under-text">When someone mentions you, you'll find it here.</div>
         </div>
         <div class="notification-container">
-            <div class="notification" v-for="notification in currentNotifications" :key="notification.NotificationID" @click="openLink(notification.NotificationLink)" :class="{ 'unread': !notification.Read, 'selected': isSelected(notification) }">
+            <div class="notification" v-for="notification in currentNotifications" :key="notification.NotificationID" @click="openLink(notification.NotificationLink, notification.NotificationID)" :class="{ 'unread': !notification.Read, 'selected': isSelected(notification) }">
                 <div class="user-img">
                     <img @click.stop="openProfile(notification.sender.UserTag)" :src="'/storage/' + notification.sender.ProfilePicture">
                 </div>
@@ -208,8 +208,16 @@ export default{
         switchToMentions() {
             this.notiType = 'mentions';
         },
-        openLink(link){
-            this.$router.push(link)
+        openLink(link, id){
+            axios
+                .post('/api/mark-selected-as-read-notifications', { notificationIds: [id] })
+                .then((response) => {
+                    console.log(response.data.message);
+                    this.$router.push(link);
+                })
+                .catch((error) => {
+                    console.error(error);
+                })
         },
         openProfile(tag){
             const NoSymbolTag = tag.replace(/^@/, '');
@@ -236,6 +244,31 @@ export default{
 }
 </script>
 <style lang="scss" scoped>
+
+input[type="checkbox"]{
+    appearance: none;
+    width:20px;
+    height:20px;
+    background-color: #202223;
+    border-radius:5px;
+    border:#2F3336 solid 2px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:all 0.3s;
+    &::after{
+        color:#1d9bf0;
+        content:"✓";
+        display:none;
+    }
+    &:checked::after{
+        display:block;
+    }
+    &:hover{
+        background-color: rgb(29, 31, 33);
+    }
+}
 .top-bar{
     position:sticky;
     top:0;
