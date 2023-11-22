@@ -29,12 +29,11 @@
                 </button>
             </div>
             <div class="notification-buttons">
-                <button @click="selectAll" class="noti-btn">Select all</button>
-                <button @click="selectRead" class="noti-btn">Select read</button>
-                <button @click="selectUnread" class="noti-btn">Select unread</button>
-                <button @click="markSelectedAsRead" class="noti-btn">Mark as read</button>
-                <button @click="deleteSelected" class="noti-btn">Delete</button>
-                
+                <input type="checkbox" @click.stop="selectAll()">
+                <button @click="selectUnread" class="noti-btn"><ion-icon name="mail-unread"></ion-icon></button>
+                <button @click="selectRead" class="noti-btn"><ion-icon name="mail-open"></ion-icon></button>
+                <button @click="markSelectedAsRead" class="noti-btn"><ion-icon name="book"></ion-icon></button>
+                <button @click="deleteSelected" class="noti-btn"><ion-icon class="delete" name="trash"></ion-icon></button>
             </div>
         </div>
 
@@ -353,16 +352,24 @@ input[type="checkbox"]{
         .noti-btn{
             height:100%;
             width:auto;
+            display:flex;
             align-items: center;
             justify-content: center;
             color:#71767B;
             border:none;
             background:none;
             transition:all 0.3s;
-            font-size:13px;
+            font-size:18px;
             font-weight:600;
+            cursor:pointer;
             &:hover{
                 background-color:rgba($color: #202223, $alpha: 0.8);
+            }
+            ion-icon{
+                color:#a9adb1;
+            }
+            .delete{
+                color:#e42020;
             }
         }
     }
@@ -402,8 +409,9 @@ input[type="checkbox"]{
 .notification-container{
     color:white;
     box-sizing: border-box;
-    height:2000px;
+    height:auto;
     .notification{
+        position:relative;
         width:100%;
         height:auto;
         display:flex;
@@ -461,13 +469,6 @@ input[type="checkbox"]{
                 font-size: 14px;
             }
         }
-        .checkbox{
-            width:20px;
-            height:20px;
-            border-radius:5px;
-            background:none;
-            border:solid 1px white;
-        }
         &:hover{
             background-color: #080808;
         }
@@ -504,7 +505,7 @@ input[type="checkbox"]{
         height:auto;
         min-height:30px;
         .noti-btn{
-            font-size:13px;
+            font-size:15px;
         }
     }
 }
