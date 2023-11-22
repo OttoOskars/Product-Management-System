@@ -38,7 +38,7 @@
                     </div>
                 </div>
             </div>
-            <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID" @click="openTweet(tweet.TweetID)">
+            <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID" @click="openTweet(tweet.TweetID)" :id="tweet.TweetID">
                 <div class="isretweet" v-if="tweet.isRetweet">
                     <p class="tweet-text"><span>{{ user.UserTag }}</span> Reposted</p>
                 </div>

@@ -1624,7 +1624,7 @@ export default{
         font-size:20px;
     }
     .profile-top{
-        padding: 5px 5px 0px 25px;
+        padding: 5px 5px 0px 15px;
         .title{
             font-size: 18px;
         }

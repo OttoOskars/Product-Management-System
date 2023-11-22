@@ -19,29 +19,60 @@ use Illuminate\Pagination\Paginator;
 
 class NotificationController extends Controller
 {
-    public function getNotifications(){
+    public function getNotifications($type)
+    {
         $user = auth()->user();
-        $notifications = $user->notifications();
-        foreach ($notifications as $notification) {
-            $notification->created_at = $this->formatTimeAgo($notification->created_at, Carbon::now());
+        $query = $user->notificationsReceived()->orderBy('created_at', 'desc');
+    
+        if ($type === 'all') {
+            // Exclude mentions
+            $query->where('NotificationType', '!=', 'mention');
+        } elseif ($type === 'mentions') {
+            // Filter only mentions
+            $query->where('NotificationType', 'mention');
+        } else {
+            // Handle other types as needed
         }
-        return response()->json($notifications);
+    
+        $notifications = $query->get();
+    
+        foreach ($notifications as $notification) {
+            $notification->created_ago = $this->formatTimeAgo($notification->created_at, Carbon::now());
+            $notification->sender = User::find($notification->SenderID);
+        }
+    
+        return response()->json(['notifications' => $notifications]);
     }
 
-    public function markAsRead($array){
-        Notification::whereIn('NotificationID', $array)->update(['Read' => true]);
-        return response()->json(['message' => 'All notifications marked as read successfully']);
+    public function markSelectedAsReadNotifications(Request $request){
+        $notificationIds = $request->input('notificationIds', []);
+
+        // Validate if notificationIds is an array to avoid potential issues
+        if (!is_array($notificationIds)) {
+            return response()->json(['message' => 'Invalid request.'], 400);
+        }
+    
+        // Update notifications with the provided IDs
+        Notification::whereIn('NotificationID', $notificationIds)->update(['Read' => true]);
+    
+        return response()->json(['message' => 'Selected notifications marked as read successfully']);
     }
-    public function deleteAllNotification($array)
+    public function deleteSelectedNotifications(Request $request)
     {
-        Notification::whereIn('NotificationID', $array)->delete();
-        return response()->json(['message' => 'All notifications deleted successfully']);
+        $notificationIds = $request->input('notificationIds', []);
+
+        // Validate if notificationIds is an array to avoid potential issues
+        if (!is_array($notificationIds)) {
+            return response()->json(['message' => 'Invalid request.'], 400);
+        }
+    
+        // Delete notifications with the provided IDs
+        Notification::whereIn('NotificationID', $notificationIds)->delete();
+    
+        return response()->json(['message' => 'Selected notifications deleted successfully']);
     }
-    public function deleteNotification($id)
-    {
-        Notification::find($id)->delete();
-        return response()->json(['message' => 'notification deleted successfully']);
-    }
+
+
     private function formatTimeAgo($created_at, $now)
     {
         $diff = $created_at->diff($now);
