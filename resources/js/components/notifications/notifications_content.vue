@@ -49,7 +49,7 @@
                 </div>
                 <div class="notification-content">
                     <div class="notification-text" v-if="notification.sender">
-                        <p class="user-tag">{{ notification.sender.Name }}</p>
+                        <p class="user-tag">{{ notification.sender.UserTag }}</p>
                         <p class="text">{{ notification.NotificationText }}</p>
                     </div>
                     <div class="time">{{ notification.created_ago }}</div>
@@ -446,7 +446,7 @@ input[type="checkbox"]{
                 }
                 .user-tag{
                     position:absolute;
-                    top:5px;
+                    top:0px;
                     margin:0;
                     font-weight: bold;
                     max-width:100%;
@@ -456,6 +456,7 @@ input[type="checkbox"]{
                 }
             }
             .time{
+                color:#6A6F74;
                 margin-left:5px;
                 font-size: 14px;
             }
