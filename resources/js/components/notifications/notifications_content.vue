@@ -368,9 +368,9 @@ input[type="checkbox"]{
             ion-icon{
                 color:#a9adb1;
             }
-            .delete{
+/*             .delete{
                 color:#e42020;
-            }
+            } */
         }
     }
 }
