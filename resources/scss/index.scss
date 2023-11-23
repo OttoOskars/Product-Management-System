@@ -21,6 +21,7 @@ html,body {
 .navbar{
     width: 3/12*100%;
     box-sizing: border-box;
+    z-index:99;
 }
 .search{
     min-height: 100%;

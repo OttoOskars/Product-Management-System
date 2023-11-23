@@ -13,23 +13,29 @@
             </div>
             <div class="noti-type">
                 <button @click="switchToAll" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'all' }">
-                    All
+                    <div class="noti-title">
+                        All
+                        <div class="noti-count" v-if="all_count > 0">{{ all_count }}</div>
+                    </div>
                     <div class="active-line" :class ="{ 'active': notiType == 'all' }"></div>
-                    <div class="noti-count" v-if="all_count > 0">{{ all_count }}</div>
                 </button>
                 <button @click="switchToVerified" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'verified' }">
-                    Verified
+                    <div class="noti-title">
+                        Verified
+                        <!-- <div class="noti-count" v-if="all_count > 0">{{ all_count }}</div> -->
+                    </div>
                     <div class="active-line" :class ="{ 'active': notiType == 'verified' }"></div>
-                    <!-- <div class="noti-count" v-if="all_count > 0">{{ all_count }}</div> -->
                 </button>
                 <button @click="switchToMentions" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'mentions' }">
-                    Mentions
+                    <div class="noti-title">
+                        Mentions
+                        <div class="noti-count" v-if="mentions_count > 0">{{ mentions_count }}</div>
+                    </div>
                     <div class="active-line" :class ="{ 'active': notiType == 'mentions' }"></div>
-                    <div class="noti-count" v-if="mentions_count > 0">{{ mentions_count }}</div>
                 </button>
             </div>
             <div class="notification-buttons">
-                <input type="checkbox" @click.stop="selectAll()">
+                <input type="checkbox" @click.stop="selectAll()" id="markAllCheckBox">
                 <button @click="selectUnread" class="noti-btn"><ion-icon name="mail-unread"></ion-icon></button>
                 <button @click="selectRead" class="noti-btn"><ion-icon name="mail-open"></ion-icon></button>
                 <button @click="markSelectedAsRead" class="noti-btn"><ion-icon name="book"></ion-icon></button>
@@ -51,12 +57,13 @@
                         <p class="user-tag">{{ notification.sender.UserTag }}</p>
                         <p class="text">{{ notification.NotificationText }}</p>
                     </div>
-                    <div class="time">{{ notification.created_ago }}</div>
+                    <div class="time"><p>{{ notification.created_ago }}</p></div>
                 </div>
                 <div>
                     <input type="checkbox"            
                     :checked="isSelected(notification)"
-                    @click.stop="markCheckbox(notification)">
+                    @click.stop="markCheckbox(notification)"
+                    :id="notification.NotificationID+'_notification'">
                 </div>
             </div>
         </div>
@@ -306,6 +313,25 @@ input[type="checkbox"]{
             &:hover{
                 background-color:rgba($color: #202223, $alpha: 0.8);
             }
+            .noti-title{
+                display:flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap:2px;
+                .noti-count{
+                    background-color: #1d9bf0;
+                    font-size:14px;
+                    border-radius:50%;
+                    right:5px;
+                    width:20px;
+                    height:20px;
+                    color:white;
+                    display:flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
         }
         .active-noti-type{
             color:white;
@@ -325,21 +351,7 @@ input[type="checkbox"]{
                 display:block;
             }
         }
-        .noti-count{
-            position:absolute;
-            bottom:50%;
-            transform: translateY(50%);
-            left: 10px;
-            background-color: #1d9bf0;
-            border-radius: 50%;
-            font-size:14px;
-            width:20px;
-            height:20px;
-            color:white;
-            display:flex;
-            align-items: center;
-            justify-content: center;
-        }
+
     }
     .notification-buttons{
         width:100%;
@@ -495,6 +507,13 @@ input[type="checkbox"]{
             padding:5px;
             font-size: 14px;
             font-weight:600;
+            .noti-title{
+                .noti-count{
+                    font-size:12px;
+                    width:15px;
+                    height:15px;
+                }
+            }
         }
         .active-line{
             height:3px;
