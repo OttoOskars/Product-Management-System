@@ -943,7 +943,7 @@ export default{
                     font-size: 16px;
                 }
                 .message-img{
-                    width: 460px;
+                    width: 100%;
                     max-height: 300px;
                     border-radius: 15px;
                 }
@@ -996,7 +996,7 @@ export default{
                     font-size: 16px;
                 }
                 .message-img{
-                    width: 460px;
+                    width: 100%;
                     max-height: 300px;
                     border-radius: 15px;
                 }
