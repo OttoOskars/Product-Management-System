@@ -817,9 +817,11 @@ export default{
                 const tweet = this.currentPosts.find((t) => t.TweetID === tweetID);
                 if (tweet) {
                     tweet.comment_count -= 1;
+                    tweet.comments = tweet.comments.filter((c) => c.CommentID !== commentID);
                 }
                 this.popupTriggers.DeleteTrigger2 = false;
-                this.getCommentedTweets(this.$route.params.UserTag);
+                this.popupTriggers.DeleteTrigger = false;
+                this.loadTweets('replies');
                 console.log(`Comment with ID ${commentID} deleted successfully.`);
             } catch (error) {
                 console.error('Error deleting comment:', error);
@@ -842,8 +844,9 @@ export default{
                 const newComment = response.data.comment;
                 this.comments.push(newComment);
                 tweet.comment_count++;
-                const textarea = this.$refs.tweetInput;
+                const textarea = this.commentInput;
                 textarea.style.height = 'auto';
+                this.comment_text_input = '';
                 this.popupTriggers.CommentTrigger = false;
                 setTimeout(() => {
                     this.buttonDisabled = false;
@@ -1621,7 +1624,7 @@ export default{
         font-size:20px;
     }
     .profile-top{
-        padding: 5px 5px 0px 25px;
+        padding: 5px 5px 0px 15px;
         .title{
             font-size: 18px;
         }

@@ -10,7 +10,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens;
 
     protected $table = 'users';
     protected $primaryKey = 'UserID';
@@ -96,6 +96,16 @@ class User extends Authenticatable
     public function messagesReceived()
     {
         return $this->hasMany(Messages::class, 'ReceiverID');
+    }
+
+    public function notificationsSent()
+    {
+        return $this->hasMany(Notification::class, 'SenderID');
+    }
+
+    public function notificationsReceived()
+    {
+        return $this->hasMany(Notification::class, 'ReceiverID');
     }
 
     public function tokens(): MorphMany

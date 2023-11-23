@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Follow;
 use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,10 +18,23 @@ class FollowController extends Controller
     {
         $user = auth()->user();
         $userToFollow = User::find($userToFollowId);
+        $EditedUserTag = substr($userToFollow->UserTag, 1);
+
     
         if ($userToFollow) {
             // Attach the relationship
             $user->follows()->attach($userToFollow->UserID);
+            if ($user->UserID != $userToFollow->UserID){
+                $notification = new Notification([
+                    'SenderID' => $user->UserID,
+                    'ReceiverID' => $userToFollow->UserID,
+                    'NotificationType' => 'follow',
+                    'NotificationText' => ' followed you',
+                    'NotificationLink' => '/profile/' . $EditedUserTag,
+                    'Read' => false, 
+                ]);
+            }
+            $notification->save();
             return response()->json(['message' => 'You are now following this user.'.$userToFollow->UserID]);
         } else {
             return response()->json(['error' => 'User not found.'], 404);

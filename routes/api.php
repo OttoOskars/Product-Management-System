@@ -9,6 +9,7 @@ use App\Http\Controllers\API\RetweetController;
 use App\Http\Controllers\API\FollowController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BookmarkController;
+use App\Http\Controllers\API\NotificationController;
 
 Route::post('check-email', [UserController::class, 'checkEmail']);
 Route::post('login', [UserController::class, 'login']);
@@ -31,9 +32,9 @@ Route::middleware('auth:sanctum')->get('/tweet_type/{type}/{page}', [TweetContro
 Route::middleware('auth:sanctum')->get('/user_tweets/{userTag}/{type}/{page}', [TweetController::class, 'getUserTweetsByType']);
 
 
-Route::middleware('auth:sanctum')->get('/user-tweets/{userTag}', [TweetController::class, 'getUserTweets']);
+/* Route::middleware('auth:sanctum')->get('/user-tweets/{userTag}', [TweetController::class, 'getUserTweets']);
 Route::middleware('auth:sanctum')->get('/liked-tweets/{userTag}', [TweetController::class, 'getUserLikedTweets']);
-Route::middleware('auth:sanctum')->get('/commented-tweets/{userTag}', [TweetController::class, 'getUserCommentedTweets']);
+Route::middleware('auth:sanctum')->get('/commented-tweets/{userTag}', [TweetController::class, 'getUserCommentedTweets']); */
 Route::middleware('auth:sanctum')->get('/tweetdata/{id}', [TweetController::class, 'getTweetData']);
 Route::delete('/tweets/{id}',[TweetController::class, 'deleteTweet']);
 
@@ -64,3 +65,9 @@ Route::middleware('auth:sanctum')->delete('tweets/unbookmark/{tweetId}', [Bookma
 
 Route::middleware('auth:sanctum')->post('/send-message', [UserController::class, 'sendMessage']);
 Route::middleware('auth:sanctum')->get('/user-messages', [UserController::class, 'getUserMessages']);
+
+
+Route::middleware('auth:sanctum')->get('/get-notifications/{type}', [NotificationController::class, 'getNotifications']);
+Route::middleware('auth:sanctum')->get('/get-unread-notification-count', [NotificationController::class, 'getUnreadNotificationCount']);
+Route::middleware('auth:sanctum')->post('/delete-selected-notifications', [NotificationController::class, 'deleteSelectedNotifications']);
+Route::middleware('auth:sanctum')->post('/mark-selected-as-read-notifications', [NotificationController::class, 'markSelectedAsReadNotifications']);

@@ -1,11 +1,11 @@
 <template>
     <div class="search-container">
         <div class="search-input-container">
-            <input 
+            <input
                 type="text"
                 id="search-input"
-                class="search-input" 
-                maxlength="30" 
+                class="search-input"
+                maxlength="30"
                 placeholder="Search"
                 :class="{ 'focused': isInputFocused }"
                 @focus="inputFocus"

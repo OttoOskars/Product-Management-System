@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Comment;
 use App\Models\Tweet;
 use App\Models\User;
+use App\Models\Notification;
 use App\Models\CommentMention;
 
 class CommentController extends Controller
@@ -43,7 +44,29 @@ class CommentController extends Controller
                         'UserID' => $user->UserID,
                     ]);
                     $comment->comment_mentions()->save($mentionModel);
+                    if ($mention->UserID != $user->UserID) {
+                        $mentionnotifcation = new Notification([
+                            'SenderID' => $user->UserID,
+                            'ReceiverID' => $mention->UserID,
+                            'NotificationType' => 'mention',
+                            'NotificationText' => ' mentioned you in a comment',
+                            'NotificationLink' => '/tweet/' . $tweet->TweetID,
+                            'Read' => false,
+                        ]);
+                        $mentionnotifcation->save();
+                    }
                 }
+            }
+            if ($tweet->UserID != $user->UserID){
+                $commentnotifcation = new Notification([
+                    'SenderID' => $user->UserID,
+                    'ReceiverID' => $tweet->UserID,
+                    'NotificationType' => 'comment',
+                    'NotificationText' => ' commented on your tweet',
+                    'NotificationLink' => '/tweet/' . $tweet->TweetID,
+                    'Read' => false,
+                ]);
+                $commentnotifcation->save();
             }
             $comment->user = $user;
             $comment->created_ago = 'now';

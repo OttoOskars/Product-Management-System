@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Like;
 use App\Models\Tweet;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
@@ -40,7 +41,17 @@ class LikeController extends Controller
         $like->UserID = $user->UserID;
         $like->TweetID = $tweet->TweetID;
         $like->save();
-
+        if ($tweet->UserID != $user->UserID) {
+            $notification = new Notification([
+                'SenderID' => $user->UserID,
+                'ReceiverID' => $tweet->UserID,
+                'NotificationType' => 'like',
+                'NotificationText' => ' liked your tweet',
+                'NotificationLink' => '/tweet/' . $tweet->TweetID,
+                'Read' => false,
+            ]);
+            $notification->save();
+        }
         return response()->json(['message' => 'Liked successfully', 'like' => $like, 'tweet' => $tweet], 201);
     }
 
