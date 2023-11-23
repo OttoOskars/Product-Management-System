@@ -45,7 +45,9 @@
 
         <div class="noti-main" v-if ="currentNotifications.length <= 0">
             <div class="main-text">Nothing to see here — yet</div>
-            <div class="under-text">When someone mentions you, you'll find it here.</div>
+            <div class="under-text" v-if="notiType=='mentions'">When someone mentions you, you'll find it here.</div>
+            <div class="under-text" v-if="notiType=='verified'">Likes, mentions, reposts, and a whole lot more — when it comes from a verified account, you’ll find it here</div>
+            <div class="under-text" v-if="notiType=='all'">All notifications will be shown here.</div>
         </div>
         <div class="notification-container">
             <div class="notification" v-for="notification in currentNotifications" :key="notification.NotificationID" @click="openLink(notification.NotificationLink, notification.NotificationID)" :class="{ 'unread': !notification.Read, 'selected': isSelected(notification) }">
@@ -390,31 +392,31 @@ input[type="checkbox"]{
     width: 100%;
     height: auto;
     box-sizing: border-box;
-    .noti-main{
-        padding-top:0px;
-        padding-bottom:80px;
-        width:100%;
-        height:auto;
-        display:flex;
-        flex-direction:column;
+    .noti-main {
+        padding-top: 0;
+        padding-bottom: 80px;
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
         box-sizing: border-box;
-        .main-text{
+        .main-text {
             color: white;
             text-align: left;
             font-size: 37px;
             font-weight: bold;
-            display: flex;
             margin-top: 10%;
-            margin-left:15%;
-            margin-right:15%;
+            margin-left: 15%;
+            margin-right: 15%;
         }
-        .under-text{
-            color:gray;
-            display: flex;
-            font-size: 15px;
+        .under-text {
+            max-width: 100%;
+            color: gray;
+            font-size: 16px;
             text-align: left;
-            padding-left: 15%;
-            margin-top: 15px;
+            margin-top: 10px;
+            margin-left: 15%;
+            margin-right: 15%;
         }
     }
 }
@@ -537,7 +539,7 @@ input[type="checkbox"]{
             font-size: 25px;
         }
         .under-text{
-            font-size: 13px;
+            font-size: 14px;
         }
     }
 }
