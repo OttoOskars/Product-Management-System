@@ -35,11 +35,11 @@
                 </button>
             </div>
             <div class="notification-buttons">
-                <input type="checkbox" @click.stop="selectAll()" id="markAllCheckBox">
-                <button @click="selectUnread" class="noti-btn"><ion-icon name="mail-unread"></ion-icon></button>
-                <button @click="selectRead" class="noti-btn"><ion-icon name="mail-open"></ion-icon></button>
-                <button @click="markSelectedAsRead" class="noti-btn"><ion-icon name="book"></ion-icon></button>
-                <button @click="deleteSelected" class="noti-btn"><ion-icon class="delete" name="trash"></ion-icon></button>
+                <input type="checkbox" @click.stop="selectAll()" id="selectAllCheckBox" title="Select all">
+                <button @click="selectUnread" class="noti-btn" title="Select unread"><ion-icon name="mail-unread"></ion-icon></button>
+                <button @click="selectRead" class="noti-btn" title="Select read"><ion-icon name="mail-open"></ion-icon></button>
+                <button @click="markSelectedAsRead" class="noti-btn" title="Mark selected as read"><ion-icon name="book"></ion-icon></button>
+                <button @click="deleteSelected" class="noti-btn" title="Delete selected"><ion-icon class="delete" name="trash"></ion-icon></button>
             </div>
         </div>
 
