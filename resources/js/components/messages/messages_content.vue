@@ -55,7 +55,7 @@
                             <p class="usertag">{{ selectedUser ? selectedUser.UserTag : '' }}</p>
                         </div>
                         <div class="message-input-container">
-                            <textarea class="message-input" rows="1" @input="autoSize" ref="tweetInputnav" placeholder="Message..." maxlength="255"></textarea>
+                            <textarea class="message-input" rows="1" @input="handleInput" ref="tweetInputnav" placeholder="Message..." maxlength="255"></textarea>
                         </div>
                         <div class="message-image-preview">
                             <img :src="previewImagenav" v-if="previewImagenav">
@@ -66,7 +66,7 @@
                     <div class="buttons">
                         <button class="message-btn"><input type="file" accept="image/png, image/gif, image/jpeg, video/mp4,video/x-m4v,video/*" id="message-img-input" @change="onImageChangenav" hidden><label for="message-img-input" class="message-img-label"><ion-icon name="images-outline" class="create-message-icon"></ion-icon></label></button>
                     </div>
-                    <button class="popup-button" @click="sendMessage">Send</button>
+                    <button class="popup-button" @click="sendMessage" :disabled="isSendDisabled">Send</button>
                 </div>
             </div>
         </Popup>
@@ -110,10 +110,14 @@ export default{
         return {
             isInputFocused: false,
             personClicked: false,
+            messageText: '',
         };
     },
     computed: {
         ...mapState(['user']),
+        isSendDisabled() {
+            return this.messageText.trim().length === 0;
+        },
     },
     setup () {
         const previewImagenav = ref(null);
@@ -348,6 +352,13 @@ export default{
             } else {
                 textarea.style.height = maxHeight + 'px';
             }
+        },
+        updateMessageText(event) {
+            this.messageText = event.target.value;
+        },
+        handleInput(event) {
+            this.autoSize();
+            this.updateMessageText(event);
         },
         openProfile(tag){
             const NoSymbolTag = tag.replace(/^@/, '');
@@ -686,7 +697,6 @@ export default{
         box-sizing: border-box;
         justify-content: space-between;
         padding:0px 0px 0px 0px;
-        box-sizing: border-box;
         .title-messages{
             color: white;
             margin-left:20px;
@@ -861,6 +871,7 @@ export default{
                 &:disabled{
                     background-color: #0F4E78;
                     color:#808080;
+                    cursor: default;
                 }
             }
         }
@@ -868,12 +879,12 @@ export default{
     .received-messages-popup{
         width:500px;
         max-height: 600px;
+        min-height: 200px;
         display:flex;
         flex-direction:column;
         box-sizing: border-box;
         justify-content: space-between;
         padding:0px 0px 0px 0px;
-        box-sizing: border-box;
         .title-messages{
             color: white;
             margin-left:20px;
@@ -942,12 +953,12 @@ export default{
     .sent-messages-popup{
         width:500px;
         max-height: 600px;
+        min-height: 200px;
         display:flex;
         flex-direction:column;
         box-sizing: border-box;
         justify-content: space-between;
         padding:0px 0px 0px 0px;
-        box-sizing: border-box;
         .title-messages{
             color: white;
             margin-left:20px;
@@ -1087,7 +1098,7 @@ export default{
                 height: 45px;
             }
         }
-        .edit-popup{
+        .edit-popup, .message-popup, .received-messages-popup, .sent-messages-popup{
             width: 100%;
         }
     }
