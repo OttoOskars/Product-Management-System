@@ -22,7 +22,7 @@
                 <button @click="switchToVerified" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'verified' }">
                     <div class="noti-title">
                         Verified
-                        <!-- <div class="noti-count" v-if="all_count > 0">{{ all_count }}</div> -->
+                        <div class="noti-count" v-if="verified_count > 0">{{ verified_count }}</div>
                     </div>
                     <div class="active-line" :class ="{ 'active': notiType == 'verified' }"></div>
                 </button>
