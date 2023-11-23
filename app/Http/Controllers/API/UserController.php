@@ -160,6 +160,7 @@ class UserController extends Controller
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
+
     private function checkIfFollowedByUser($user1, $user2)
     {
         return $user2->followers->contains('UserID', $user1->UserID);
@@ -244,27 +245,61 @@ class UserController extends Controller
 
     public function sendMessage(Request $request)
     {
-        $user = Auth::user(); // Get the authenticated user
+        $user = Auth::user();
 
-        // Assuming you pass ReceiverID and Content in the request
         $message = new Messages();
-        $message->SenderID = $user->UserID; // Set the sender ID
-        $message->ReceiverID = $request->input('ReceiverID'); // Get the receiver ID from the request
-        $message->Content = $request->input('Content'); // Get the message content from the request
-        $message->Image = $request->file('Image'); // Get the message content from the request
+        $message->SenderID = $user->UserID;
+        $message->ReceiverID = $request->input('ReceiverID');
+        $message->Content = $request->input('Content');
 
-        $message->save(); // Save the message
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $path = $image->store('tweet_pictures', 'public');
+            $message->Image = $path;
+        }
+
+        $message->save();
 
         return response()->json(['success' => true, 'message' => 'Message sent successfully']);
     }
 
+    private function formatTimeAgo($created_at, $now)
+    {
+        $diff = $created_at->diff($now);
+
+        if ($diff->y > 0) {
+            return $diff->y . 'y';
+        } elseif ($diff->m > 0) {
+            return $diff->m . 'm';
+        } elseif ($diff->d > 0) {
+            return $diff->d . 'd';
+        } elseif ($diff->h > 0) {
+            return $diff->h . 'h';
+        } elseif ($diff->i > 0) {
+            return $diff->i . 'm';
+        } else {
+            return $diff->s . 's';
+        }
+    }
+
     public function getUserMessages()
     {
-        $user = Auth::user(); // Get the authenticated user
+        $user = Auth::user();
 
-        // Retrieve messages sent and received by the user
-        $sentMessages = $user->messagesSent()->get();
-        $receivedMessages = $user->messagesReceived()->get();
+        $sentMessages = $user->messagesSent()->orderBy('created_at', 'desc')->get();
+        $receivedMessages = $user->messagesReceived()->orderBy('created_at', 'desc')->get();
+
+        $now = Carbon::now();
+
+        foreach ($sentMessages as $message) {
+            $message->sent_ago = $this->formatTimeAgo($message->created_at, $now);
+        }
+
+        foreach ($receivedMessages as $message) {
+            $message->received_ago = $this->formatTimeAgo($message->created_at, $now);
+        }
+        Log::info($sentMessages);
+        Log::info($receivedMessages);
 
         return response()->json(['sent_messages' => $sentMessages, 'received_messages' => $receivedMessages]);
     }

@@ -17,7 +17,7 @@
         <div class="messages-right">
             <div class="right-text">Select a message</div>
             <div class="right-under-text">Choose from your existing conversations, start a new one, or just keep swimming.</div>
-            <button class="right-write-button" @click="ToggleThirdPopup('MessageTrigger2')">New message</button>
+            <button class="right-write-button" @click="ToggleThirdPopup('MessageTrigger2')">Messages</button>
         </div>
         <Popup v-if="popupTriggers.EditTrigger" :TogglePopup="() => ToggleFirstPopup('EditTrigger')">
             <div class="edit-popup">
@@ -71,12 +71,26 @@
             </div>
         </Popup>
         <Popup v-if="popupTriggers.MessageTrigger2" :TogglePopup="() => ToggleThirdPopup('MessageTrigger2')">
-            <div class="received-messages-popup" v-if="selectedUser">
-                <div class="title-messages">Received Messages from {{ selectedUser.Name }}</div>
-                <button class="see-messages-btn" @click="fetchReceivedMessages">See Messages</button>
-                <div v-for="(message, index) in receivedMessages" :key="index" class="received-message">
-                    <p>{{ message.content }}</p>
-                    <p>Sent at: {{ message.timestamp }}</p>
+            <div class="received-messages-popup" v-if="user">
+                <div class="title-messages">Received Messages<button @click="ToggleFourthPopup('MessageTrigger3')" class="sent-messages-btn">Sent messages</button></div>
+                <div class="message-container">
+                    <div v-for= "message in receivedMessages" :key="message.MessageID" class="received-message">
+                        <p class="message-p" v-if="message.senderTag"><span style="font-weight: bold;">From </span><span style="color:gray">{{ message.senderTag }} <span>{{ message.received_ago }}</span></span></p>
+                        <p class="message-content">{{ message.content }}</p>
+                        <img class="message-img" v-if="message.image" :src="'/storage/'+ message.image" alt="Message Image">
+                    </div>
+                </div>
+            </div>
+        </Popup>
+        <Popup v-if="popupTriggers.MessageTrigger3" :TogglePopup="() => ToggleFourthPopup('MessageTrigger3')">
+            <div class="sent-messages-popup" v-if="user">
+                <div class="title-messages">Sent Messages</div>
+                <div class="message-container">
+                    <div v-for="message in sentMessages" :key="message.MessageID" class="sent-message">
+                        <p class="message-p" v-if="message.receiverTag"><span style="font-weight: bold;">To </span><span style="color:gray">{{ message.receiverTag }} <span>{{ message.sent_ago }}</span></span></p>
+                        <p class="message-content">{{ message.content }}</p>
+                        <img class="message-img" v-if="message.image" :src="'/storage/'+ message.image" alt="Message Image">
+                    </div>
                 </div>
             </div>
         </Popup>
@@ -96,7 +110,6 @@ export default{
         return {
             isInputFocused: false,
             personClicked: false,
-            // receivedMessages: [],
         };
     },
     computed: {
@@ -111,10 +124,12 @@ export default{
         const selectedUser = ref(null);
         const tweetInputnav = ref(null);
         const receivedMessages = ref([]);
+        const sentMessages = ref([]);
         const popupTriggers = ref({
             EditTrigger: false,
             MessageTrigger: false,
             MessageTrigger2: false,
+            MessageTrigger3: false,
         });
         const foundUsers = computed(() => {
             if (searchInput.value.length > 0) {
@@ -131,7 +146,6 @@ export default{
             foundUsers.value = [];
             searchInput.value = '';
             clickedPerson.value = null;
-            selectedUser.value = null;
         };
         const ToggleFirstPopup = () => {
             popupTriggers.value['EditTrigger'] = !popupTriggers.value['EditTrigger'];
@@ -158,17 +172,117 @@ export default{
                 popupTriggers.value['MessageTrigger2'] = true;
             }
         };
+        let fetchSentMessages = null;
+
+        const setSentMessages = (messages) => {
+            sentMessages.value = messages;
+        };
+        const ToggleFourthPopup = async () => {
+            popupTriggers.value['MessageTrigger3'] = !popupTriggers.value['MessageTrigger3'];
+            if (popupTriggers.value['MessageTrigger3'] && fetchSentMessages) {
+                await fetchSentMessages();
+                popupTriggers.value['MessageTrigger3'] = true;
+            }
+        };
         fetchReceivedMessages = async () => {
             try {
                 const response = await axios.get(`/api/user-messages`);
                 const { received_messages } = response.data;
 
+                const senderIds = received_messages.map(message => message.SenderID);
+                const senderTagsMap = await fetchSenderTags(senderIds);
+
                 setReceivedMessages(received_messages.map(message => ({
                     content: message.Content,
-                    timestamp: message.created_at,
+                    image: message.Image,
+                    senderId: message.SenderID,
+                    senderTag: senderTagsMap[message.SenderID] || 'Unknown Sender',
+                    sent_ago: message.sent_ago,
+                    received_ago: message.received_ago,
                 })));
             } catch (error) {
                 console.error('Error fetching received messages:', error);
+            }
+        };
+        fetchSentMessages = async () => {
+            try {
+                const response = await axios.get(`/api/user-messages`);
+                const { sent_messages } = response.data;
+
+                const receiverIds = sent_messages.map(message => message.ReceiverID);
+                const receiverTagsMap = await fetchReceiverTags(receiverIds);
+
+                setSentMessages(sent_messages.map(message => ({
+                    content: message.Content,
+                    image: message.Image,
+                    receiverId: message.ReceiverID,
+                    receiverTag: receiverTagsMap[message.ReceiverID] || 'Unknown Sender',
+                    sent_ago: message.sent_ago,
+                })));
+            } catch (error) {
+                console.error('Error fetching sent messages:', error);
+            }
+        };
+        const fetchSenderTags = async (senderIds) => {
+            try {
+                const senderTagsMap = {};
+
+                for (const id of senderIds) {
+                    try {
+                        const response = await axios.get(`/api/get-user/${id}`);
+                        
+                        if (response && response.data && response.data.user && response.data.user.UserTag) {
+                            const userTag = response.data.user.UserTag;
+                            senderTagsMap[id] = userTag;
+                        } else {
+                            console.warn(`Invalid or missing data for ID ${id}`);
+                            senderTagsMap[id] = 'Unknown';
+                        }
+
+                        console.log('Response for ID', id, ':', response.data);
+
+                    } catch (error) {
+                        console.error(`Error fetching user data for ID ${id}:`, error);
+                    }
+                }
+
+                console.log('Sender Tags Map:', senderTagsMap);
+                return senderTagsMap;
+
+            } catch (error) {
+                console.error('Error fetching sender tags:', error);
+                return {};
+            }
+        };
+        const fetchReceiverTags = async (receiverIds) => {
+            try {
+                const receiverTagsMap = {};
+
+                for (const id of receiverIds) {
+                    try {
+                        const response = await axios.get(`/api/get-user/${id}`);
+
+                        if (response && response.data && response.data.user && response.data.user.UserTag) {
+                            const userTag = response.data.user.UserTag;
+                            receiverTagsMap[id] = userTag;
+                        } else {
+                            console.warn(`Invalid or missing data for ID ${id}`);
+                            receiverTagsMap[id] = 'Unknown';
+                        }
+
+                        console.log('Response for ID', id, ':', response.data);
+
+                    } catch (error) {
+                        console.error(`Error fetching user data for ID ${id}:`, error);
+                    }
+                }
+
+                console.log('Receiver Tags Map:', receiverTagsMap);
+                return receiverTagsMap;
+
+            } catch (error) {
+                console.error('Error fetching receiver tags:', error);
+                return {};
             }
         };
         const nextButtonClick = () => {
@@ -195,6 +309,8 @@ export default{
             ToggleSecondPopup,
             fetchReceivedMessages,
             ToggleThirdPopup,
+            ToggleFourthPopup,
+            fetchSentMessages,
             nextButtonClick,
             resetFirstPopup,
             previewImagenav,
@@ -208,6 +324,7 @@ export default{
             users,
             tweetInputnav,
             receivedMessages,
+            sentMessages,
         }
     },
     methods: {
@@ -254,59 +371,30 @@ export default{
         },
         async sendMessage() {
             if (!this.selectedUser || !this.tweetInputnav) return;
-
             const formData = new FormData();
             formData.append('ReceiverID', this.selectedUser.UserID);
             const content = this.tweetInputnav ? this.tweetInputnav.value.trim() : '';
             formData.append('Content', content);
-            if (this.messageImagenav && this.messageImagenav[0]) {
-                formData.append('Image', this.messageImagenav[0]);
+            if (this.messageImagenav) {
+                formData.append('image', this.messageImagenav);
             }
-
             try {
                 const response = await this.$axios.post('/api/send-message', formData, {
                     headers: {
                     'Content-Type': 'multipart/form-data',
                     },
                 });
-
-                // Assuming the response contains the newly sent message data
                 const sentMessage = response.data;
 
                 if (!this.selectedUser.messages) {
-                    this.selectedUser.messages = []; // Initialize if it's not defined
+                    this.selectedUser.messages = [];
                 }
-
-                // Update UI to display the sent message
-                // This might involve updating a list of messages for the selected user
-                // or adding the sent message directly to the UI
-                // Example:
                 this.selectedUser.messages.push(sentMessage);
-
-                // Close the message popup after sending the message
                 this.ToggleSecondPopup();
             } catch (error) {
             console.error('Error sending message:', error);
-            // Handle error - show error message or take appropriate action
             }
         },
-        // async fetchReceivedMessages() {
-        //     try {
-        //         // Assuming there's a method to fetch received messages for a user
-        //         const response = await this.$axios.get(`/api/user-messages`);
-        //         const { received_messages } = response.data; // Assuming the response contains received messages data
-
-        //         // Upon successfully fetching messages, update receivedMessages array
-        //         // For example, receivedMessages should be updated with the response data:
-        //         this.receivedMessages = received_messages.map(message => ({
-        //             content: message.Content,
-        //             timestamp: message.created_at // Assuming 'created_at' holds the timestamp
-        //         }));
-        //     } catch (error) {
-        //         console.error('Error fetching received messages:', error);
-        //         // Handle error - show error message or take appropriate action
-        //     }
-        // },
     },
     async mounted() {
         await this.$store.dispatch('initializeApp');
@@ -779,7 +867,7 @@ export default{
     }
     .received-messages-popup{
         width:500px;
-        min-height: 270px;
+        max-height: 600px;
         display:flex;
         flex-direction:column;
         box-sizing: border-box;
@@ -792,6 +880,116 @@ export default{
             padding-top:50px;
             font-weight: bold;
             font-size: 22px;
+        }
+        .sent-messages-btn{
+            position:absolute;
+            top:10px;
+            right:10px;
+            width:auto;
+            height:auto;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            color:#000000;
+            border:none;
+            background-color: white;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: bold;
+            padding:8px 16px;
+            cursor: pointer;
+            &:hover{
+                background-color:rgba($color: #f2f2f2, $alpha: 0.8);
+            }
+        }
+        .message-container{
+            overflow-y: auto;
+            height: auto;
+            &::-webkit-scrollbar{
+            width:4px;
+            }
+            &::-webkit-scrollbar-thumb{
+                background-color: #2F3336;
+                border-radius: 5px;;
+                border:none;
+            }
+            &::-webkit-scrollbar-track{
+                background:none;
+                border:none;
+            }
+            &:focus{
+                outline:none;
+            }
+            .received-message{
+                color:white;
+                margin-left: 20px;
+                margin-right: 20px;
+                .message-p{
+                    font-size: 18px;
+                }
+                .message-content{
+                    overflow-wrap: anywhere;
+                    font-size: 16px;
+                }
+                .message-img{
+                    width: 460px;
+                    max-height: 300px;
+                    border-radius: 15px;
+                }
+            }
+        }
+    }
+    .sent-messages-popup{
+        width:500px;
+        max-height: 600px;
+        display:flex;
+        flex-direction:column;
+        box-sizing: border-box;
+        justify-content: space-between;
+        padding:0px 0px 0px 0px;
+        box-sizing: border-box;
+        .title-messages{
+            color: white;
+            margin-left:20px;
+            padding-top:50px;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        .message-container{
+            overflow-y: auto;
+            height: auto;
+            &::-webkit-scrollbar{
+            width:4px;
+            }
+            &::-webkit-scrollbar-thumb{
+                background-color: #2F3336;
+                border-radius: 5px;;
+                border:none;
+            }
+            &::-webkit-scrollbar-track{
+                background:none;
+                border:none;
+            }
+            &:focus{
+                outline:none;
+            }
+            .sent-message{
+                color:white;
+                margin-left: 20px;
+                margin-right: 20px;
+                .message-p{
+                    font-size: 18px;
+                }
+                .message-content{
+                    overflow-wrap: anywhere;
+                    font-size: 16px;
+                }
+                .message-img{
+                    width: 460px;
+                    max-height: 300px;
+                    border-radius: 15px;
+                }
+            }
         }
     }
 }
