@@ -279,7 +279,7 @@ input[type="checkbox"]{
 }
 .top-bar{
     position:sticky;
-    top:0;
+    top:0px;
     background-color:rgba($color: #000000, $alpha: 0.8);
     backdrop-filter: blur(5px);
     z-index:10;
@@ -424,6 +424,7 @@ input[type="checkbox"]{
     color:white;
     box-sizing: border-box;
     height:auto;
+    padding-bottom:125px;
     .notification{
         position:relative;
         width:100%;
