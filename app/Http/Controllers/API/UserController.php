@@ -270,7 +270,7 @@ class UserController extends Controller
         if ($diff->y > 0) {
             return $diff->y . 'y';
         } elseif ($diff->m > 0) {
-            return $diff->m . 'm';
+            return $diff->m . 'mo';
         } elseif ($diff->d > 0) {
             return $diff->d . 'd';
         } elseif ($diff->h > 0) {
