@@ -100,6 +100,11 @@
                     </div>
                     <div class="tweet-image-preview">
                         <img :src="previewImagenav" v-if="previewImagenav">
+                        <div class="preview-cover" v-if="previewImagenav">
+                            <div class="preview-close" @click="removeImage">
+                                <ion-icon class="preview-close-icon" name="close"></ion-icon>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -110,7 +115,7 @@
                     <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                     <button class="tweet-btn" @click.stop="TogglePopup('MentionTrigger', 'comment')"><ion-icon name="at-sharp" class="create-tweet-icon"></ion-icon></button>
                 </div>
-                <button class="popup-button"  @click="createTweetnav" :disabled="buttonDisabled">Post</button>
+                <button class="popup-button"  @click="createTweetnav" :disabled="buttonDisabled || !tweet_text_inputnav && !previewImagenav">Post</button>
             </div>
         </div>
     </Popup>
@@ -298,6 +303,10 @@ export default{
             } else {
                 this.previewImagenav = null;
             }
+        },
+        removeImage(){
+            this.tweetImagenav = null;
+            this.previewImagenav = null;
         },
         async createTweetnav() {
             if (this.buttonDisabled) {

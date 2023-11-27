@@ -27,6 +27,11 @@
                     </div>
                     <div class="tweet-image-preview">
                         <img :src="previewImage" v-if="previewImage">
+                        <div class="preview-cover" v-if="previewImage">
+                            <div class="preview-close" @click="removeImage">
+                                <ion-icon class="preview-close-icon" name="close"></ion-icon>
+                            </div>
+                        </div>
                     </div>
                     <div class="bottom">
                         <div class="buttons">
@@ -34,7 +39,7 @@
                             <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                             <button class="tweet-btn" @click.stop="TogglePopup('MentionTrigger', 'tweet')"><ion-icon name="at-sharp" class="create-tweet-icon"></ion-icon></button>
                         </div>
-                        <button class="post-button" @click="createTweet" :disabled="buttonDisabled">Post</button>
+                        <button class="post-button" @click="createTweet" :disabled="buttonDisabled || tweet_text_input === '' && !tweetImage">Post</button>
                     </div>
                 </div>
             </div>
@@ -445,6 +450,10 @@ export default{
             } else {
                 this.previewImage = null;
             }
+        },
+        removeImage(){
+            this.tweetImage = null;
+            this.previewImage = null;
         },
         async createTweet() {
             if (this.buttonDisabled) {
