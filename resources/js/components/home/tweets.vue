@@ -178,6 +178,7 @@
         </div>
     </div>
 </template>
+<!-- Make a function that would check if there are new tweets made, also return the count and the person that made the tweet -->
 <script>
 import { ref, computed, watch } from 'vue';
 import Popup from '../Popup.vue';

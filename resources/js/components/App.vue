@@ -1,7 +1,7 @@
 <template>
     <router-view />
 </template>
-
+<!-- Make a universal nav-bar(if user is logged in) and make a function that would check if there are any new notifications and update the count. -->
 <script>
 import router from '../router';
 import store from '../store';
