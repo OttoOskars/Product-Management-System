@@ -18,10 +18,8 @@
         <div class="trends">
             <div class="title">Trending Latvia</div>
             <div class="trend-container">
-                <div class="trend"  v-for="i in trends" :key="i">
-                    <p class="trend-rank">1. News. Trending</p>
-                    <p class="trend-name">Skolā bumba</p>
-                    <p class="trend-posts">1232 posts</p>
+                <div class="trend">
+                    <ul id="trendsList"></ul>
                 </div>
             </div>
             <div class="show-more-container">
@@ -33,12 +31,12 @@
 <script>
 import { mapState } from 'vuex';
 import { ref } from 'vue';
+import axios from 'axios';
 export default{
     name: 'Search',
     data() {
         return {
             isInputFocused: false,
-            trends: 5,
         };
     },
     setup () {
@@ -48,7 +46,9 @@ export default{
         }
         return {
             search,
-            clearSearch
+            clearSearch,
+            trends: [],
+
         }
     },
     methods: {
@@ -60,10 +60,30 @@ export default{
         },
         redirectTo(where) {
             this.$router.push(where);
-        }
-    },
+        },
+
+        fetchData() {
+            fetch('https://api.twitter.com/1.1/trends/place.json')
+            .then(response => response.json())
+            .then(data => {
+                const trendsList = document.getElementById('trendsList');
+                data.forEach(trend => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = trend.name;
+                    trendsList.appendChild(listItem);
+        });
+      });
+  }
+},
+
+mounted() {
+  this.fetchData();
+}
+
 
 }
+
+
 </script>
 <style lang="scss" scoped>
 .search-container {

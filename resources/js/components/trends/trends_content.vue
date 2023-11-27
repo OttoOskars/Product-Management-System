@@ -10,32 +10,52 @@
 
         <div class="trend-container">
             <p class="title">Trends for you</p>
-            <div class="trend" v-for="i in trends" :key="i">
-                <div class="trend-info">
-                    <p class="trend-rank">Trending in Latvia</p>
-                    <p class="trend-name">Skolā bumba</p>
-                    <p class="trend-posts">1232 posts</p>
-                </div>
+            <div class="trend"></div>
+                <ul id="trendsList"></ul>
+                <li></li>
+            </div>
                 <div class="more-icon">
                     <ion-icon name="ellipsis-horizontal"></ion-icon>
                 </div>
-            </div>
-        </div>
     </div>
 </template>
+
 <script>
+import axios from 'axios';
+axios.get('https://api.twitter.com/1.1/trends/place.json', {
+  params: {
+    id: 23424977,
+  },
+  headers: {
+    Authorization: '1'
+  }
+
+})
+  .then(response => {
+    const trends = response.data[0].trends;
+    const trendsList = document.getElementById('trendsList');
+    trends.forEach(trend => {
+      const listItem = document.createElement('li');
+      listItem.textContent = trend.name;
+      trendsList.appendChild(listItem);
+    });
+  })
+  .catch(error => {
+    console.error('Error fetching world trends:', error);
+  });
+
 export default{
+
     name: 'Tweets',
     data(){
         return {
-            trends: 12,
         }
     },
-    methods: {
-        goBack() {
-            this.$router.go(-1);
-        }
-    },   
+
+
+    mounted() {
+    this.fetchData();
+}
 }
 </script>
 <style lang="scss" scoped>
@@ -262,5 +282,14 @@ export default{
             }
         }
     }
+
+#trendsList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    color: white;
+
+}
+
 }
 </style>
