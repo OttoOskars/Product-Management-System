@@ -96,7 +96,7 @@
                         <p class="usertag">{{ user.UserTag }}</p>
                     </div>
                     <div class="tweet-input-container">
-                        <textarea v-model="tweet_text_inputnav" id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInputnav" maxlength="255"></textarea>
+                        <textarea v-model="tweet_text_inputnav" id="tweet-input-nav" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInputnav" maxlength="255"></textarea>
                     </div>
                     <div class="tweet-image-preview">
                         <img :src="previewImagenav" v-if="previewImagenav">

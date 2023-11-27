@@ -161,6 +161,11 @@ class UserController extends Controller
         }
     }
 
+    public function getAllUsers(){
+        $users = User::all();
+        return response()->json(['users' => $users]);
+    }
+
     private function checkIfFollowedByUser($user1, $user2)
     {
         return $user2->followers->contains('UserID', $user1->UserID);
