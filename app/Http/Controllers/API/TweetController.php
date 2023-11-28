@@ -89,10 +89,17 @@ class TweetController extends Controller
             ->where('UserID', '!=', $user->UserID)
             ->orderBy('created_at', 'desc')
             ->get();
-
         $tweet_count = $newTweets->count();
         $tweetIDs = $newTweets->pluck('TweetID');
-        return response()->json(['tweet_count' => $tweet_count, 'tweetIDs' => $tweetIDs]);
+
+        $newFollowingTweets = Tweet::where('created_at', '>', $lastCheckedAt)
+            ->whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID))
+            ->whereNotIn('UserID', [$user->UserID])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $following_tweet_count = $newFollowingTweets->count();
+        $following_tweetIDs = $newFollowingTweets->pluck('TweetID');
+        return response()->json(['tweet_count' => $tweet_count, 'tweetIDs' => $tweetIDs, 'following_tweet_count' => $following_tweet_count, 'following_tweetIDs' => $following_tweetIDs]);
     }
     
     public function loadNewTweets(Request $request)
@@ -100,28 +107,21 @@ class TweetController extends Controller
         $Ids = $request->input('Ids');
         $type = $request->input('type');
         $user = auth()->user();
-        $newTweets = Tweet::whereIn('TweetID', $Ids);
-        $newTweets = $newTweets->orderBy('created_at', 'desc')->get();
-        if ($type == 'following'){
-            $newTweets = Tweet::findInBatch($Ids)
-            ->whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID))->whereNotIn('UserID', [$user->UserID]);
-            $newTweets = $newTweets->orderBy('created_at', 'desc')->get();
+
+        if (empty($Ids)) {
+            return response()->json(['message' => 'No new tweets found.'], 404);
         }
-        foreach ($newTweets as $tweet) {
-            $now = Carbon::now();
-            $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
-            $tweet->like_count = $tweet->likes()->count();
-            $tweet->comment_count = $tweet->comments()->count();
-            $tweet->retweet_count = $tweet->retweets()->count();
-            $tweet->user = User::find($tweet->UserID);
+        if ($type == 'all') {
+            $newTweets = Tweet::whereIn('TweetID', $Ids)
+                ->orderBy('created_at', 'desc')
+                ->get();
         }
-        return response()->json(['newTweets' => $newTweets]);
-    }
-    public function loadNewFollowingTweets()
-    {
-        $user = auth()->user();
-        $newTweets = Tweet::whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID))->whereNotIn('UserID', [$user->UserID]);;
-        $newTweets = $newTweets->orderBy('created_at', 'desc')->get();
+        if ($type == 'following') {
+            $newTweets = Tweet::whereIn('TweetID', $Ids)
+                ->whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID))
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
         foreach ($newTweets as $tweet) {
             $now = Carbon::now();
             $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
