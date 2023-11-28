@@ -12,7 +12,6 @@
             <p class="title">Trends for you</p>
             <div class="trend"></div>
                 <ul id="trendsList"></ul>
-                <li></li>
             </div>
                 <div class="more-icon">
                     <ion-icon name="ellipsis-horizontal"></ion-icon>
@@ -22,26 +21,38 @@
 
 <script>
 import axios from 'axios';
-axios.get('https://api.twitter.com/1.1/trends/place.json', {
-  params: {
-    id: 23424977,
-  },
-  headers: {
-    Authorization: '1'
-  }
+import oauth from 'oauth-1.0a';
+import crypto from 'crypto';
 
+// Construct the OAuth 1.0a client
+const oauthClient = oauth({
+  consumer: {
+    key: 'MV6qXVFB1Qw6jjwAfIcEFRzUS', // Replace with your actual API Key
+    secret: 'K5YCEOwxXyYxyqKA4QFzVISFMkgwqciOk5793x6oWJaFPiDof0' // Replace with your actual API Key Secret
+  },
+  signature_method: 'HMAC-SHA1',
+  hash_function(base_string, key) {
+    return crypto.createHmac('sha1', key).update(base_string).digest('base64');
+  }
+});
+
+// Generate the OAuth 1.0a headers
+const oauthHeaders = oauthClient.toHeader(oauthClient.authorize({}));
+
+// Make the API request with the OAuth headers
+axios.get('https://api.twitter.com/1.1/trends/place.json', {
+  headers: {
+    Authorization: oauthHeaders['Authorization']
+  },
+  params: {
+    id: 23424977 // WOEID for global trends
+  }
 })
   .then(response => {
-    const trends = response.data[0].trends;
-    const trendsList = document.getElementById('trendsList');
-    trends.forEach(trend => {
-      const listItem = document.createElement('li');
-      listItem.textContent = trend.name;
-      trendsList.appendChild(listItem);
-    });
+    // Process the response data
   })
   .catch(error => {
-    console.error('Error fetching world trends:', error);
+    // Handle errors
   });
 
 export default{
