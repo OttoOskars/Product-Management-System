@@ -25,14 +25,22 @@ class FollowController extends Controller
             // Attach the relationship
             $user->follows()->attach($userToFollow->UserID);
             if ($user->UserID != $userToFollow->UserID){
-                $notification = new Notification([
-                    'SenderID' => $user->UserID,
-                    'ReceiverID' => $userToFollow->UserID,
-                    'NotificationType' => 'follow',
-                    'NotificationText' => ' followed you',
-                    'NotificationLink' => '/profile/' . $EditedUserTag,
-                    'Read' => false, 
-                ]);
+                $existingNotification = Notification::where('SenderID', $user->UserID)
+                    ->where('ReceiverID', $userToFollow->UserID)
+                    ->where('NotificationType', 'follow')
+                    ->where('NotificationLink', '/profile/' . $EditedUserTag)
+                    ->first();
+                if (!$existingNotification) {
+                    $notification = new Notification([
+                        'SenderID' => $user->UserID,
+                        'ReceiverID' => $userToFollow->UserID,
+                        'NotificationType' => 'follow',
+                        'NotificationText' => ' followed you',
+                        'NotificationLink' => '/profile/' . $EditedUserTag,
+                        'Read' => false, 
+                    ]);
+                    $notification->save();
+                }
             }
             $notification->save();
             return response()->json(['message' => 'You are now following this user.'.$userToFollow->UserID]);

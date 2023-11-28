@@ -43,6 +43,12 @@
                     </div>
                 </div>
             </div>
+            <div class="new-tweets" v-if="newTweetIds.length > 0 && postType === 'all'">
+                <button class="new-tweets-button" @click="loadNewTweets('all')" :disabled="buttonDisabled">Load New Tweets {{ newTweetIds.length }}</button>
+            </div>
+            <div class="new-tweets" v-if="postType === 'following'">
+                <button class="new-tweets-button" @click="loadNewTweets('following')" :disabled="buttonDisabled">Refresh following page</button>
+            </div>
             <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID" @click="openTweet(tweet.TweetID)" :id="tweet.TweetID">
                 <div class="isretweet" v-if="tweet.isRetweet">
                     <p class="tweet-text"><span>{{ user.UserTag }}</span> Reposted</p>
@@ -219,6 +225,11 @@ export default{
                 all: [],
                 following: [],
             },
+            new_tweet_count: {
+                all: 0,
+                following: 0,
+            },
+            newTweetIds: [],
         }
     },
     setup(){
@@ -278,6 +289,58 @@ export default{
         },
     },
     methods: {
+        async checkNewTweetCount(type) {
+            try {
+                const response = await axios.get(`/api/get-new-tweet-count/${type}`);
+                const newTweetIds = response.data.tweetIDs;
+
+                if (newTweetIds.length > 0) {
+                    this.newTweetIds = [...this.newTweetIds, ...newTweetIds];
+                    this.new_tweet_count[type] = this.newTweetIds.length;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        },
+
+        async loadNewTweets(type) {
+            if (this.buttonDisabled) {
+                return;
+            }
+
+            if (type === 'all') {
+                try {
+                    const response = await axios.get(`/api/load-new-tweets`, {
+                        params: {
+                            type: type,
+                            Ids: this.newTweetIds,
+                        },
+                    });
+
+                    const newTweets = response.data.newTweets;
+                    this.tweets[type] = [...newTweets, ...this.tweets[type]];
+                    this.newTweetIds = [];
+                    setTimeout(() => {
+                        this.buttonDisabled = false;
+                    }, 1500);
+                } catch (error) {
+                    console.error('Error loading new tweets:', error);
+                }
+            }
+
+            if (type === 'following') {
+                try {
+                    const response = await axios.get(`/api/load-new-following-tweets`);
+                    const newTweets = response.data.newTweets;
+                    this.tweets[type] = [...newTweets, ...this.tweets[type]];
+                    setTimeout(() => {
+                        this.buttonDisabled = false;
+                    }, 1500);
+                } catch (error) {
+                    console.error('Error loading new tweets:', error);
+                }
+            }
+        },
         switchToTweets() {
             this.postType = 'all';
             window.scrollTo(0, this.scrollPositions.all);
@@ -733,9 +796,21 @@ export default{
         this.getAllUsersMention();
         this.loadTweets('following');
         this.loadTweets('all');
+        this.NewTweetInterval = setInterval(() => {
+            this.checkNewTweetCount(this.postType);
+        }, 10000);
     },   
     beforeDestroy() {
         window.removeEventListener('scroll', this.handleScroll);
+        clearInterval(this.NewTweetInterval);
+    },
+    beforeUnmount() {
+        window.removeEventListener('scroll', this.handleScroll);
+        clearInterval(this.NewTweetInterval);
+    },
+    beforeRouteLeave(to, from, next) {
+        window.removeEventListener('scroll', this.handleScroll);
+        clearInterval(this.NewTweetInterval);
     },
 }
 </script>

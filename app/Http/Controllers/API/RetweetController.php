@@ -40,15 +40,22 @@ class RetweetController extends Controller
         $retweet->TweetID = $tweet->TweetID;
         $retweet->save();
         if ($tweet->UserID != $user->UserID) {
-            $notification = new Notification([
-                'SenderID' => $user->UserID,
-                'ReceiverID' => $tweet->UserID,
-                'NotificationType' => 'retweet',
-                'NotificationText' => ' retweeted your tweet',
-                'NotificationLink' => '/tweet/' . $tweet->TweetID,
-                'Read' => false,
-            ]);
-            $notification->save();
+            $existingNotification = Notification::where('SenderID', $user->UserID)
+                ->where('ReceiverID', $tweet->UserID)
+                ->where('NotificationType', 'retweet')
+                ->where('NotificationLink', '/tweet/' . $tweet->TweetID)
+                ->first();
+            if (!$existingNotification) {
+                $notification = new Notification([
+                    'SenderID' => $user->UserID,
+                    'ReceiverID' => $tweet->UserID,
+                    'NotificationType' => 'retweet',
+                    'NotificationText' => ' retweeted your tweet',
+                    'NotificationLink' => '/tweet/' . $tweet->TweetID,
+                    'Read' => false,
+                ]);
+                $notification->save();
+            }
         }
 
         return response()->json(['message' => 'Retweeted successfully', 'retweet' => $retweet], 201);

@@ -363,7 +363,6 @@ export default{
         
     async mounted() {
         this.getAllUsersMention();
-        this.getUnreadNotificationCount();
         this.activeRoute = this.$route.path;
         this.isHomeFilled = this.activeRoute.includes('/home');
         this.isNotificationsFilled = this.activeRoute.includes('/notifications');
@@ -379,6 +378,17 @@ export default{
             this.isBookmarksFilled = this.activeRoute.includes('/bookmarks');
             this.isProfileFilled = this.activeRoute.includes('/profile');
         });
+
+        this.unreadNotificationsIntervalId = setInterval(
+            this.getUnreadNotificationCount,
+            10000
+        );
+    },
+    beforeDestroy() {
+        clearInterval(this.unreadNotificationsIntervalId);
+    },
+    beforeUnmount() {
+        clearInterval(this.unreadNotificationsIntervalId);
     },
 }
 </script>

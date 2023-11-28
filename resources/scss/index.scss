@@ -170,6 +170,31 @@ html,body {
     display:flex;
     flex-direction:column;
     box-sizing: border-box;
+    .new-tweets{
+        width:100%;
+        height:40px;
+        border-bottom: 1px solid #2F3336;
+        box-sizing: border-box;
+        .new-tweets-button{
+            width:100%;
+            height:100%;
+            font-size:15px;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            color:white;
+            background:none;
+            border:none;
+            cursor:pointer;
+            .new-tweets-icon{
+                color:white;
+                font-size:20px;
+            }
+            &:hover{
+                background-color: #080808;
+            }
+        }
+    }
     .create-tweet-or-comment{
         width:100%;
         min-height:fit-content;
@@ -1590,6 +1615,7 @@ html,body {
             padding:15px;
             font-size:13px;
         }
+
         .post{
             gap:0px;
             .isretweet{
