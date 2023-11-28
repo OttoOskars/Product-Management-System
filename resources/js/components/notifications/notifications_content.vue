@@ -108,6 +108,36 @@ export default{
         }
     },
     methods: {
+        async checkForNewNotifications() {
+            try {
+                const response = await axios.get(`/api/get-new-notifications/${this.notiType}`);
+                const newNotifications = response.data.newNotifications;
+                const newAll = [];
+                const newVerified = [];
+                const newMentions = [];
+
+                newNotifications.forEach((notification) => {
+                    if (notification.NotificationType === !'mention') {
+                        newAll.push(notification);
+                    } else if (notification.NotificationType === 'verified') {
+                        newVerified.push(notification);                        
+                    }
+                    if (notification.NotificationType === 'mention') {
+                        newMentions.push(notification);
+                    }
+                })
+                this.notifications.all = [...newAll, ...this.notifications.all];
+                this.notifications.verified = [...newVerified, ...this.notifications.verified];
+                this.notifications.mentions = [...newMentions, ...this.notifications.mentions];
+
+                // Update notification counts
+                this.all_count += newAll.length;
+                this.verified_count += newVerified.length;
+                this.mentions_count += newMentions.length;
+            } catch (error) {
+                console.error(error);
+            }
+        },
         isSelected(notification) {
             return this.selectedNotifications.includes(notification);
         },
@@ -248,6 +278,15 @@ export default{
         await this.$store.dispatch('initializeApp');
         this.getUserNotifications('all');
         this.getUserNotifications('mentions');
+
+        this.checkForNewNotificationsInterval = setInterval(this.checkForNewNotifications, 10000);
+    },
+    beforeUnmount() {
+        clearInterval(this.checkForNewNotificationsInterval);
+    },
+
+    beforeRouteLeave(to, from, next) {
+        clearInterval(this.checkForNewNotificationsInterval);
     }
 }
 </script>

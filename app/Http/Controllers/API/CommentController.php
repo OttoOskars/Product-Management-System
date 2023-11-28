@@ -45,28 +45,44 @@ class CommentController extends Controller
                     ]);
                     $comment->comment_mentions()->save($mentionModel);
                     if ($mention->UserID != $user->UserID) {
-                        $mentionnotifcation = new Notification([
-                            'SenderID' => $user->UserID,
-                            'ReceiverID' => $mention->UserID,
-                            'NotificationType' => 'mention',
-                            'NotificationText' => ' mentioned you in a comment',
-                            'NotificationLink' => '/tweet/' . $tweet->TweetID,
-                            'Read' => false,
-                        ]);
-                        $mentionnotifcation->save();
+                        $existingMentionNotification = Notification::where('SenderID', $user->UserID)
+                            ->where('ReceiverID', $mention->UserID)
+                            ->where('NotificationType', 'mention')
+                            ->where('NotificationLink', '/tweet/' . $tweet->TweetID)
+                            ->where('created_at', '>=', Carbon::now()->subMinutes(0.2))
+                            ->first();
+                        if (!$existingMentionNotification) {
+                            $mentionnotifcation = new Notification([
+                                'SenderID' => $user->UserID,
+                                'ReceiverID' => $mention->UserID,
+                                'NotificationType' => 'mention',
+                                'NotificationText' => ' mentioned you in a comment',
+                                'NotificationLink' => '/tweet/' . $tweet->TweetID,
+                                'Read' => false,
+                            ]);
+                            $mentionnotifcation->save();
+                        }
                     }
                 }
             }
             if ($tweet->UserID != $user->UserID){
-                $commentnotifcation = new Notification([
-                    'SenderID' => $user->UserID,
-                    'ReceiverID' => $tweet->UserID,
-                    'NotificationType' => 'comment',
-                    'NotificationText' => ' commented on your tweet',
-                    'NotificationLink' => '/tweet/' . $tweet->TweetID,
-                    'Read' => false,
-                ]);
-                $commentnotifcation->save();
+                $existingCommentNotification = Notification::where('SenderID', $user->UserID)
+                    ->where('ReceiverID', $tweet->UserID)
+                    ->where('NotificationType', 'comment')
+                    ->where('NotificationLink', '/tweet/' . $tweet->TweetID)
+                    ->where('created_at', '>=', Carbon::now()->subMinutes(0.2))
+                    ->first();
+                if (!$existingCommentNotification) {
+                    $commentnotifcation = new Notification([
+                        'SenderID' => $user->UserID,
+                        'ReceiverID' => $tweet->UserID,
+                        'NotificationType' => 'comment',
+                        'NotificationText' => ' commented on your tweet',
+                        'NotificationLink' => '/tweet/' . $tweet->TweetID,
+                        'Read' => false,
+                    ]);
+                    $commentnotifcation->save();
+                }
             }
             $comment->user = $user;
             $comment->created_ago = 'now';

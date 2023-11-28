@@ -96,10 +96,15 @@
                         <p class="usertag">{{ user.UserTag }}</p>
                     </div>
                     <div class="tweet-input-container">
-                        <textarea v-model="tweet_text_inputnav" id="tweet-input" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInputnav" maxlength="255"></textarea>
+                        <textarea v-model="tweet_text_inputnav" id="tweet-input-nav" class="tweet-input" rows="1" placeholder="What's happening?!" @input="autoSize" ref="tweetInputnav" maxlength="255"></textarea>
                     </div>
                     <div class="tweet-image-preview">
                         <img :src="previewImagenav" v-if="previewImagenav">
+                        <div class="preview-cover" v-if="previewImagenav">
+                            <div class="preview-close" @click="removeImage">
+                                <ion-icon class="preview-close-icon" name="close"></ion-icon>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -110,7 +115,7 @@
                     <button class="tweet-btn"><ion-icon name="happy-outline" class="create-tweet-icon"></ion-icon></button>
                     <button class="tweet-btn" @click.stop="TogglePopup('MentionTrigger', 'comment')"><ion-icon name="at-sharp" class="create-tweet-icon"></ion-icon></button>
                 </div>
-                <button class="popup-button"  @click="createTweetnav" :disabled="buttonDisabled">Post</button>
+                <button class="popup-button"  @click="createTweetnav" :disabled="buttonDisabled || !tweet_text_inputnav && !previewImagenav">Post</button>
             </div>
         </div>
     </Popup>
@@ -299,6 +304,10 @@ export default{
                 this.previewImagenav = null;
             }
         },
+        removeImage(){
+            this.tweetImagenav = null;
+            this.previewImagenav = null;
+        },
         async createTweetnav() {
             if (this.buttonDisabled) {
                 return;
@@ -354,7 +363,6 @@ export default{
         
     async mounted() {
         this.getAllUsersMention();
-        this.getUnreadNotificationCount();
         this.activeRoute = this.$route.path;
         this.isHomeFilled = this.activeRoute.includes('/home');
         this.isNotificationsFilled = this.activeRoute.includes('/notifications');
@@ -370,6 +378,17 @@ export default{
             this.isBookmarksFilled = this.activeRoute.includes('/bookmarks');
             this.isProfileFilled = this.activeRoute.includes('/profile');
         });
+
+        this.unreadNotificationsIntervalId = setInterval(
+            this.getUnreadNotificationCount,
+            10000
+        );
+    },
+    beforeDestroy() {
+        clearInterval(this.unreadNotificationsIntervalId);
+    },
+    beforeUnmount() {
+        clearInterval(this.unreadNotificationsIntervalId);
     },
 }
 </script>
@@ -445,8 +464,8 @@ export default{
                 background-color: #1d9bf0;
                 border-radius: 50%;
                 font-size:14px;
-                width:15px;
-                height:15px;
+                width:16px;
+                height:16px;
                 color:white;
                 display:flex;
                 align-items: center;

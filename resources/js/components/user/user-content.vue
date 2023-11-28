@@ -1106,6 +1106,9 @@ export default{
     beforeDestroy() {
         window.removeEventListener('scroll', this.handleScroll);
     },
+    unmounted() {
+        window.removeEventListener('scroll', this.handleScroll);
+    }
 }
 </script>
 <style lang="scss" scoped>

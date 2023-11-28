@@ -47,15 +47,22 @@ class TweetController extends Controller
                     ]);
                     $tweet->mentions()->save($mentionModel);
                     if ($mention->UserID != $user->UserID){
-                        $notification = new Notification([
-                            'SenderID' => $user->UserID,
-                            'ReceiverID' => $mention->UserID,
-                            'NotificationType' => 'mention',
-                            'NotificationText' => ' mentioned you in a tweet',
-                            'NotificationLink' => '/tweet/' . $tweet->TweetID,
-                            'Read' => false,
-                        ]);
-                        $notification->save();
+                        $existingNotification = Notification::where('SenderID', $user->UserID)
+                            ->where('ReceiverID', $mention->UserID)
+                            ->where('NotificationType', 'mention')
+                            ->where('created_at', '>=', now()->subMinutes(0.2))
+                            ->first();
+                        if (!$existingNotification) {
+                            $notification = new Notification([
+                                'SenderID' => $user->UserID,
+                                'ReceiverID' => $mention->UserID,
+                                'NotificationType' => 'mention',
+                                'NotificationText' => ' mentioned you in a tweet',
+                                'NotificationLink' => '/tweet/' . $tweet->TweetID,
+                                'Read' => false,
+                            ]);
+                            $notification->save();
+                        }
                     }
                 }
             }
@@ -72,6 +79,58 @@ class TweetController extends Controller
         } else {
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
+    }
+    public function getNewTweetCount($type)
+    {
+        $user = auth()->user();
+        $lastCheckedAt = now()->subSeconds(10); // Assuming last checked time is 10 seconds ago
+        
+        $newTweets = Tweet::where('created_at', '>', $lastCheckedAt)
+            ->where('UserID', '!=', $user->UserID)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $tweet_count = $newTweets->count();
+        $tweetIDs = $newTweets->pluck('TweetID');
+        return response()->json(['tweet_count' => $tweet_count, 'tweetIDs' => $tweetIDs]);
+    }
+    
+    public function loadNewTweets(Request $request)
+    {
+        $Ids = $request->input('Ids');
+        $type = $request->input('type');
+        $user = auth()->user();
+        $newTweets = Tweet::whereIn('TweetID', $Ids);
+        $newTweets = $newTweets->orderBy('created_at', 'desc')->get();
+        if ($type == 'following'){
+            $newTweets = Tweet::findInBatch($Ids)
+            ->whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID))->whereNotIn('UserID', [$user->UserID]);
+            $newTweets = $newTweets->orderBy('created_at', 'desc')->get();
+        }
+        foreach ($newTweets as $tweet) {
+            $now = Carbon::now();
+            $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
+            $tweet->like_count = $tweet->likes()->count();
+            $tweet->comment_count = $tweet->comments()->count();
+            $tweet->retweet_count = $tweet->retweets()->count();
+            $tweet->user = User::find($tweet->UserID);
+        }
+        return response()->json(['newTweets' => $newTweets]);
+    }
+    public function loadNewFollowingTweets()
+    {
+        $user = auth()->user();
+        $newTweets = Tweet::whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID))->whereNotIn('UserID', [$user->UserID]);;
+        $newTweets = $newTweets->orderBy('created_at', 'desc')->get();
+        foreach ($newTweets as $tweet) {
+            $now = Carbon::now();
+            $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
+            $tweet->like_count = $tweet->likes()->count();
+            $tweet->comment_count = $tweet->comments()->count();
+            $tweet->retweet_count = $tweet->retweets()->count();
+            $tweet->user = User::find($tweet->UserID);
+        }
+        return response()->json(['newTweets' => $newTweets]);
     }
     private function extractMentions($tweetText)
     {

@@ -51,6 +51,24 @@ class NotificationController extends Controller
 
         return response()->json(['unreadCount' => $unreadCount]);
     }
+    
+    public function getNewNotifications($type)
+    {
+        $user = auth()->user();
+        $lastCheckedAt = now()->subSeconds(10); // Assuming last checked time is 10 seconds ago
+    
+        $newNotifications = $user->notificationsReceived()
+            ->where('created_at', '>', $lastCheckedAt)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    
+        foreach ($newNotifications as $notification) {
+            $notification->created_ago = $this->formatTimeAgo($notification->created_at, now());
+            $notification->sender = User::find($notification->SenderID);
+        }
+    
+        return response()->json(['newNotifications' => $newNotifications]);
+    }
 
     public function markSelectedAsReadNotifications(Request $request){
         $notificationIds = $request->input('notificationIds', []);
