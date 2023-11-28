@@ -433,10 +433,7 @@ class TweetController extends Controller
         $comments = $tweet->comments()->get();
     
         foreach ($comments as $comment) {
-            // Delete mentions associated with each comment
             $comment->comment_mentions()->delete();
-    
-            // Delete the comment itself
             $comment->delete();
         }
     
