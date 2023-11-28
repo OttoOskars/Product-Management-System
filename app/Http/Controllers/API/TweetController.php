@@ -84,12 +84,11 @@ class TweetController extends Controller
     {
         $user = auth()->user();
         $lastCheckedAt = now()->subSeconds(10); // Assuming last checked time is 10 seconds ago
-        
+
         $newTweets = Tweet::where('created_at', '>', $lastCheckedAt)
             ->where('UserID', '!=', $user->UserID)
             ->orderBy('created_at', 'desc')
             ->get();
-        $tweet_count = $newTweets->count();
         $tweetIDs = $newTweets->pluck('TweetID');
 
         $newFollowingTweets = Tweet::where('created_at', '>', $lastCheckedAt)
@@ -97,9 +96,8 @@ class TweetController extends Controller
             ->whereNotIn('UserID', [$user->UserID])
             ->orderBy('created_at', 'desc')
             ->get();
-        $following_tweet_count = $newFollowingTweets->count();
         $following_tweetIDs = $newFollowingTweets->pluck('TweetID');
-        return response()->json(['tweet_count' => $tweet_count, 'tweetIDs' => $tweetIDs, 'following_tweet_count' => $following_tweet_count, 'following_tweetIDs' => $following_tweetIDs]);
+        return response()->json(['tweetIDs' => $tweetIDs, 'following_tweetIDs' => $following_tweetIDs]);
     }
     
     public function loadNewTweets(Request $request)
