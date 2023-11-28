@@ -80,6 +80,20 @@ class TweetController extends Controller
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
+    public function updateTweetStats($tweetID)
+    {
+        $tweet = Tweet::find($tweetID);
+        if (!$tweet) {
+            return response()->json(['error' => 'Tweet not found'], 404);
+        }
+        $now = Carbon::now();
+        $tweet->like_count = $tweet->likes->count();
+        $tweet->comment_count = $tweet->comments->count();
+        $tweet->retweet_count = $tweet->retweets->count();
+        $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
+        
+        return response()->json(['like_count' => $tweet->like_count, 'comment_count' => $tweet->comment_count, 'retweet_count' => $tweet->retweet_count, 'created_ago' => $tweet->created_ago]);
+    }
     public function getNewTweetCount($type)
     {
         $user = auth()->user();
@@ -98,8 +112,7 @@ class TweetController extends Controller
             ->get();
         $following_tweetIDs = $newFollowingTweets->pluck('TweetID');
         return response()->json(['tweetIDs' => $tweetIDs, 'following_tweetIDs' => $following_tweetIDs]);
-    }
-    
+    } 
     public function loadNewTweets(Request $request)
     {
         $Ids = $request->input('Ids');
@@ -199,7 +212,6 @@ class TweetController extends Controller
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
-
     public function getUserTweetsByType($userTag, $type, $page)
     {
         if (auth()->check()) {
@@ -410,22 +422,30 @@ class TweetController extends Controller
             return $diff->s . 's';
         }
     }
-
     public function deleteTweet($id)
     {
         $tweet = Tweet::find($id);
-
+    
         if (!$tweet) {
             return response()->json(['message' => 'Tweet not found'], 404);
         }
+    
+        $comments = $tweet->comments()->get();
+    
+        foreach ($comments as $comment) {
+            // Delete mentions associated with each comment
+            $comment->comment_mentions()->delete();
+    
+            // Delete the comment itself
+            $comment->delete();
+        }
+    
         $tweet->likes()->delete();
         $tweet->retweets()->delete();
         $tweet->bookmarks()->delete();
-        $tweet->comments()->delete();
         $tweet->mentions()->delete();
         $tweet->delete();
-
-
+    
         return response()->json(['message' => 'Tweet deleted successfully']);
     }
     public function getTweetData($id)
@@ -463,7 +483,6 @@ class TweetController extends Controller
         }
         return response()->json(['tweet' => $tweet]);
     }
-
     private function checkIfLikedByUser($tweet, $user)
     {
         return $tweet->likes->contains('UserID', $user->UserID);

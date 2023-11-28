@@ -68,7 +68,8 @@ Route::middleware('auth:sanctum')->get('/user-messages', [UserController::class,
 
 Route::middleware('auth:sanctum')->get('/get-new-tweet-count/{type}', [TweetController::class, 'getNewTweetCount']);
 Route::middleware('auth:sanctum')->get('/load-new-tweets', [TweetController::class, 'loadNewTweets']);
-Route::middleware('auth:sanctum')->get('/load-new-following-tweets', [TweetController::class, 'loadNewFollowingTweets']);
+
+Route::middleware('auth:sanctum')->get('/update-stats/{type}', [TweetController::class, 'updateTweetStats']);
 
 Route::middleware('auth:sanctum')->get('/get-notifications/{type}', [NotificationController::class, 'getNotifications']);
 Route::middleware('auth:sanctum')->get('/get-new-notifications/{type}', [NotificationController::class, 'getNewNotifications']);

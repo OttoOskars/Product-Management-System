@@ -308,7 +308,18 @@ export default{
                 console.error(error);
             }
         },
-
+        async updateCounts(tweet) {
+            try {
+                const response = await axios.get(`/api/get-tweet-counts/${tweet.TweetID}`);
+                const updatedStats = response.data;
+                tweet.like_count = updatedStats.like_count;
+                tweet.comment_count = updatedStats.comment_count;
+                tweet.retweet_count = updatedStats.retweet_count;
+                tweet.created_ago = updatedStats.created_ago;
+            } catch (error) {
+                console.error('Error updating counts:', error);
+            }
+        },
         async loadNewTweets(type) {
             if (this.buttonDisabled) {
                 return;
