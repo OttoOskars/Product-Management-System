@@ -464,8 +464,8 @@ export default{
                 background-color: #1d9bf0;
                 border-radius: 50%;
                 font-size:14px;
-                width:15px;
-                height:15px;
+                width:16px;
+                height:16px;
                 color:white;
                 display:flex;
                 align-items: center;
