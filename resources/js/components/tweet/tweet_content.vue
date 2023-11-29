@@ -254,6 +254,32 @@ export default {
         ...mapState(['user']),
     },
     methods: {
+        async updateCounts(tweets) {
+            try {
+                const tweetIds = tweets.map(tweet => tweet.TweetID);
+                const response = await axios.get(`/api/update-stats`, {
+                    params: {
+                        tweetIds: tweetIds,
+                    }
+                });
+
+                const updatedStatsMap = response.data;
+
+                // Update counts for each tweet based on the response
+                tweets.forEach(tweet => {
+                    const updatedStats = updatedStatsMap[tweet.TweetID];
+                    if (updatedStats) {
+                        tweet.like_count = updatedStats.like_count;
+                        tweet.comment_count = updatedStats.comment_count;
+                        tweet.retweet_count = updatedStats.retweet_count;
+                        tweet.created_ago = updatedStats.created_ago;
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error updating counts:', error);
+            }
+        },
         formatMentionText(tweetText) {
             const mentionRegex = /@([a-zA-Z0-9_]+)/g;
             const parts = tweetText.split(mentionRegex);
@@ -598,7 +624,19 @@ export default {
         this.getTweet(this.$route.params.tweetID);
         this.fetchCommentsByTweet(this.$route.params.tweetID);
         this.getAllUsersMention();
-    }
+        this.NewTweetInterval = setInterval(() => {
+            this.updateCounts([this.tweet]);
+        }, 10000);
+    },  
+    beforeDestroy() {
+        clearInterval(this.NewTweetInterval);
+    },
+    beforeUnmount() {
+        clearInterval(this.NewTweetInterval);
+    },
+    beforeRouteLeave(to, from, next) {
+        clearInterval(this.NewTweetInterval);
+    },
 };
 </script>
 

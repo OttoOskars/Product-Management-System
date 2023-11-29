@@ -80,19 +80,25 @@ class TweetController extends Controller
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
-    public function updateTweetStats($tweetID)
+    public function updateTweetStats(Request $request)
     {
-        $tweet = Tweet::find($tweetID);
-        if (!$tweet) {
-            return response()->json(['error' => 'Tweet not found'], 404);
+        $tweetIds = $request->input('tweetIds', []);
+    
+        $tweets = Tweet::whereIn('TweetID', $tweetIds)->get();
+    
+        $updatedStats = [];
+    
+        foreach ($tweets as $tweet) {
+            $now = Carbon::now();
+            $updatedStats[$tweet->TweetID] = [
+                'like_count' => $tweet->likes()->count(),
+                'comment_count' => $tweet->comments()->count(),
+                'retweet_count' => $tweet->retweets()->count(),
+                'created_ago' => $this->formatTimeAgo($tweet->created_at, $now),
+            ];
         }
-        $now = Carbon::now();
-        $tweet->like_count = $tweet->likes->count();
-        $tweet->comment_count = $tweet->comments->count();
-        $tweet->retweet_count = $tweet->retweets->count();
-        $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
-        
-        return response()->json(['like_count' => $tweet->like_count, 'comment_count' => $tweet->comment_count, 'retweet_count' => $tweet->retweet_count, 'created_ago' => $tweet->created_ago]);
+    
+        return response()->json($updatedStats);
     }
     public function getNewTweetCount($type)
     {

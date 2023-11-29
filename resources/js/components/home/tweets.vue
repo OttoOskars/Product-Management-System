@@ -308,14 +308,28 @@ export default{
                 console.error(error);
             }
         },
-        async updateCounts(tweet) {
+        async updateCounts(tweets) {
             try {
-                const response = await axios.get(`/api/get-tweet-counts/${tweet.TweetID}`);
-                const updatedStats = response.data;
-                tweet.like_count = updatedStats.like_count;
-                tweet.comment_count = updatedStats.comment_count;
-                tweet.retweet_count = updatedStats.retweet_count;
-                tweet.created_ago = updatedStats.created_ago;
+                const tweetIds = tweets.map(tweet => tweet.TweetID);
+                const response = await axios.get(`/api/update-stats`, {
+                    params: {
+                        tweetIds: tweetIds,
+                    }
+                });
+
+                const updatedStatsMap = response.data;
+
+                // Update counts for each tweet based on the response
+                tweets.forEach(tweet => {
+                    const updatedStats = updatedStatsMap[tweet.TweetID];
+                    if (updatedStats) {
+                        tweet.like_count = updatedStats.like_count;
+                        tweet.comment_count = updatedStats.comment_count;
+                        tweet.retweet_count = updatedStats.retweet_count;
+                        tweet.created_ago = updatedStats.created_ago;
+                    }
+                });
+
             } catch (error) {
                 console.error('Error updating counts:', error);
             }
@@ -799,11 +813,13 @@ export default{
         this.loadTweets('all');
         this.NewTweetInterval = setInterval(() => {
             this.checkNewTweetCount(this.postType);
+            this.updateCounts(this.currentPosts);
         }, 10000);
     },   
     beforeDestroy() {
         window.removeEventListener('scroll', this.handleScroll);
         clearInterval(this.NewTweetInterval);
+
     },
     beforeUnmount() {
         window.removeEventListener('scroll', this.handleScroll);

@@ -127,6 +127,16 @@ class UserController extends Controller
         ];
         return response()->json($response);
     }
+
+    public function updateFollowerCount($userID)
+    {
+        $user = User::find($userID);
+        $updatedFollowCount = [
+            'follower_count' => $user->followers()->count(),
+            'following_count' => $user->following()->count(),
+        ];
+        return response()->json($updatedFollowCount);
+    }
     public function getUserById($id)
     {
         if (auth()->check()) {
