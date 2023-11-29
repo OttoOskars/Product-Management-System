@@ -1,8 +1,8 @@
 <template>
     <div class="followers">
-        <div class="navbar">
+<!--         <div class="navbar">
             <NavBar></NavBar>
-        </div>
+        </div> -->
         <div class="content">
             <Followers></Followers>
         </div>

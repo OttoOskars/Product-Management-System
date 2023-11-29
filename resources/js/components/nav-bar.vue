@@ -362,6 +362,7 @@ export default{
     },
         
     async mounted() {
+        await this.$store.dispatch('initializeApp');
         this.getAllUsersMention();
         this.activeRoute = this.$route.path;
         this.isHomeFilled = this.activeRoute.includes('/home');

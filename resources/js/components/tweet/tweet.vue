@@ -1,8 +1,8 @@
 <template>
     <div class="tweet">
-        <div class="navbar">
+<!--         <div class="navbar">
             <NavBar></NavBar>
-        </div>
+        </div> -->
         <div class="content">
             <Tweets></Tweets>
         </div>

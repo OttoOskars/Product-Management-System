@@ -1,8 +1,8 @@
 <template>
     <div class="trends">
-        <div class="navbar">
+<!--         <div class="navbar">
             <NavBar></NavBar>
-        </div>
+        </div> -->
         <div class="content">
             <Trends></Trends>
         </div>
