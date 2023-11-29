@@ -23,7 +23,7 @@
                 <div class="button-content">
                     <div class="icon-container">
                         <ion-icon class="button-icon" :name="isNotificationsFilled ? 'notifications' : 'notifications-outline'"></ion-icon>
-                        <div class="notification-count" v-if="unreadNotificationsCount > 0">{{ unreadNotificationsCount }}</div>
+                        <div class="notification-count" v-if="unreadNotificationsCount">{{ unreadNotificationsCount }}</div>
                     </div>
                     <span class="button-text">Notifications</span>
                 </div>
@@ -185,7 +185,7 @@ export default{
             isMessagesFilled: false,
             isBookmarksFilled: false,
             isProfileFilled: false,
-            unreadNotificationsCount: 0,
+            unreadNotificationsCount: '',
         }
     },
     setup(){
@@ -463,7 +463,7 @@ export default{
                 right:-4px;
                 background-color: #1d9bf0;
                 border-radius: 50%;
-                font-size:14px;
+                font-size:12px;
                 width:16px;
                 height:16px;
                 color:white;

@@ -48,6 +48,9 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
         $unreadCount = $user->notificationsReceived()->where('Read', false)->count();
+        if ($unreadCount > 9) {
+            $unreadCount = '9+';
+        }
 
         return response()->json(['unreadCount' => $unreadCount]);
     }
