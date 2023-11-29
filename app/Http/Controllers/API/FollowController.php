@@ -35,7 +35,7 @@ class FollowController extends Controller
                         'SenderID' => $user->UserID,
                         'ReceiverID' => $userToFollow->UserID,
                         'NotificationType' => 'follow',
-                        'NotificationText' => ' followed you',
+                        'NotificationText' => ' started following you',
                         'NotificationLink' => '/profile/' . $EditedUserTag,
                         'Read' => false, 
                     ]);
