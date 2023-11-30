@@ -15,7 +15,7 @@
                 <button @click="switchToAll" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'all' }">
                     <div class="noti-title">
                         All
-                        <div class="noti-count" v-if="all_count > 0">10{{ all_count }}</div>
+                        <div class="noti-count" v-if="all_count > 0">{{ all_count }}</div>
                     </div>
                     <div class="active-line" :class ="{ 'active': notiType == 'all' }"></div>
                 </button>
