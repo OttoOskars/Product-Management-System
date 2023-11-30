@@ -80,7 +80,7 @@
                             <div class="message-p3" v-if="message.senderTag">{{ message.senderTag }}</div>
                             <div class="message-p4">{{ message.received_ago }}</div>
                             <div>
-                                <button v-if="message && message.MessageID !== null" class="delete-btn" @click.stop="TogglePopup(message.MessageID)">
+                                <button class="delete-btn" @click.stop="TogglePopup(message.MessageID)">
                                     <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
                                 </button>
                             </div>
@@ -101,7 +101,7 @@
                             <div class="message-p3" v-if="message.receiverTag">{{ message.receiverTag }}</div>
                             <div class="message-p4">{{ message.sent_ago }}</div>
                             <div>
-                                <button v-if="message && message.MessageID !== null" class="delete-btn" @click.stop="TogglePopup(message.MessageID)">
+                                <button class="delete-btn" @click.stop="TogglePopup(message.MessageID)">
                                     <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
                                 </button>
                             </div>
@@ -200,12 +200,9 @@ export default{
             searchInput.value = '';
             clickedPerson.value = null;
         };
-        const TogglePopup = (messageID) => {
-            if (messageID !== null) {
-                console.log('Message ID to delete:', messageID);
-                popupTriggers.value['DeleteMessageTrigger'] = !popupTriggers.value['DeleteMessageTrigger'];
-            } else {
-                console.error('Invalid message ID:', messageID);
+        const TogglePopup = () => {
+            popupTriggers.value['DeleteMessageTrigger'] = !popupTriggers.value['DeleteMessageTrigger'];
+            if (!popupTriggers.value['DeleteMessageTrigger']) {
             }
         };
         const ToggleFirstPopup = () => {
