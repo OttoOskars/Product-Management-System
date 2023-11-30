@@ -3,7 +3,7 @@
 <!--         <div class="navbar">
             <NavBar></NavBar>
         </div> -->
-        <div class="messages-info">
+        <div class="content">
             <Messages></Messages>
         </div>
     </div>
@@ -33,47 +33,5 @@ export default {
     margin: 0 auto;
     display:flex;
     flex-direction: row;
-
 }
-
-.navbar{
-    width: 3/12*100%;
-
-}
-.messages-info{
-    height:100%;
-    width:5/12*100%;
-
-}
-
-@media (max-width: 1250px) {
-    .navbar{
-        width:100px;
-    }
-    .messages-info{
-        width:7/12*100%
-    }
-}
-@media (max-width: 1000px) {
-    .navbar{
-        width:100px;
-    }
-    .messages-info{
-        width:11/12*100%
-    }
-
-}
-@media (max-width: 500px) {
-    .navbar{
-        width:100%;
-        position:fixed;
-        bottom:0;
-        z-index:99;
-    }
-    .messages-info{
-        width:100%
-    }
-
-}
-
 </style>
