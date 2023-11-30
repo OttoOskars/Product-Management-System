@@ -42,7 +42,6 @@ class FollowController extends Controller
                     $notification->save();
                 }
             }
-            $notification->save();
             return response()->json(['message' => 'You are now following this user.'.$userToFollow->UserID]);
         } else {
             return response()->json(['error' => 'User not found.'], 404);
