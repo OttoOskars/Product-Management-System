@@ -15,7 +15,7 @@
                 <button @click="switchToAll" class="noti-type-btn" :class ="{ 'active-noti-type': notiType == 'all' }">
                     <div class="noti-title">
                         All
-                        <div class="noti-count" v-if="all_count > 0">{{ all_count }}</div>
+                        <div class="noti-count" v-if="all_count > 0">10{{ all_count }}</div>
                     </div>
                     <div class="active-line" :class ="{ 'active': notiType == 'all' }"></div>
                 </button>
@@ -363,9 +363,10 @@ input[type="checkbox"]{
                 .noti-count{
                     background-color: #1d9bf0;
                     font-size:14px;
-                    border-radius:50%;
+                    border-radius:20px;
                     right:5px;
-                    width:20px;
+                    min-width:20px;
+                    max-width:40px;
                     height:20px;
                     color:white;
                     display:flex;
