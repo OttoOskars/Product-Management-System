@@ -212,6 +212,9 @@ export default{
                 mentionSearch.value = '';
                 filteredUsers.value = [];
             }
+            if (trigger === 'TweetTrigger') {
+                tweet_text_inputnav.value='';
+            }
 		}
         const logoutUser = async () => {
             try {

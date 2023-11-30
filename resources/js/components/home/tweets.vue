@@ -266,6 +266,9 @@ export default{
                 filteredUsers.value = [];
                 mentionInputType.value = source;
             }
+            if (trigger === 'CommentTrigger') {
+                comment_text_input.value='';
+            }
         };
         return {
             popupTriggers,

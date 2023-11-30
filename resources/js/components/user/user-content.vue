@@ -428,6 +428,9 @@ export default{
                 mentionSearch.value = '';
                 filteredUsers.value = [];
             }
+            if (trigger === 'CommentTrigger') {
+                comment_text_input.value='';
+            }
         };
 
         return {
