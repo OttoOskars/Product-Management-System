@@ -1,8 +1,8 @@
 <template>
     <div class="profile">
-        <div class="navbar">
+<!--         <div class="navbar">
             <NavBar></NavBar>
-        </div>
+        </div> -->
         <div class="content">
             <Content></Content>
         </div>

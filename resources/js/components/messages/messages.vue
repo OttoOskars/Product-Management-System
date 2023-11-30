@@ -1,8 +1,8 @@
 <template>
     <div class="messages">
-        <div class="navbar">
+<!--         <div class="navbar">
             <NavBar></NavBar>
-        </div>
+        </div> -->
         <div class="messages-info">
             <Messages></Messages>
         </div>

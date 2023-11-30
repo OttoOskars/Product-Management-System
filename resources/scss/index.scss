@@ -30,7 +30,7 @@ html,body {
 }
 .content{
     min-height:100%;
-    width:5/12*100%;
+    width:8/12*100%;
     box-sizing: border-box;
 }
 @media (max-width: 1250px) {
@@ -170,6 +170,31 @@ html,body {
     display:flex;
     flex-direction:column;
     box-sizing: border-box;
+    .new-tweets{
+        width:100%;
+        height:40px;
+        border-bottom: 1px solid #2F3336;
+        box-sizing: border-box;
+        .new-tweets-button{
+            width:100%;
+            height:100%;
+            font-size:15px;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            color:white;
+            background:none;
+            border:none;
+            cursor:pointer;
+            .new-tweets-icon{
+                color:white;
+                font-size:20px;
+            }
+            &:hover{
+                background-color: #080808;
+            }
+        }
+    }
     .create-tweet-or-comment{
         width:100%;
         min-height:fit-content;
@@ -327,10 +352,46 @@ html,body {
             }
         }
         .tweet-image-preview{
+            position:relative;
             img{
                 width:100%;
                 max-height:100%;
                 border-radius: 15px;
+            }
+            .preview-cover{
+                display:none;
+                width:100%;
+                height:100% ;
+                position:absolute;
+                top:-2.5px;
+                z-index:99;
+                background-color: rgba($color: #000000, $alpha: 0.1);
+                backdrop-filter: blur(2px);
+                border-radius:15px;
+                overflow: hidden;
+                .preview-close{
+                    position: absolute;
+                    top:50%;
+                    left:50%;
+                    transform: translate(-50%, -50%);
+                    width:50px;
+                    height:50px;
+                    border-radius:50%;
+                    display:flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: rgba($color: #000000, $alpha: 0.4);
+                    cursor:pointer;
+                    .preview-close-icon{
+                        color:white;
+                        font-size:30px;
+                    }
+                }
+            }
+            &:hover{
+                .preview-cover{
+                    display:block;
+                }
             }
         }
     }
@@ -846,10 +907,47 @@ html,body {
             }
             .tweet-image-preview{
                 padding-top: 10px;
+                position:relative;
+                max-width:100%;
                 img{
                     max-width:100%;
                     max-height:100%;
                     border-radius: 15px;
+                }
+                .preview-cover{
+                    display:none;
+                    width:100%;
+                    height:100% ;
+                    position:absolute;
+                    top:-2.5px;
+                    z-index:99;
+                    background-color: rgba($color: #000000, $alpha: 0.1);
+                    backdrop-filter: blur(2px);
+                    border-radius:15px;
+                    overflow: hidden;
+                    .preview-close{
+                        position: absolute;
+                        top:50%;
+                        left:50%;
+                        transform: translate(-50%, -50%);
+                        width:50px;
+                        height:50px;
+                        border-radius:50%;
+                        display:flex;
+                        align-items: center;
+                        justify-content: center;
+                        background-color: rgba($color: #000000, $alpha: 0.4);
+                        cursor:pointer;
+                        .preview-close-icon{
+                            color:white;
+                            font-size:30px;
+                        }
+                    }
+                }
+                &:hover{
+                    .preview-cover{
+                        display:block;
+                    }
                 }
             }
         }
@@ -1498,6 +1596,17 @@ html,body {
                     }
                 }
             }
+            .tweet-image-preview{
+                .preview-cover{
+                    .preview-close{
+                        width:30px;
+                        height:30px;
+                        .preview-close-icon{
+                            font-size:15px;
+                        }
+                    }
+                }
+            }
         }
         .left-side, .post-top{
                 display:none !important;
@@ -1506,6 +1615,7 @@ html,body {
             padding:15px;
             font-size:13px;
         }
+
         .post{
             gap:0px;
             .isretweet{
@@ -1686,7 +1796,7 @@ html,body {
         .top{
             width:100%;
             gap:5px;
-            padding:20px 15px 10px 10px;
+            padding:20px 30px 10px 10px;
             .left-side-popup{
                 width:40px;
                 box-sizing: border-box;
@@ -1714,6 +1824,17 @@ html,body {
                     padding-right:10px;
                     .tweet-input{
                         font-size: 14px !important;
+                    }
+                }
+                .tweet-image-preview{
+                    .preview-cover{
+                        .preview-close{
+                            width:30px;
+                            height:30px;
+                            .preview-close-icon{
+                                font-size:15px;
+                            }
+                        }
                     }
                 }
             }

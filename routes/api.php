@@ -65,9 +65,16 @@ Route::middleware('auth:sanctum')->delete('tweets/unbookmark/{tweetId}', [Bookma
 
 Route::middleware('auth:sanctum')->post('/send-message', [UserController::class, 'sendMessage']);
 Route::middleware('auth:sanctum')->get('/user-messages', [UserController::class, 'getUserMessages']);
+
+Route::middleware('auth:sanctum')->get('/get-new-tweet-count/{type}', [TweetController::class, 'getNewTweetCount']);
+Route::middleware('auth:sanctum')->get('/load-new-tweets', [TweetController::class, 'loadNewTweets']);
+
+Route::middleware('auth:sanctum')->get('/update-stats', [TweetController::class, 'updateTweetStats']);
+Route::middleware('auth:sanctum')->get('/update-follower-count/{userID}', [UserController::class, 'updateFollowerCount']);
 Route::delete('/messages/{id}', [UserController::class, 'deleteMessage']);
 
 Route::middleware('auth:sanctum')->get('/get-notifications/{type}', [NotificationController::class, 'getNotifications']);
+Route::middleware('auth:sanctum')->get('/get-new-notifications/{type}', [NotificationController::class, 'getNewNotifications']);
 Route::middleware('auth:sanctum')->get('/get-unread-notification-count', [NotificationController::class, 'getUnreadNotificationCount']);
 Route::middleware('auth:sanctum')->post('/delete-selected-notifications', [NotificationController::class, 'deleteSelectedNotifications']);
 Route::middleware('auth:sanctum')->post('/mark-selected-as-read-notifications', [NotificationController::class, 'markSelectedAsReadNotifications']);

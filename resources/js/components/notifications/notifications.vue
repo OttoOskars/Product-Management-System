@@ -1,8 +1,6 @@
 <template>
     <div class="notifications">
-        <div class="navbar">
-            <NavBar></NavBar>
-        </div>
+
         <div class="content">
             <Notifications></Notifications>
         </div>

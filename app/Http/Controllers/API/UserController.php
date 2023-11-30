@@ -127,6 +127,16 @@ class UserController extends Controller
         ];
         return response()->json($response);
     }
+
+    public function updateFollowerCount($userID)
+    {
+        $user = User::find($userID);
+        $updatedFollowCount = [
+            'follower_count' => $user->followers()->count(),
+            'following_count' => $user->following()->count(),
+        ];
+        return response()->json($updatedFollowCount);
+    }
     public function getUserById($id)
     {
         if (auth()->check()) {
@@ -159,6 +169,11 @@ class UserController extends Controller
         } else {
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
+    }
+
+    public function getAllUsers(){
+        $users = User::all();
+        return response()->json(['users' => $users]);
     }
 
     private function checkIfFollowedByUser($user1, $user2)
