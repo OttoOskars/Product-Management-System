@@ -75,7 +75,16 @@
                 <div class="title-messages">Received Messages<button @click="ToggleFourthPopup('MessageTrigger3')" class="sent-messages-btn">Sent messages</button></div>
                 <div class="message-container">
                     <div v-for= "message in receivedMessages" :key="message.MessageID" class="received-message">
-                        <p class="message-p" v-if="message.senderTag"><span style="font-weight: bold;">From </span><span style="color:gray">{{ message.senderTag }} <span>{{ message.received_ago }}</span></span></p>
+                        <div class="message-p">
+                            <div class="message-p2">From</div>
+                            <div class="message-p3" v-if="message.senderTag">{{ message.senderTag }}</div>
+                            <div class="message-p4">{{ message.received_ago }}</div>
+                            <div>
+                                <button v-if="message && message.MessageID !== null" class="delete-btn" @click.stop="TogglePopup(message.MessageID)">
+                                    <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
+                                </button>
+                            </div>
+                        </div>
                         <p class="message-content">{{ message.content }}</p>
                         <img class="message-img" v-if="message.image" :src="'/storage/'+ message.image" alt="Message Image">
                     </div>
@@ -87,10 +96,29 @@
                 <div class="title-messages">Sent Messages</div>
                 <div class="message-container">
                     <div v-for="message in sentMessages" :key="message.MessageID" class="sent-message">
-                        <p class="message-p" v-if="message.receiverTag"><span style="font-weight: bold;">To </span><span style="color:gray">{{ message.receiverTag }} <span>{{ message.sent_ago }}</span></span></p>
+                        <div class="message-p">
+                            <div class="message-p2">To</div>
+                            <div class="message-p3" v-if="message.receiverTag">{{ message.receiverTag }}</div>
+                            <div class="message-p4">{{ message.sent_ago }}</div>
+                            <div>
+                                <button v-if="message && message.MessageID !== null" class="delete-btn" @click.stop="TogglePopup(message.MessageID)">
+                                    <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
+                                </button>
+                            </div>
+                        </div>
                         <p class="message-content">{{ message.content }}</p>
                         <img class="message-img" v-if="message.image" :src="'/storage/'+ message.image" alt="Message Image">
                     </div>
+                </div>
+            </div>
+        </Popup>
+        <Popup v-if="popupTriggers.DeleteMessageTrigger" :TogglePopup="() => TogglePopup('DeleteMessageTrigger')">
+            <div class="delete-popup">
+                <h1 class="delete-title">Delete Message</h1>
+                <p class="tweet-p">Are you sure you want to delete this message?</p>
+                <div class="tweet-buttons">
+                    <button class="cancel-button" @click="TogglePopup('DeleteMessageTrigger')">Cancel</button>
+                    <button class="delete-button" @click.stop="deleteMessage(message.MessageID)">Delete</button>
                 </div>
             </div>
         </Popup>
@@ -111,6 +139,7 @@ export default{
             isInputFocused: false,
             personClicked: false,
             messageText: '',
+            // deleteMessageID: null,
         };
     },
     computed: {
@@ -134,7 +163,27 @@ export default{
             MessageTrigger: false,
             MessageTrigger2: false,
             MessageTrigger3: false,
+            DeleteMessageTrigger: false,
         });
+        const deleteMessage = (messageID) => {
+            console.log('Message ID to delete:', messageID);
+            performDeleteMessage(messageID);
+        };
+        const performDeleteMessage = async (messageID) => {
+            try {
+                const receivedIndex = receivedMessages.value.findIndex((m) => m.MessageID === messageID);
+                if (receivedIndex !== -1) {
+                    receivedMessages.value.splice(receivedIndex, 1);
+                }
+                const sentIndex = sentMessages.value.findIndex((m) => m.MessageID === messageID);
+                if (sentIndex !== -1) {
+                    sentMessages.value.splice(sentIndex, 1);
+                }
+                console.log(`Message with ID ${messageID} deleted successfully.`);
+            } catch (error) {
+                console.error('Error deleting message:', error);
+            }
+        };
         const foundUsers = computed(() => {
             if (searchInput.value.length > 0) {
                 const searchInputLower = searchInput.value.toLowerCase();
@@ -150,6 +199,14 @@ export default{
             foundUsers.value = [];
             searchInput.value = '';
             clickedPerson.value = null;
+        };
+        const TogglePopup = (messageID) => {
+            if (messageID !== null) {
+                console.log('Message ID to delete:', messageID);
+                popupTriggers.value['DeleteMessageTrigger'] = !popupTriggers.value['DeleteMessageTrigger'];
+            } else {
+                console.error('Invalid message ID:', messageID);
+            }
         };
         const ToggleFirstPopup = () => {
             popupTriggers.value['EditTrigger'] = !popupTriggers.value['EditTrigger'];
@@ -176,18 +233,6 @@ export default{
                 popupTriggers.value['MessageTrigger2'] = true;
             }
         };
-        let fetchSentMessages = null;
-
-        const setSentMessages = (messages) => {
-            sentMessages.value = messages;
-        };
-        const ToggleFourthPopup = async () => {
-            popupTriggers.value['MessageTrigger3'] = !popupTriggers.value['MessageTrigger3'];
-            if (popupTriggers.value['MessageTrigger3'] && fetchSentMessages) {
-                await fetchSentMessages();
-                popupTriggers.value['MessageTrigger3'] = true;
-            }
-        };
         fetchReceivedMessages = async () => {
             try {
                 const response = await axios.get(`/api/user-messages`);
@@ -201,11 +246,22 @@ export default{
                     image: message.Image,
                     senderId: message.SenderID,
                     senderTag: senderTagsMap[message.SenderID] || 'Unknown Sender',
-                    sent_ago: message.sent_ago,
                     received_ago: message.received_ago,
                 })));
             } catch (error) {
                 console.error('Error fetching received messages:', error);
+            }
+        };
+        let fetchSentMessages = null;
+
+        const setSentMessages = (messages) => {
+            sentMessages.value = messages;
+        };
+        const ToggleFourthPopup = async () => {
+            popupTriggers.value['MessageTrigger3'] = !popupTriggers.value['MessageTrigger3'];
+            if (popupTriggers.value['MessageTrigger3'] && fetchSentMessages) {
+                await fetchSentMessages();
+                popupTriggers.value['MessageTrigger3'] = true;
             }
         };
         fetchSentMessages = async () => {
@@ -314,6 +370,7 @@ export default{
             fetchReceivedMessages,
             ToggleThirdPopup,
             ToggleFourthPopup,
+            TogglePopup,
             fetchSentMessages,
             nextButtonClick,
             resetFirstPopup,
@@ -329,6 +386,8 @@ export default{
             tweetInputnav,
             receivedMessages,
             sentMessages,
+            deleteMessage,
+            performDeleteMessage,
         }
     },
     methods: {
@@ -374,12 +433,6 @@ export default{
         inputBlur() {
             this.isInputFocused = false;
         },
-        redirectTo(where) {
-            this.$router.push(where);
-        },
-        openTweet(id) {
-            console.log(id);
-        },
         async sendMessage() {
             if (!this.selectedUser || !this.tweetInputnav) return;
             const formData = new FormData();
@@ -406,6 +459,32 @@ export default{
             console.error('Error sending message:', error);
             }
         },
+        // deleteMessage(messageID) {
+        //     console.log('Message ID to delete:', messageID);
+        //     this.performDeleteMessage(messageID);
+        // },
+        // async performDeleteMessage(messageID) {
+        //     console.log('Performing deletion for message ID:', messageID);
+        //     if (!messageID) {
+        //         console.error('Message ID not provided');
+        //         return;
+        //     }
+        //     try {
+        //         await this.$axios.delete(`/api/messages/${messageID}`);
+        //         const receivedIndex = this.receivedMessages.findIndex((m) => m.MessageID === messageID);
+        //         if (receivedIndex !== -1) {
+        //             this.receivedMessages.splice(receivedIndex, 1);
+        //         }
+        //         const sentIndex = this.sentMessages.findIndex((m) => m.MessageID === messageID);
+        //         if (sentIndex !== -1) {
+        //             this.sentMessages.splice(sentIndex, 1);
+        //         }
+        //         this.popupTriggers.DeleteMessageTrigger = false;
+        //         console.log(`Message with ID ${messageID} deleted successfully.`);
+        //     } catch (error) {
+        //         console.error('Error deleting message:', error);
+        //     }
+        // },
     },
     async mounted() {
         await this.$store.dispatch('initializeApp');
@@ -921,7 +1000,7 @@ export default{
             }
             &::-webkit-scrollbar-thumb{
                 background-color: #2F3336;
-                border-radius: 5px;;
+                border-radius: 5px;
                 border:none;
             }
             &::-webkit-scrollbar-track{
@@ -936,7 +1015,39 @@ export default{
                 margin-left: 20px;
                 margin-right: 20px;
                 .message-p{
+                    margin-top: 20px;
                     font-size: 18px;
+                    display: flex;
+                    flex-direction: row;
+                    .message-p2{
+                        font-weight: bold;
+                    }
+                    .message-p3, .message-p4{
+                        color: gray;
+                        margin-left: 5px;
+                    }
+                    .delete-btn{
+                        height:25px;
+                        width:25px;
+                        background:none;
+                        border-radius:50%;
+                        border:none;
+                        display:flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding:0;
+                        cursor:pointer;
+                        margin-left: 5px;
+                        .delete-icon{
+                            font-size:16px;
+                            color:#f11515;
+                            --ionicon-stroke-width: 30px;
+                            visibility: visible;
+                        }
+                        &:hover{
+                            background-color: rgba($color: #f11515, $alpha: 0.1);
+                        }
+                    }
                 }
                 .message-content{
                     overflow-wrap: anywhere;
@@ -989,7 +1100,39 @@ export default{
                 margin-left: 20px;
                 margin-right: 20px;
                 .message-p{
+                    margin-top: 20px;
                     font-size: 18px;
+                    display: flex;
+                    flex-direction: row;
+                    .message-p2{
+                        font-weight: bold;
+                    }
+                    .message-p3, .message-p4{
+                        color: gray;
+                        margin-left: 5px;
+                    }
+                    .delete-btn{
+                        height:25px;
+                        width:25px;
+                        background:none;
+                        border-radius:50%;
+                        border:none;
+                        display:flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding:0;
+                        cursor:pointer;
+                        margin-left: 5px;
+                        .delete-icon{
+                            font-size:16px;
+                            color:#f11515;
+                            --ionicon-stroke-width: 30px;
+                            visibility: visible;
+                        }
+                        &:hover{
+                            background-color: rgba($color: #f11515, $alpha: 0.1);
+                        }
+                    }
                 }
                 .message-content{
                     overflow-wrap: anywhere;

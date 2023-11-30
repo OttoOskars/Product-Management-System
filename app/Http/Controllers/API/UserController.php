@@ -303,4 +303,23 @@ class UserController extends Controller
 
         return response()->json(['sent_messages' => $sentMessages, 'received_messages' => $receivedMessages]);
     }
+
+    public function deleteMessage($id)
+    {
+        $message = Messages::find($id);
+
+        if (!$message) {
+            return response()->json(['message' => 'Message not found'], 404);
+        }
+        
+        // Delete associated data like mentions, likes, etc., if applicable
+        // Adjust these based on your message schema
+        // $message->likes()->delete();
+        // $message->mentions()->delete();
+        // ...
+
+        $message->delete();
+
+        return response()->json(['message' => 'Message deleted successfully']);
+    }
 }
