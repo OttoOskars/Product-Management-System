@@ -80,7 +80,7 @@
                             <div class="message-p3" v-if="message.senderTag">{{ message.senderTag }}</div>
                             <div class="message-p4">{{ message.received_ago }}</div>
                             <div>
-                                <button class="delete-btn" @click.stop="TogglePopup(message.MessageID)">
+                                <button class="delete-btn" @click.stop="message.MessageID && TogglePopup(message.MessageID)">
                                     <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
                                 </button>
                             </div>
@@ -95,13 +95,13 @@
             <div class="sent-messages-popup" v-if="user">
                 <div class="title-messages">Sent Messages</div>
                 <div class="message-container">
-                    <div v-for="message in sentMessages" :key="message.MessageID" class="sent-message">
+                    <div v-for="message in sentMessages" :key="message.id" class="sent-message">
                         <div class="message-p">
                             <div class="message-p2">To</div>
                             <div class="message-p3" v-if="message.receiverTag">{{ message.receiverTag }}</div>
                             <div class="message-p4">{{ message.sent_ago }}</div>
                             <div>
-                                <button class="delete-btn" @click.stop="TogglePopup(message.MessageID)">
+                                <button class="delete-btn" @click.stop="DeleteMessageID = message.id; TogglePopup(message.MessageID); console.log(message.id)">
                                     <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
                                 </button>
                             </div>
@@ -118,7 +118,7 @@
                 <p class="tweet-p">Are you sure you want to delete this message?</p>
                 <div class="tweet-buttons">
                     <button class="cancel-button" @click="TogglePopup('DeleteMessageTrigger')">Cancel</button>
-                    <button class="delete-button" @click.stop="deleteMessage(message.MessageID)">Delete</button>
+                    <button class="delete-button" @click.stop="deleteMessage(DeleteMessageID)">Delete</button>
                 </div>
             </div>
         </Popup>
@@ -149,6 +149,7 @@ export default{
         },
     },
     setup () {
+        const DeleteMessageID = ref(null);
         const previewImagenav = ref(null);
         const messageImagenav = ref(null);
         const searchInput = ref('');
@@ -200,9 +201,11 @@ export default{
             searchInput.value = '';
             clickedPerson.value = null;
         };
-        const TogglePopup = () => {
+        const TogglePopup = (id) => {
             popupTriggers.value['DeleteMessageTrigger'] = !popupTriggers.value['DeleteMessageTrigger'];
+
             if (!popupTriggers.value['DeleteMessageTrigger']) {
+                
             }
         };
         const ToggleFirstPopup = () => {
@@ -270,6 +273,7 @@ export default{
                 const receiverTagsMap = await fetchReceiverTags(receiverIds);
 
                 setSentMessages(sent_messages.map(message => ({
+                    id: message.MessageID,
                     content: message.Content,
                     image: message.Image,
                     receiverId: message.ReceiverID,
@@ -361,6 +365,7 @@ export default{
             }
         };
         return {
+            DeleteMessageID,
             popupTriggers,
             ToggleFirstPopup,
             ToggleSecondPopup,
