@@ -172,6 +172,7 @@ export default{
         };
         const performDeleteMessage = async (messageID) => {
             try {
+                await axios.delete(`/api/messages/${messageID}`);
                 const receivedIndex = receivedMessages.value.findIndex((m) => m.MessageID === messageID);
                 if (receivedIndex !== -1) {
                     receivedMessages.value.splice(receivedIndex, 1);
@@ -180,6 +181,7 @@ export default{
                 if (sentIndex !== -1) {
                     sentMessages.value.splice(sentIndex, 1);
                 }
+                popupTriggers.value['DeleteMessageTrigger'] = false;
                 console.log(`Message with ID ${messageID} deleted successfully.`);
             } catch (error) {
                 console.error('Error deleting message:', error);
