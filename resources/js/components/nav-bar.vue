@@ -366,7 +366,6 @@ export default{
         
     async mounted() {
         await this.$store.dispatch('initializeApp');
-        this.getAllUsersMention();
         this.activeRoute = this.$route.path;
         this.isHomeFilled = this.activeRoute.includes('/home');
         this.isNotificationsFilled = this.activeRoute.includes('/notifications');
@@ -383,10 +382,13 @@ export default{
             this.isProfileFilled = this.activeRoute.includes('/profile');
         });
 
-        this.unreadNotificationsIntervalId = setInterval(
-            this.getUnreadNotificationCount,
-            10000
-        );
+        if (this.$route.name !== 'login') {
+            this.getAllUsersMention();
+            this.unreadNotificationsIntervalId = setInterval(
+                this.getUnreadNotificationCount,
+                10000
+            );
+        }
     },
     beforeDestroy() {
         clearInterval(this.unreadNotificationsIntervalId);
