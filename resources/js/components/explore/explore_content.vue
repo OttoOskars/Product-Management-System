@@ -191,7 +191,7 @@ export default{
     backdrop-filter: blur(5px);
     position:sticky;
     top:0;
-    z-index:99;
+    z-index:9;
     padding:0 20px;
     box-sizing: border-box;
     .search-input {
