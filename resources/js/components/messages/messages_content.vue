@@ -1,23 +1,25 @@
 <template>
     <div class="messages-container">
-        <div class="messages-main">
-            <div class="top-top">
-                <button class="back-icon" @click="goBack">
-                    <ion-icon name="arrow-back-outline"></ion-icon>
-                </button>
-                <div class="top-top-top" v-if="user">
-                    <p class="title">Messages</p>
-                    <p class="user-tag">{{ user.UserTag }}</p>
-                </div>
+        <div class="top-top">
+            <button class="back-icon" @click="goBack">
+                <ion-icon name="arrow-back-outline"></ion-icon>
+            </button>
+            <div class="top-top-top" v-if="user">
+                <p class="title">Messages</p>
+                <p class="user-tag">{{ user.UserTag }}</p>
             </div>
-            <div class="main-text">Welcome to your inbox!</div>
-            <div class="under-text">Drop a line, share posts and more with private conversations between you and others on X. </div>
-            <button class="write-button" @click="ToggleFirstPopup('EditTrigger')">New message</button>
         </div>
-        <div class="messages-right">
-            <div class="right-text">Select a message</div>
-            <div class="right-under-text">Choose from your existing conversations, start a new one, or just keep swimming.</div>
-            <button class="right-write-button" @click="ToggleThirdPopup('MessageTrigger2')">Messages</button>
+        <div class="messages-sub">
+            <div class="messages-main">
+                <div class="main-text">Welcome to your inbox!</div>
+                <div class="under-text">Drop a line, share posts and more with private conversations between you and others on X. </div>
+                <button class="write-button" @click="ToggleFirstPopup('EditTrigger')">New message</button>
+            </div>
+            <div class="messages-right">
+                <div class="right-text">Select a message</div>
+                <div class="right-under-text">Choose from your existing conversations, start a new one, or just keep swimming.</div>
+                <button class="right-write-button" @click="ToggleThirdPopup('MessageTrigger2')">Messages</button>
+            </div>
         </div>
         <Popup v-if="popupTriggers.EditTrigger" :TogglePopup="() => ToggleFirstPopup('EditTrigger')">
             <div class="edit-popup">
@@ -130,7 +132,7 @@ import Popup from '../Popup.vue';
 import { mapState } from 'vuex';
 import axios from 'axios';
 export default{
-    name: 'Search',
+    name: 'Messages',
     components: {
         Popup,
     },
@@ -504,96 +506,103 @@ export default{
 </script>
 <style lang="scss" scoped>
 .messages-container{
-    height: 100%;
-    display: grid;
-    grid-template-columns: 65% 100%;
-    .messages-main{
-        padding-top:0px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #2F3336;
+    // display: grid;
+    // grid-template-columns: 65% 100%;
+    .messages-sub{
+        display: flex;
+        flex-direction: row;
         height: 100vh;
-        padding-bottom:80px;
-        display:flex;
-        flex-direction:column;
-        box-sizing: border-box;
-        border-right: 1px solid #2F3336;
-        border-left: 1px solid #2F3336;
-        .main-text{
-            color: white;
-            text-align:left;
-            font-size: 32px;
-            font-weight: bold;
-            display: flex;
-            margin-top: 10%;
-            margin-left:6%;
-            margin-right:15.5%;
-        }
-        .under-text{
-            color:gray;
-            display: flex;
-            font-size: 15px;
-            text-align: left;
-            padding-left: 6%;
-            margin-top: 15px;
-        }
-        .write-button{
-            display: block;
-            width: 170px;
-            align-items: center;
-            background:#1d9bf0;
-            color: white;
-            text-align: center;
-            margin-top: 35px;
-            margin-left: 6%;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            height: 50px;
-            &:hover{
-                background:#0c79c2
+        .messages-main{
+            // padding-top:0px;
+            // height: auto;
+            // padding-bottom:80px;
+            width: 40%;
+            display:flex;
+            flex-direction:column;
+            box-sizing: border-box;
+            border-right: 1px solid #2F3336;
+            .main-text{
+                color: white;
+                text-align:left;
+                font-size: 32px;
+                font-weight: bold;
+                display: flex;
+                margin-top: 10%;
+                margin-left:6%;
+                margin-right:15.5%;
+            }
+            .under-text{
+                color:gray;
+                display: flex;
+                font-size: 15px;
+                text-align: left;
+                padding-left: 6%;
+                margin-top: 15px;
+            }
+            .write-button{
+                display: block;
+                width: 170px;
+                align-items: center;
+                background:#1d9bf0;
+                color: white;
+                text-align: center;
+                margin-top: 35px;
+                margin-left: 6%;
+                border-radius: 50px;
+                font-size: 16px;
+                font-weight: bold;
+                border: none;
+                height: 50px;
+                &:hover{
+                    background:#0c79c2
+                }
             }
         }
-    }
-    .messages-right{
-        height: 100vh;
-        flex-direction:column;
-        box-sizing: border-box;
-        border-right: 1px solid #2F3336;
-        justify-content: center;
-        .right-text{
-            color: white;
-            text-align: left;
-            font-size: 32px;
-            font-weight: bold;
-            display: flex;
+        .messages-right{
+            width: 60%;
+            flex-direction:column;
+            box-sizing: border-box;
             justify-content: center;
-            margin-top: 40%;
-            align-items: center;
-        }
-        .right-under-text{
-            color:gray;
-            display: flex;
-            font-size: 15px;
-            text-align: left;
-            padding-right: 20%;
-            padding-left: 29.4%;
-            margin-top: 15px;
-            justify-content: center;
-        }
-        .right-write-button{
-            display: block;
-            width: 170px;
-            background:#1d9bf0;
-            color: white;
-            text-align: center;
-            margin-top: 35px;
-            margin-left: 29.5%;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            height: 50px;
-            &:hover{
-                background:#0c79c2
+            .right-text{
+                color: white;
+                text-align: left;
+                font-size: 32px;
+                font-weight: bold;
+                display: flex;
+                justify-content: center;
+                margin-top: 40%;
+                align-items: center;
+            }
+            .right-under-text{
+                color:gray;
+                display: flex;
+                font-size: 15px;
+                text-align: left;
+                padding-right: 20%;
+                padding-left: 29.4%;
+                margin-top: 15px;
+                justify-content: center;
+            }
+            .right-write-button{
+                display: block;
+                width: 170px;
+                background:#1d9bf0;
+                color: white;
+                text-align: center;
+                margin-top: 35px;
+                margin-left: 29.5%;
+                border-radius: 50px;
+                font-size: 16px;
+                font-weight: bold;
+                border: none;
+                height: 50px;
+                &:hover{
+                    background:#0c79c2
+                }
             }
         }
     }
@@ -1153,96 +1162,107 @@ export default{
 }
 @media (max-width: 1000px){
     .messages-container{
-        display: flex;
-        flex-direction: column;
-        .messages-main{
-            height: 50%;
-            padding-bottom: 0px;
-            border-right: 0px;
-            border-left: 0px;
-            .main-text{
-                margin-left:4%;
+        .messages-sub{
+            display: flex;
+            flex-direction: column;
+            .messages-main{
+                height: 50%;
+                // padding-bottom: 0px;
+                // border-right: 0px;
+                // border-left: 0px;
+                width: 100%;
+                border-bottom:solid 1px #2F3336;
+                .main-text{
+                    margin-left:4%;
+                }
+                .under-text{
+                    padding-left: 4%;
+                }
+                .write-button{
+                    margin-left: 4%;
+                }
             }
-            .under-text{
-                padding-left: 4%;
-            }
-            .write-button{
-                margin-left: 4%;
-            }
-        }
-        .messages-right{
-            height: 50%;
-            border-right: 0px;
-            border-left: 0px;
-            padding-bottom: 0px;
-            justify-content: left;
-            .right-text{
-                margin-top: 15%;
-                padding-left: 4%;
+            .messages-right{
+                height: 50%;
+                // border-right: 0px;
+                // border-left: 0px;
+                // padding-bottom: 0px;
+                width: 100%;
                 justify-content: left;
-            }
-            .right-under-text{
-                padding-left: 4%;
-                justify-content: left;
-            }
-            .right-write-button{
-                margin-left: 4%;
+                .right-text{
+                    margin-top: 15%;
+                    padding-left: 4%;
+                    justify-content: left;
+                }
+                .right-under-text{
+                    padding-left: 4%;
+                    justify-content: left;
+                }
+                .right-write-button{
+                    margin-left: 4%;
+                }
             }
         }
     }
 }
 @media (max-width: 700px){
     .messages-container{
-        display: flex;
-        flex-direction: column;
-        .messages-main{
-            height: 50%;
-            padding-bottom: 0px;
-            border-right: 0px;
-            border-left: 0px;
-            .main-text{
-                font-size: 26px;
-                margin-top: 20%;
-                margin-left:4%;
+        .messages-sub{
+            display: flex;
+            flex-direction: column;
+            .messages-main{
+                height: 50%;
+                width: 100%;
+                // padding-bottom: 0px;
+                // border-right: 0px;
+                // border-left: 0px;
+                .main-text{
+                    font-size: 26px;
+                    margin-top: 20%;
+                    // width: 300px;
+                    // margin-left:4%;
+                }
+                .under-text{
+                    font-size: 13px;
+                    // padding-left: 4%;
+                    margin-top: 12px;
+                    // width: 400px;
+                }
+                .write-button{
+                    width: 150px;
+                    margin-top: 30px;
+                    margin-left: 4%;
+                    font-size: 14px;
+                    height: 45px;
+                }
             }
-            .under-text{
-                font-size: 13px;
-                padding-left: 4%;
-                margin-top: 12px;
-            }
-            .write-button{
-                width: 150px;
-                margin-top: 30px;
-                margin-left: 4%;
-                font-size: 14px;
-                height: 45px;
-            }
-        }
-        .messages-right{
-            height: 50%;
-            border-right: 0px;
-            border-left: 0px;
-            padding-bottom: 0px;
-            justify-content: left;
-            .right-text{
-                font-size: 26px;
-                margin-top: 20%;
-                padding-left: 4%;
-                justify-content: left;
-            }
-            .right-under-text{
-                font-size: 13px;
-                padding-left: 4%;
-                padding-right: 4%;
-                margin-top: 12px;
-                justify-content: left;
-            }
-            .right-write-button{
-                width: 150px;
-                margin-top: 30px;
-                margin-left: 4%;
-                font-size: 14px;
-                height: 45px;
+            .messages-right{
+                height: 50%;
+                width: 100%;
+                // border-right: 0px;
+                // border-left: 0px;
+                // padding-bottom: 0px;
+                // justify-content: left;
+                .right-text{
+                    font-size: 26px;
+                    margin-top: 20%;
+                    padding-left: 4%;
+                    // justify-content: left;
+                }
+                .right-under-text{
+                    font-size: 13px;
+                    padding-left: 4%;
+                    padding-right: 4%;
+                    margin-top: 12px;
+                    // justify-content: left;
+                }
+                .right-write-button{
+                    width: 150px;
+                    margin-top: 30px;
+                    margin-left: 4%;
+                    font-size: 14px;
+                    height: 45px;
+                }
             }
         }
         .edit-popup, .message-popup, .received-messages-popup, .sent-messages-popup{

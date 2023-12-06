@@ -33,5 +33,9 @@ export default {
     margin: 0 auto;
     display:flex;
     flex-direction: row;
+    .content{
+      width: 100%;
+      box-sizing: border-box;
+    }
 }
 </style>
