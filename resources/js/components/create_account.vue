@@ -787,7 +787,6 @@ select option { color: white; }
       font-size: 11px;
     }
     .account-input {
-      padding-top: 18px;
       font-size: 13px;
     }
     .warning {
@@ -903,7 +902,6 @@ select option { color: white; }
       font-size: 10px;
     }
     .account-input {
-      padding-top: 18px;
       font-size: 12px;
     }
     .warning {
@@ -927,8 +925,6 @@ select option { color: white; }
         }
       }
       .heading_create {
-        top: 15px;
-        left: 30px;
         font-size: 12px;
       }
       .div-form{
@@ -939,32 +935,26 @@ select option { color: white; }
           }
           .name {
             top: 70px;
-            left: 30px;
             width: 390px;
           }
           .username {
             top: 85px;
-            left: 30px;
             width: 390px;
           }
           .email {
             top: 100px;
-            left: 30px;
             width: 390px;
           }
           .password {
             top: 115px;
-            left: 30px;
             width: 390px;
           }
           .confirm_password {
             top: 130px;
-            left: 30px;
             width: 390px;
           }
           .birth_date {
             top: 330px;
-            left: 30px;
             .date {
               font-size: 16px;
             }
@@ -980,7 +970,6 @@ select option { color: white; }
             }
             .months {
               top: 230px;
-              left: 30px;
               .select-1 {
                 width: 170px;
               }
@@ -1005,7 +994,6 @@ select option { color: white; }
               font-size: 12px;
               width: 390px;
               height: 40px;
-              left: 30px;
               top: 500px;
             }
           }
@@ -1019,11 +1007,9 @@ select option { color: white; }
       font-size: 9px;
     }
     .account-input {
-      padding-top: 18px;
       font-size: 11px;
     }
     .warning {
-      top: 80%;
       font-size: 10px;
     }
   }
@@ -1033,7 +1019,6 @@ select option { color: white; }
   .account-background{
     .account-container {
       width: 400px;
-      height: 560px;
       .X-2 {
         top: 8px;
         left: 8px;
@@ -1042,74 +1027,44 @@ select option { color: white; }
           height: 27px;
         }
       }
-      .heading_create {
-        top: 15px;
-        left: 30px;
-        font-size: 12px;
-      }
       .div-form{
         .form{
           input[type="text"], input[type="password"], input[type="email"] {
-            height: 40px;
             width: 340px;
           }
           .name {
-            top: 70px;
-            left: 30px;
             width: 340px;
           }
           .username {
-            top: 85px;
-            left: 30px;
             width: 340px;
           }
           .email {
-            top: 100px;
-            left: 30px;
             width: 340px;
           }
           .password {
-            top: 115px;
-            left: 30px;
             width: 340px;
           }
           .confirm_password {
-            top: 130px;
-            left: 30px;
             width: 340px;
           }
           .birth_date {
-            top: 330px;
-            left: 30px;
-            .date {
-              font-size: 16px;
-            }
             .p {
-              font-size: 11px;
               width: 340px;
             }
           }
           .time{
-            select {
-              height: 40px;
-              font-size: 12px;
-            }
             .months {
-              top: 230px;
-              left: 30px;
               .select-1 {
                 width: 150px;
               }
             }
             .days {
-              top: 190px;
               left: 190px;
               .select-2 {
                 width: 60px;
               }
             }
             .years {
-              top: 150px;
               left: 260px;
               .select-3 {
                 width: 110px;
@@ -1118,29 +1073,11 @@ select option { color: white; }
           }
           .submit-form{
             .next {
-              font-size: 12px;
               width: 340px;
-              height: 40px;
-              left: 30px;
-              top: 500px;
             }
           }
         }
       }
-    }
-    .input-label {
-      font-size: 12px;
-    }
-    .input-label.active {
-      font-size: 9px;
-    }
-    .account-input {
-      padding-top: 18px;
-      font-size: 11px;
-    }
-    .warning {
-      top: 80%;
-      font-size: 10px;
     }
   }
 }
@@ -1159,7 +1096,6 @@ select option { color: white; }
         }
       }
       .heading_create {
-        top: 15px;
         left: 20px;
         font-size: 10px;
       }
@@ -1255,7 +1191,6 @@ select option { color: white; }
       font-size: 10px;
     }
     .warning {
-      top: 80%;
       font-size: 9px;
     }
   }
@@ -1373,6 +1308,76 @@ select option { color: white; }
     .warning {
       top: 75%;
       font-size: 8px;
+    }
+  }
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+@media (max-width: 310px) {
+  .account-background{
+    .account-container {
+      width: 270px;
+      .X-2 {
+        top: 5px;
+        left: 5px;
+        .X {
+          width: 24px;
+          height: 24px;
+        }
+      }
+      .heading_create {
+        font-size: 8px;
+      }
+      .div-form{
+        .form{
+          input[type="text"], input[type="password"], input[type="email"] {
+            width: 240px;
+          }
+          .name {
+            width: 240px;
+          }
+          .username {
+            width: 240px;
+          }
+          .email {
+            width: 240px;
+          }
+          .password {
+            width: 240px;
+          }
+          .confirm_password {
+            width: 240px;
+          }
+          .birth_date {
+            .p {
+              width: 240px;
+            }
+          }
+          .time{
+            .months {
+              .select-1 {
+                width: 120px;
+              }
+            }
+            .days {
+              left: 145px;
+              .select-2 {
+                width: 45px;
+              }
+            }
+            .years {
+              left: 200px;
+              .select-3 {
+                width: 55px;
+              }
+            }
+          }
+          .submit-form{
+            .next {
+              width: 240px;
+            }
+          }
+        }
+      }
     }
   }
 }
