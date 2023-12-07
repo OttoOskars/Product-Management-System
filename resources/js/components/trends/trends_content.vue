@@ -20,15 +20,13 @@
 </template>
 
 <script>
-import axios from 'axios';
 import oauth from 'oauth-1.0a';
 import crypto from 'crypto';
 
-// Construct the OAuth 1.0a client
 const oauthClient = oauth({
   consumer: {
-    key: 'MV6qXVFB1Qw6jjwAfIcEFRzUS', // Replace with your actual API Key
-    secret: 'K5YCEOwxXyYxyqKA4QFzVISFMkgwqciOk5793x6oWJaFPiDof0' // Replace with your actual API Key Secret
+    key: 'MV6qXVFB1Qw6jjwAfIcEFRzUS',
+    secret: 'K5YCEOwxXyYxyqKA4QFzVISFMkgwqciOk5793x6oWJaFPiDof0'
   },
   signature_method: 'HMAC-SHA1',
   hash_function(base_string, key) {
@@ -36,24 +34,16 @@ const oauthClient = oauth({
   }
 });
 
-// Generate the OAuth 1.0a headers
-const oauthHeaders = oauthClient.toHeader(oauthClient.authorize({}));
 
-// Make the API request with the OAuth headers
-axios.get('https://api.twitter.com/1.1/trends/place.json', {
-  headers: {
-    Authorization: oauthHeaders['Authorization']
-  },
-  params: {
-    id: 23424977 // WOEID for global trends
-  }
-})
-  .then(response => {
-    // Process the response data
-  })
-  .catch(error => {
-    // Handle errors
-  });
+const requestData = {
+  url: 'https://api.twitter.com/1.1/trends/place.json',
+  method: 'GET',
+};
+
+const baseString = oauthClient.getBaseString(requestData).toUpperCase();
+const oauthHeader = oauthClient.toHeader(oauthClient.authorize(requestData));
+
+
 
 export default{
 
