@@ -127,6 +127,16 @@ class UserController extends Controller
         ];
         return response()->json($response);
     }
+
+    public function updateFollowerCount($userID)
+    {
+        $user = User::find($userID);
+        $updatedFollowCount = [
+            'follower_count' => $user->followers()->count(),
+            'following_count' => $user->following()->count(),
+        ];
+        return response()->json($updatedFollowCount);
+    }
     public function getUserById($id)
     {
         if (auth()->check()) {
@@ -307,5 +317,24 @@ class UserController extends Controller
         Log::info($receivedMessages);
 
         return response()->json(['sent_messages' => $sentMessages, 'received_messages' => $receivedMessages]);
+    }
+
+    public function deleteMessage($id)
+    {
+        $message = Messages::find($id);
+
+        if (!$message) {
+            return response()->json(['message' => 'Message not found'], 404);
+        }
+        
+        // Delete associated data like mentions, likes, etc., if applicable
+        // Adjust these based on your message schema
+        // $message->likes()->delete();
+        // $message->mentions()->delete();
+        // ...
+
+        $message->delete();
+
+        return response()->json(['message' => 'Message deleted successfully']);
     }
 }

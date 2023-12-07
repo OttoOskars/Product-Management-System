@@ -363,9 +363,10 @@ input[type="checkbox"]{
                 .noti-count{
                     background-color: #1d9bf0;
                     font-size:14px;
-                    border-radius:50%;
+                    border-radius:20px;
                     right:5px;
-                    width:20px;
+                    min-width:20px;
+                    max-width:40px;
                     height:20px;
                     color:white;
                     display:flex;

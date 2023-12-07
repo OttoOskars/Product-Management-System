@@ -35,14 +35,13 @@ class FollowController extends Controller
                         'SenderID' => $user->UserID,
                         'ReceiverID' => $userToFollow->UserID,
                         'NotificationType' => 'follow',
-                        'NotificationText' => ' followed you',
+                        'NotificationText' => ' started following you',
                         'NotificationLink' => '/profile/' . $EditedUserTag,
                         'Read' => false, 
                     ]);
                     $notification->save();
                 }
             }
-            $notification->save();
             return response()->json(['message' => 'You are now following this user.'.$userToFollow->UserID]);
         } else {
             return response()->json(['error' => 'User not found.'], 404);

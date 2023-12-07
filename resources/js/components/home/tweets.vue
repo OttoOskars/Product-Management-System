@@ -43,11 +43,8 @@
                     </div>
                 </div>
             </div>
-            <div class="new-tweets" v-if="newTweetIds.length > 0 && postType === 'all'">
-                <button class="new-tweets-button" @click="loadNewTweets('all')" :disabled="buttonDisabled">Load New Tweets {{ newTweetIds.length }}</button>
-            </div>
-            <div class="new-tweets" v-if="postType === 'following'">
-                <button class="new-tweets-button" @click="loadNewTweets('following')" :disabled="buttonDisabled">Refresh following page</button>
+            <div class="new-tweets" v-if="newTweetIds[postType].length > 0">
+                <button class="new-tweets-button" @click="loadNewTweets(postType)" :disabled="buttonDisabled">Load New Tweets {{ newTweetIds[postType].length }}</button>
             </div>
             <div class="post" v-for="tweet in currentPosts" :key="tweet.TweetID" @click="openTweet(tweet.TweetID)" :id="tweet.TweetID">
                 <div class="isretweet" v-if="tweet.isRetweet">
@@ -229,7 +226,10 @@ export default{
                 all: 0,
                 following: 0,
             },
-            newTweetIds: [],
+            newTweetIds: {
+                all: [],
+                following: [],
+            },
         }
     },
     setup(){
@@ -266,6 +266,9 @@ export default{
                 filteredUsers.value = [];
                 mentionInputType.value = source;
             }
+            if (trigger === 'CommentTrigger') {
+                comment_text_input.value='';
+            }
         };
         return {
             popupTriggers,
@@ -293,52 +296,67 @@ export default{
             try {
                 const response = await axios.get(`/api/get-new-tweet-count/${type}`);
                 const newTweetIds = response.data.tweetIDs;
+                const FollowingTweetIds = response.data.following_tweetIDs;
+
+                if (FollowingTweetIds.length > 0) {
+                    this.newTweetIds.following = [...this.newTweetIds.following, ...FollowingTweetIds];
+                    this.new_tweet_count.following = this.newTweetIds.following.length;
+                }
 
                 if (newTweetIds.length > 0) {
-                    this.newTweetIds = [...this.newTweetIds, ...newTweetIds];
-                    this.new_tweet_count[type] = this.newTweetIds.length;
+                    this.newTweetIds.all = [...this.newTweetIds.all, ...newTweetIds];
+                    this.new_tweet_count.all = this.newTweetIds.length;
                 }
             } catch (error) {
                 console.error(error);
             }
         },
+        async updateCounts(tweets) {
+            try {
+                const tweetIds = tweets.map(tweet => tweet.TweetID);
+                const response = await axios.get(`/api/update-stats`, {
+                    params: {
+                        tweetIds: tweetIds,
+                    }
+                });
 
+                const updatedStatsMap = response.data;
+
+                // Update counts for each tweet based on the response
+                tweets.forEach(tweet => {
+                    const updatedStats = updatedStatsMap[tweet.TweetID];
+                    if (updatedStats) {
+                        tweet.like_count = updatedStats.like_count;
+                        tweet.comment_count = updatedStats.comment_count;
+                        tweet.retweet_count = updatedStats.retweet_count;
+                        tweet.created_ago = updatedStats.created_ago;
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error updating counts:', error);
+            }
+        },
         async loadNewTweets(type) {
             if (this.buttonDisabled) {
                 return;
             }
+            try {
+                const response = await axios.get(`/api/load-new-tweets`, {
+                    params: {
+                        type: type,
+                        Ids: this.newTweetIds[type],
+                    },
+                });
 
-            if (type === 'all') {
-                try {
-                    const response = await axios.get(`/api/load-new-tweets`, {
-                        params: {
-                            type: type,
-                            Ids: this.newTweetIds,
-                        },
-                    });
-
-                    const newTweets = response.data.newTweets;
-                    this.tweets[type] = [...newTweets, ...this.tweets[type]];
-                    this.newTweetIds = [];
-                    setTimeout(() => {
-                        this.buttonDisabled = false;
-                    }, 1500);
-                } catch (error) {
-                    console.error('Error loading new tweets:', error);
-                }
-            }
-
-            if (type === 'following') {
-                try {
-                    const response = await axios.get(`/api/load-new-following-tweets`);
-                    const newTweets = response.data.newTweets;
-                    this.tweets[type] = [...newTweets, ...this.tweets[type]];
-                    setTimeout(() => {
-                        this.buttonDisabled = false;
-                    }, 1500);
-                } catch (error) {
-                    console.error('Error loading new tweets:', error);
-                }
+                const newTweets = response.data.newTweets;
+                this.tweets[type] = [...newTweets, ...this.tweets[type]];
+                this.newTweetIds[type] = [];
+                setTimeout(() => {
+                    this.buttonDisabled = false;
+                }, 1500);
+            } catch (error) {
+                console.error('Error loading new tweets:', error);
             }
         },
         switchToTweets() {
@@ -798,11 +816,13 @@ export default{
         this.loadTweets('all');
         this.NewTweetInterval = setInterval(() => {
             this.checkNewTweetCount(this.postType);
+            this.updateCounts(this.currentPosts);
         }, 10000);
     },   
     beforeDestroy() {
         window.removeEventListener('scroll', this.handleScroll);
         clearInterval(this.NewTweetInterval);
+
     },
     beforeUnmount() {
         window.removeEventListener('scroll', this.handleScroll);

@@ -23,7 +23,7 @@
                 <div class="button-content">
                     <div class="icon-container">
                         <ion-icon class="button-icon" :name="isNotificationsFilled ? 'notifications' : 'notifications-outline'"></ion-icon>
-                        <div class="notification-count" v-if="unreadNotificationsCount > 0">{{ unreadNotificationsCount }}</div>
+                        <div class="notification-count" v-if="unreadNotificationsCount">{{ unreadNotificationsCount }}</div>
                     </div>
                     <span class="button-text">Notifications</span>
                 </div>
@@ -185,7 +185,7 @@ export default{
             isMessagesFilled: false,
             isBookmarksFilled: false,
             isProfileFilled: false,
-            unreadNotificationsCount: 0,
+            unreadNotificationsCount: '',
         }
     },
     setup(){
@@ -211,6 +211,9 @@ export default{
             if (trigger === 'MentionTrigger') {
                 mentionSearch.value = '';
                 filteredUsers.value = [];
+            }
+            if (trigger === 'TweetTrigger') {
+                tweet_text_inputnav.value='';
             }
 		}
         const logoutUser = async () => {
@@ -362,7 +365,7 @@ export default{
     },
         
     async mounted() {
-        this.getAllUsersMention();
+        await this.$store.dispatch('initializeApp');
         this.activeRoute = this.$route.path;
         this.isHomeFilled = this.activeRoute.includes('/home');
         this.isNotificationsFilled = this.activeRoute.includes('/notifications');
@@ -379,10 +382,13 @@ export default{
             this.isProfileFilled = this.activeRoute.includes('/profile');
         });
 
-        this.unreadNotificationsIntervalId = setInterval(
-            this.getUnreadNotificationCount,
-            10000
-        );
+        if (this.$route.name !== 'login') {
+            this.getAllUsersMention();
+            this.unreadNotificationsIntervalId = setInterval(
+                this.getUnreadNotificationCount,
+                10000
+            );
+        }
     },
     beforeDestroy() {
         clearInterval(this.unreadNotificationsIntervalId);
@@ -463,7 +469,7 @@ export default{
                 right:-4px;
                 background-color: #1d9bf0;
                 border-radius: 50%;
-                font-size:14px;
+                font-size:12px;
                 width:16px;
                 height:16px;
                 color:white;

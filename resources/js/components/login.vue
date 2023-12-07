@@ -80,7 +80,7 @@
       <h1 class="title">Reset Password</h1>
       <div>
         <div class="input-wrap">
-          <input type="password" v-model="newPassword" class="SignInput" required>
+          <input type="password" v-model="newPassword" class="SignInput" required @keyup.enter="resetPassword">
           <label for="sign-in-pass">New password</label>
         </div>
         <div v-if="newPasswordError" class="warning-1">Password must be at least 8 characters long.</div>
@@ -88,12 +88,12 @@
 
       <div>
         <div class="input-wrap">
-          <input type="password" v-model="confirmPassword" class="SignInput" required>
+          <input type="password" v-model="confirmPassword" class="SignInput" required @keyup.enter="resetPassword">
           <label for="sign-in-pass">Confirm password</label>
         </div>
         <div v-if="passwordMismatch" class="warning-1">Passwords do not match.</div>
       </div>
-      <button type="button" class="FormButton" @click="resetPassword" :disabled="isButtonDisabled">Reset Password</button>
+      <button type="button" class="FormButton" @click="resetPassword" :disabled="isButtonDisabled" @keyup.enter="resetPassword">Reset Password</button>
     </div>
   </Popup>
 
@@ -295,11 +295,9 @@ export default {
         this.password=''
     },
   },
-
 };
 </script>
 <style lang="scss" scoped>
-
 .warning-1 {
     color: red;
     font-size: 12px;
@@ -314,7 +312,6 @@ export default {
   flex-direction: row;
   box-sizing: border-box;
   padding:80px 0px;
-
   color:white;
   .left-side{
     width:55%;
@@ -331,7 +328,6 @@ export default {
     height:100%;
     display:flex;
     flex-direction: column;
-
     .sign-container{
       display:flex;
       flex-direction: column;
@@ -459,7 +455,6 @@ export default {
     }
   }
 }
-
 .Sign-Pop-Up{
   display:flex;
   flex-direction:column;
@@ -717,11 +712,11 @@ export default {
       }
     }
   }
-.Sign-Pop-Up{
-  width:100%;
-  padding:40px 15px;
-  gap:10px;
-  .title{
+  .Sign-Pop-Up{
+    width:100%;
+    padding:40px 15px;
+    gap:10px;
+    .title{
       font-size:20px;
       font-weight:600;
     }

@@ -80,48 +80,65 @@ class TweetController extends Controller
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
+    public function updateTweetStats(Request $request)
+    {
+        $tweetIds = $request->input('tweetIds', []);
+    
+        $tweets = Tweet::whereIn('TweetID', $tweetIds)->get();
+    
+        $updatedStats = [];
+    
+        foreach ($tweets as $tweet) {
+            $now = Carbon::now();
+            $updatedStats[$tweet->TweetID] = [
+                'like_count' => $tweet->likes()->count(),
+                'comment_count' => $tweet->comments()->count(),
+                'retweet_count' => $tweet->retweets()->count(),
+                'created_ago' => $this->formatTimeAgo($tweet->created_at, $now),
+            ];
+        }
+    
+        return response()->json($updatedStats);
+    }
     public function getNewTweetCount($type)
     {
         $user = auth()->user();
         $lastCheckedAt = now()->subSeconds(10); // Assuming last checked time is 10 seconds ago
-        
+
         $newTweets = Tweet::where('created_at', '>', $lastCheckedAt)
             ->where('UserID', '!=', $user->UserID)
             ->orderBy('created_at', 'desc')
             ->get();
-
-        $tweet_count = $newTweets->count();
         $tweetIDs = $newTweets->pluck('TweetID');
-        return response()->json(['tweet_count' => $tweet_count, 'tweetIDs' => $tweetIDs]);
-    }
-    
+
+        $newFollowingTweets = Tweet::where('created_at', '>', $lastCheckedAt)
+            ->whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID))
+            ->whereNotIn('UserID', [$user->UserID])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $following_tweetIDs = $newFollowingTweets->pluck('TweetID');
+        return response()->json(['tweetIDs' => $tweetIDs, 'following_tweetIDs' => $following_tweetIDs]);
+    } 
     public function loadNewTweets(Request $request)
     {
         $Ids = $request->input('Ids');
         $type = $request->input('type');
         $user = auth()->user();
-        $newTweets = Tweet::whereIn('TweetID', $Ids);
-        $newTweets = $newTweets->orderBy('created_at', 'desc')->get();
-        if ($type == 'following'){
-            $newTweets = Tweet::findInBatch($Ids)
-            ->whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID))->whereNotIn('UserID', [$user->UserID]);
-            $newTweets = $newTweets->orderBy('created_at', 'desc')->get();
+
+        if (empty($Ids)) {
+            return response()->json(['message' => 'No new tweets found.'], 404);
         }
-        foreach ($newTweets as $tweet) {
-            $now = Carbon::now();
-            $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
-            $tweet->like_count = $tweet->likes()->count();
-            $tweet->comment_count = $tweet->comments()->count();
-            $tweet->retweet_count = $tweet->retweets()->count();
-            $tweet->user = User::find($tweet->UserID);
+        if ($type == 'all') {
+            $newTweets = Tweet::whereIn('TweetID', $Ids)
+                ->orderBy('created_at', 'desc')
+                ->get();
         }
-        return response()->json(['newTweets' => $newTweets]);
-    }
-    public function loadNewFollowingTweets()
-    {
-        $user = auth()->user();
-        $newTweets = Tweet::whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID))->whereNotIn('UserID', [$user->UserID]);;
-        $newTweets = $newTweets->orderBy('created_at', 'desc')->get();
+        if ($type == 'following') {
+            $newTweets = Tweet::whereIn('TweetID', $Ids)
+                ->whereIn('UserID', $user->follows->pluck('UserID')->push($user->UserID))
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
         foreach ($newTweets as $tweet) {
             $now = Carbon::now();
             $tweet->created_ago = $this->formatTimeAgo($tweet->created_at, $now);
@@ -201,7 +218,6 @@ class TweetController extends Controller
             return response()->json(['error' => 'User not authenticated.'], 401);
         }
     }
-
     public function getUserTweetsByType($userTag, $type, $page)
     {
         if (auth()->check()) {
@@ -412,22 +428,27 @@ class TweetController extends Controller
             return $diff->s . 's';
         }
     }
-
     public function deleteTweet($id)
     {
         $tweet = Tweet::find($id);
-
+    
         if (!$tweet) {
             return response()->json(['message' => 'Tweet not found'], 404);
         }
+    
+        $comments = $tweet->comments()->get();
+    
+        foreach ($comments as $comment) {
+            $comment->comment_mentions()->delete();
+            $comment->delete();
+        }
+    
         $tweet->likes()->delete();
         $tweet->retweets()->delete();
         $tweet->bookmarks()->delete();
-        $tweet->comments()->delete();
         $tweet->mentions()->delete();
         $tweet->delete();
-
-
+    
         return response()->json(['message' => 'Tweet deleted successfully']);
     }
     public function getTweetData($id)
@@ -465,7 +486,6 @@ class TweetController extends Controller
         }
         return response()->json(['tweet' => $tweet]);
     }
-
     private function checkIfLikedByUser($tweet, $user)
     {
         return $tweet->likes->contains('UserID', $user->UserID);

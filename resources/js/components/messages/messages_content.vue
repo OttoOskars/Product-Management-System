@@ -1,23 +1,25 @@
 <template>
     <div class="messages-container">
-        <div class="messages-main">
-            <div class="top-top">
-                <button class="back-icon" @click="goBack">
-                    <ion-icon name="arrow-back-outline"></ion-icon>
-                </button>
-                <div class="top-top-top" v-if="user">
-                    <p class="title">Messages</p>
-                    <p class="user-tag">{{ user.UserTag }}</p>
-                </div>
+        <div class="top-top">
+            <button class="back-icon" @click="goBack">
+                <ion-icon name="arrow-back-outline"></ion-icon>
+            </button>
+            <div class="top-top-top" v-if="user">
+                <p class="title">Messages</p>
+                <p class="user-tag">{{ user.UserTag }}</p>
             </div>
-            <div class="main-text">Welcome to your inbox!</div>
-            <div class="under-text">Drop a line, share posts and more with private conversations between you and others on X. </div>
-            <button class="write-button" @click="ToggleFirstPopup('EditTrigger')">New message</button>
         </div>
-        <div class="messages-right">
-            <div class="right-text">Select a message</div>
-            <div class="right-under-text">Choose from your existing conversations, start a new one, or just keep swimming.</div>
-            <button class="right-write-button" @click="ToggleThirdPopup('MessageTrigger2')">Messages</button>
+        <div class="messages-sub">
+            <div class="messages-main">
+                <div class="main-text">Welcome to your inbox!</div>
+                <div class="under-text">Drop a line, share posts and more with private conversations between you and others on X. </div>
+                <button class="write-button" @click="ToggleFirstPopup('EditTrigger')">New message</button>
+            </div>
+            <div class="messages-right">
+                <div class="right-text">Select a message</div>
+                <div class="right-under-text">Choose from your existing conversations, start a new one, or just keep swimming.</div>
+                <button class="right-write-button" @click="ToggleThirdPopup('MessageTrigger2')">Messages</button>
+            </div>
         </div>
         <Popup v-if="popupTriggers.EditTrigger" :TogglePopup="() => ToggleFirstPopup('EditTrigger')">
             <div class="edit-popup">
@@ -75,7 +77,16 @@
                 <div class="title-messages">Received Messages<button @click="ToggleFourthPopup('MessageTrigger3')" class="sent-messages-btn">Sent messages</button></div>
                 <div class="message-container">
                     <div v-for= "message in receivedMessages" :key="message.MessageID" class="received-message">
-                        <p class="message-p" v-if="message.senderTag"><span style="font-weight: bold;">From </span><span style="color:gray">{{ message.senderTag }} <span>{{ message.received_ago }}</span></span></p>
+                        <div class="message-p">
+                            <div class="message-p2">From</div>
+                            <div class="message-p3" v-if="message.senderTag">{{ message.senderTag }}</div>
+                            <div class="message-p4">{{ message.received_ago }}</div>
+                            <div>
+                                <button class="delete-btn" @click.stop="message.MessageID && TogglePopup(message.MessageID)">
+                                    <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
+                                </button>
+                            </div>
+                        </div>
                         <p class="message-content">{{ message.content }}</p>
                         <img class="message-img" v-if="message.image" :src="'/storage/'+ message.image" alt="Message Image">
                     </div>
@@ -86,11 +97,30 @@
             <div class="sent-messages-popup" v-if="user">
                 <div class="title-messages">Sent Messages</div>
                 <div class="message-container">
-                    <div v-for="message in sentMessages" :key="message.MessageID" class="sent-message">
-                        <p class="message-p" v-if="message.receiverTag"><span style="font-weight: bold;">To </span><span style="color:gray">{{ message.receiverTag }} <span>{{ message.sent_ago }}</span></span></p>
+                    <div v-for="message in sentMessages" :key="message.id" class="sent-message">
+                        <div class="message-p">
+                            <div class="message-p2">To</div>
+                            <div class="message-p3" v-if="message.receiverTag">{{ message.receiverTag }}</div>
+                            <div class="message-p4">{{ message.sent_ago }}</div>
+                            <div>
+                                <button class="delete-btn" @click.stop="DeleteMessageID = message.id; TogglePopup(message.MessageID); console.log(message.id)">
+                                    <ion-icon name="trash-bin-outline" class="delete-icon"></ion-icon>
+                                </button>
+                            </div>
+                        </div>
                         <p class="message-content">{{ message.content }}</p>
                         <img class="message-img" v-if="message.image" :src="'/storage/'+ message.image" alt="Message Image">
                     </div>
+                </div>
+            </div>
+        </Popup>
+        <Popup v-if="popupTriggers.DeleteMessageTrigger" :TogglePopup="() => TogglePopup('DeleteMessageTrigger')">
+            <div class="delete-popup">
+                <h1 class="delete-title">Delete Message</h1>
+                <p class="tweet-p">Are you sure you want to delete this message?</p>
+                <div class="tweet-buttons">
+                    <button class="cancel-button" @click="TogglePopup('DeleteMessageTrigger')">Cancel</button>
+                    <button class="delete-button" @click.stop="deleteMessage(DeleteMessageID)">Delete</button>
                 </div>
             </div>
         </Popup>
@@ -102,7 +132,7 @@ import Popup from '../Popup.vue';
 import { mapState } from 'vuex';
 import axios from 'axios';
 export default{
-    name: 'Search',
+    name: 'Messages',
     components: {
         Popup,
     },
@@ -111,6 +141,7 @@ export default{
             isInputFocused: false,
             personClicked: false,
             messageText: '',
+            // deleteMessageID: null,
         };
     },
     computed: {
@@ -120,6 +151,7 @@ export default{
         },
     },
     setup () {
+        const DeleteMessageID = ref(null);
         const previewImagenav = ref(null);
         const messageImagenav = ref(null);
         const searchInput = ref('');
@@ -134,7 +166,29 @@ export default{
             MessageTrigger: false,
             MessageTrigger2: false,
             MessageTrigger3: false,
+            DeleteMessageTrigger: false,
         });
+        const deleteMessage = (messageID) => {
+            console.log('Message ID to delete:', messageID);
+            performDeleteMessage(messageID);
+        };
+        const performDeleteMessage = async (messageID) => {
+            try {
+                await axios.delete(`/api/messages/${messageID}`);
+                const receivedIndex = receivedMessages.value.findIndex((m) => m.MessageID === messageID);
+                if (receivedIndex !== -1) {
+                    receivedMessages.value.splice(receivedIndex, 1);
+                }
+                const sentIndex = sentMessages.value.findIndex((m) => m.MessageID === messageID);
+                if (sentIndex !== -1) {
+                    sentMessages.value.splice(sentIndex, 1);
+                }
+                popupTriggers.value['DeleteMessageTrigger'] = false;
+                console.log(`Message with ID ${messageID} deleted successfully.`);
+            } catch (error) {
+                console.error('Error deleting message:', error);
+            }
+        };
         const foundUsers = computed(() => {
             if (searchInput.value.length > 0) {
                 const searchInputLower = searchInput.value.toLowerCase();
@@ -150,6 +204,13 @@ export default{
             foundUsers.value = [];
             searchInput.value = '';
             clickedPerson.value = null;
+        };
+        const TogglePopup = (id) => {
+            popupTriggers.value['DeleteMessageTrigger'] = !popupTriggers.value['DeleteMessageTrigger'];
+
+            if (!popupTriggers.value['DeleteMessageTrigger']) {
+                
+            }
         };
         const ToggleFirstPopup = () => {
             popupTriggers.value['EditTrigger'] = !popupTriggers.value['EditTrigger'];
@@ -176,18 +237,6 @@ export default{
                 popupTriggers.value['MessageTrigger2'] = true;
             }
         };
-        let fetchSentMessages = null;
-
-        const setSentMessages = (messages) => {
-            sentMessages.value = messages;
-        };
-        const ToggleFourthPopup = async () => {
-            popupTriggers.value['MessageTrigger3'] = !popupTriggers.value['MessageTrigger3'];
-            if (popupTriggers.value['MessageTrigger3'] && fetchSentMessages) {
-                await fetchSentMessages();
-                popupTriggers.value['MessageTrigger3'] = true;
-            }
-        };
         fetchReceivedMessages = async () => {
             try {
                 const response = await axios.get(`/api/user-messages`);
@@ -201,11 +250,22 @@ export default{
                     image: message.Image,
                     senderId: message.SenderID,
                     senderTag: senderTagsMap[message.SenderID] || 'Unknown Sender',
-                    sent_ago: message.sent_ago,
                     received_ago: message.received_ago,
                 })));
             } catch (error) {
                 console.error('Error fetching received messages:', error);
+            }
+        };
+        let fetchSentMessages = null;
+
+        const setSentMessages = (messages) => {
+            sentMessages.value = messages;
+        };
+        const ToggleFourthPopup = async () => {
+            popupTriggers.value['MessageTrigger3'] = !popupTriggers.value['MessageTrigger3'];
+            if (popupTriggers.value['MessageTrigger3'] && fetchSentMessages) {
+                await fetchSentMessages();
+                popupTriggers.value['MessageTrigger3'] = true;
             }
         };
         fetchSentMessages = async () => {
@@ -217,6 +277,7 @@ export default{
                 const receiverTagsMap = await fetchReceiverTags(receiverIds);
 
                 setSentMessages(sent_messages.map(message => ({
+                    id: message.MessageID,
                     content: message.Content,
                     image: message.Image,
                     receiverId: message.ReceiverID,
@@ -308,12 +369,14 @@ export default{
             }
         };
         return {
+            DeleteMessageID,
             popupTriggers,
             ToggleFirstPopup,
             ToggleSecondPopup,
             fetchReceivedMessages,
             ToggleThirdPopup,
             ToggleFourthPopup,
+            TogglePopup,
             fetchSentMessages,
             nextButtonClick,
             resetFirstPopup,
@@ -329,6 +392,8 @@ export default{
             tweetInputnav,
             receivedMessages,
             sentMessages,
+            deleteMessage,
+            performDeleteMessage,
         }
     },
     methods: {
@@ -374,12 +439,6 @@ export default{
         inputBlur() {
             this.isInputFocused = false;
         },
-        redirectTo(where) {
-            this.$router.push(where);
-        },
-        openTweet(id) {
-            console.log(id);
-        },
         async sendMessage() {
             if (!this.selectedUser || !this.tweetInputnav) return;
             const formData = new FormData();
@@ -406,6 +465,32 @@ export default{
             console.error('Error sending message:', error);
             }
         },
+        // deleteMessage(messageID) {
+        //     console.log('Message ID to delete:', messageID);
+        //     this.performDeleteMessage(messageID);
+        // },
+        // async performDeleteMessage(messageID) {
+        //     console.log('Performing deletion for message ID:', messageID);
+        //     if (!messageID) {
+        //         console.error('Message ID not provided');
+        //         return;
+        //     }
+        //     try {
+        //         await this.$axios.delete(`/api/messages/${messageID}`);
+        //         const receivedIndex = this.receivedMessages.findIndex((m) => m.MessageID === messageID);
+        //         if (receivedIndex !== -1) {
+        //             this.receivedMessages.splice(receivedIndex, 1);
+        //         }
+        //         const sentIndex = this.sentMessages.findIndex((m) => m.MessageID === messageID);
+        //         if (sentIndex !== -1) {
+        //             this.sentMessages.splice(sentIndex, 1);
+        //         }
+        //         this.popupTriggers.DeleteMessageTrigger = false;
+        //         console.log(`Message with ID ${messageID} deleted successfully.`);
+        //     } catch (error) {
+        //         console.error('Error deleting message:', error);
+        //     }
+        // },
     },
     async mounted() {
         await this.$store.dispatch('initializeApp');
@@ -421,96 +506,103 @@ export default{
 </script>
 <style lang="scss" scoped>
 .messages-container{
-    height: 100%;
-    display: grid;
-    grid-template-columns: 65% 100%;
-    .messages-main{
-        padding-top:0px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #2F3336;
+    // display: grid;
+    // grid-template-columns: 65% 100%;
+    .messages-sub{
+        display: flex;
+        flex-direction: row;
         height: 100vh;
-        padding-bottom:80px;
-        display:flex;
-        flex-direction:column;
-        box-sizing: border-box;
-        border-right: 1px solid #2F3336;
-        border-left: 1px solid #2F3336;
-        .main-text{
-            color: white;
-            text-align:left;
-            font-size: 32px;
-            font-weight: bold;
-            display: flex;
-            margin-top: 10%;
-            margin-left:6%;
-            margin-right:15.5%;
-        }
-        .under-text{
-            color:gray;
-            display: flex;
-            font-size: 15px;
-            text-align: left;
-            padding-left: 6%;
-            margin-top: 15px;
-        }
-        .write-button{
-            display: block;
-            width: 170px;
-            align-items: center;
-            background:#1d9bf0;
-            color: white;
-            text-align: center;
-            margin-top: 35px;
-            margin-left: 6%;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            height: 50px;
-            &:hover{
-                background:#0c79c2
+        .messages-main{
+            // padding-top:0px;
+            // height: auto;
+            // padding-bottom:80px;
+            width: 40%;
+            display:flex;
+            flex-direction:column;
+            box-sizing: border-box;
+            border-right: 1px solid #2F3336;
+            .main-text{
+                color: white;
+                text-align:left;
+                font-size: 32px;
+                font-weight: bold;
+                display: flex;
+                margin-top: 10%;
+                margin-left:6%;
+                margin-right:15.5%;
+            }
+            .under-text{
+                color:gray;
+                display: flex;
+                font-size: 15px;
+                text-align: left;
+                padding-left: 6%;
+                margin-top: 15px;
+            }
+            .write-button{
+                display: block;
+                width: 170px;
+                align-items: center;
+                background:#1d9bf0;
+                color: white;
+                text-align: center;
+                margin-top: 35px;
+                margin-left: 6%;
+                border-radius: 50px;
+                font-size: 16px;
+                font-weight: bold;
+                border: none;
+                height: 50px;
+                &:hover{
+                    background:#0c79c2
+                }
             }
         }
-    }
-    .messages-right{
-        height: 100vh;
-        flex-direction:column;
-        box-sizing: border-box;
-        border-right: 1px solid #2F3336;
-        justify-content: center;
-        .right-text{
-            color: white;
-            text-align: left;
-            font-size: 32px;
-            font-weight: bold;
-            display: flex;
+        .messages-right{
+            width: 60%;
+            flex-direction:column;
+            box-sizing: border-box;
             justify-content: center;
-            margin-top: 40%;
-            align-items: center;
-        }
-        .right-under-text{
-            color:gray;
-            display: flex;
-            font-size: 15px;
-            text-align: left;
-            padding-right: 20%;
-            padding-left: 29.4%;
-            margin-top: 15px;
-            justify-content: center;
-        }
-        .right-write-button{
-            display: block;
-            width: 170px;
-            background:#1d9bf0;
-            color: white;
-            text-align: center;
-            margin-top: 35px;
-            margin-left: 29.5%;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            height: 50px;
-            &:hover{
-                background:#0c79c2
+            .right-text{
+                color: white;
+                text-align: left;
+                font-size: 32px;
+                font-weight: bold;
+                display: flex;
+                justify-content: center;
+                margin-top: 40%;
+                align-items: center;
+            }
+            .right-under-text{
+                color:gray;
+                display: flex;
+                font-size: 15px;
+                text-align: left;
+                padding-right: 20%;
+                padding-left: 29.4%;
+                margin-top: 15px;
+                justify-content: center;
+            }
+            .right-write-button{
+                display: block;
+                width: 170px;
+                background:#1d9bf0;
+                color: white;
+                text-align: center;
+                margin-top: 35px;
+                margin-left: 29.5%;
+                border-radius: 50px;
+                font-size: 16px;
+                font-weight: bold;
+                border: none;
+                height: 50px;
+                &:hover{
+                    background:#0c79c2
+                }
             }
         }
     }
@@ -921,7 +1013,7 @@ export default{
             }
             &::-webkit-scrollbar-thumb{
                 background-color: #2F3336;
-                border-radius: 5px;;
+                border-radius: 5px;
                 border:none;
             }
             &::-webkit-scrollbar-track{
@@ -936,7 +1028,39 @@ export default{
                 margin-left: 20px;
                 margin-right: 20px;
                 .message-p{
+                    margin-top: 20px;
                     font-size: 18px;
+                    display: flex;
+                    flex-direction: row;
+                    .message-p2{
+                        font-weight: bold;
+                    }
+                    .message-p3, .message-p4{
+                        color: gray;
+                        margin-left: 5px;
+                    }
+                    .delete-btn{
+                        height:25px;
+                        width:25px;
+                        background:none;
+                        border-radius:50%;
+                        border:none;
+                        display:flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding:0;
+                        cursor:pointer;
+                        margin-left: 5px;
+                        .delete-icon{
+                            font-size:16px;
+                            color:#f11515;
+                            --ionicon-stroke-width: 30px;
+                            visibility: visible;
+                        }
+                        &:hover{
+                            background-color: rgba($color: #f11515, $alpha: 0.1);
+                        }
+                    }
                 }
                 .message-content{
                     overflow-wrap: anywhere;
@@ -989,7 +1113,39 @@ export default{
                 margin-left: 20px;
                 margin-right: 20px;
                 .message-p{
+                    margin-top: 20px;
                     font-size: 18px;
+                    display: flex;
+                    flex-direction: row;
+                    .message-p2{
+                        font-weight: bold;
+                    }
+                    .message-p3, .message-p4{
+                        color: gray;
+                        margin-left: 5px;
+                    }
+                    .delete-btn{
+                        height:25px;
+                        width:25px;
+                        background:none;
+                        border-radius:50%;
+                        border:none;
+                        display:flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding:0;
+                        cursor:pointer;
+                        margin-left: 5px;
+                        .delete-icon{
+                            font-size:16px;
+                            color:#f11515;
+                            --ionicon-stroke-width: 30px;
+                            visibility: visible;
+                        }
+                        &:hover{
+                            background-color: rgba($color: #f11515, $alpha: 0.1);
+                        }
+                    }
                 }
                 .message-content{
                     overflow-wrap: anywhere;
@@ -1006,96 +1162,107 @@ export default{
 }
 @media (max-width: 1000px){
     .messages-container{
-        display: flex;
-        flex-direction: column;
-        .messages-main{
-            height: 50%;
-            padding-bottom: 0px;
-            border-right: 0px;
-            border-left: 0px;
-            .main-text{
-                margin-left:4%;
+        .messages-sub{
+            display: flex;
+            flex-direction: column;
+            .messages-main{
+                height: 50%;
+                // padding-bottom: 0px;
+                // border-right: 0px;
+                // border-left: 0px;
+                width: 100%;
+                border-bottom:solid 1px #2F3336;
+                .main-text{
+                    margin-left:4%;
+                }
+                .under-text{
+                    padding-left: 4%;
+                }
+                .write-button{
+                    margin-left: 4%;
+                }
             }
-            .under-text{
-                padding-left: 4%;
-            }
-            .write-button{
-                margin-left: 4%;
-            }
-        }
-        .messages-right{
-            height: 50%;
-            border-right: 0px;
-            border-left: 0px;
-            padding-bottom: 0px;
-            justify-content: left;
-            .right-text{
-                margin-top: 15%;
-                padding-left: 4%;
+            .messages-right{
+                height: 50%;
+                // border-right: 0px;
+                // border-left: 0px;
+                // padding-bottom: 0px;
+                width: 100%;
                 justify-content: left;
-            }
-            .right-under-text{
-                padding-left: 4%;
-                justify-content: left;
-            }
-            .right-write-button{
-                margin-left: 4%;
+                .right-text{
+                    margin-top: 15%;
+                    padding-left: 4%;
+                    justify-content: left;
+                }
+                .right-under-text{
+                    padding-left: 4%;
+                    justify-content: left;
+                }
+                .right-write-button{
+                    margin-left: 4%;
+                }
             }
         }
     }
 }
 @media (max-width: 700px){
     .messages-container{
-        display: flex;
-        flex-direction: column;
-        .messages-main{
-            height: 50%;
-            padding-bottom: 0px;
-            border-right: 0px;
-            border-left: 0px;
-            .main-text{
-                font-size: 26px;
-                margin-top: 20%;
-                margin-left:4%;
+        .messages-sub{
+            display: flex;
+            flex-direction: column;
+            .messages-main{
+                height: 50%;
+                width: 100%;
+                // padding-bottom: 0px;
+                // border-right: 0px;
+                // border-left: 0px;
+                .main-text{
+                    font-size: 26px;
+                    margin-top: 20%;
+                    // width: 300px;
+                    // margin-left:4%;
+                }
+                .under-text{
+                    font-size: 13px;
+                    // padding-left: 4%;
+                    margin-top: 12px;
+                    // width: 400px;
+                }
+                .write-button{
+                    width: 150px;
+                    margin-top: 30px;
+                    margin-left: 4%;
+                    font-size: 14px;
+                    height: 45px;
+                }
             }
-            .under-text{
-                font-size: 13px;
-                padding-left: 4%;
-                margin-top: 12px;
-            }
-            .write-button{
-                width: 150px;
-                margin-top: 30px;
-                margin-left: 4%;
-                font-size: 14px;
-                height: 45px;
-            }
-        }
-        .messages-right{
-            height: 50%;
-            border-right: 0px;
-            border-left: 0px;
-            padding-bottom: 0px;
-            justify-content: left;
-            .right-text{
-                font-size: 26px;
-                margin-top: 20%;
-                padding-left: 4%;
-                justify-content: left;
-            }
-            .right-under-text{
-                font-size: 13px;
-                padding-left: 4%;
-                padding-right: 4%;
-                margin-top: 12px;
-                justify-content: left;
-            }
-            .right-write-button{
-                width: 150px;
-                margin-top: 30px;
-                margin-left: 4%;
-                font-size: 14px;
-                height: 45px;
+            .messages-right{
+                height: 50%;
+                width: 100%;
+                // border-right: 0px;
+                // border-left: 0px;
+                // padding-bottom: 0px;
+                // justify-content: left;
+                .right-text{
+                    font-size: 26px;
+                    margin-top: 20%;
+                    padding-left: 4%;
+                    // justify-content: left;
+                }
+                .right-under-text{
+                    font-size: 13px;
+                    padding-left: 4%;
+                    padding-right: 4%;
+                    margin-top: 12px;
+                    // justify-content: left;
+                }
+                .right-write-button{
+                    width: 150px;
+                    margin-top: 30px;
+                    margin-left: 4%;
+                    font-size: 14px;
+                    height: 45px;
+                }
             }
         }
         .edit-popup, .message-popup, .received-messages-popup, .sent-messages-popup{

@@ -428,6 +428,9 @@ export default{
                 mentionSearch.value = '';
                 filteredUsers.value = [];
             }
+            if (trigger === 'CommentTrigger') {
+                comment_text_input.value='';
+            }
         };
 
         return {
@@ -450,6 +453,49 @@ export default{
         };
     },
     methods: {
+        async updateFollowerCount(user) {
+            try {
+                const response = await axios.get(`/api/update-follower-count/${user.UserID}`);
+
+                const updatedFollowerData = response.data;
+
+                if (updatedFollowerData) {
+                    user.follower_count = updatedFollowerData.follower_count;
+                    user.following_count = updatedFollowerData.following_count;
+                } else {
+                    console.error('Failed to update follower count');
+                }
+            }
+            catch (error) {
+                console.error('Error updating follower count:', error);
+            }
+        },
+        async updateCounts(tweets) {
+            try {
+                const tweetIds = tweets.map(tweet => tweet.TweetID);
+                const response = await axios.get(`/api/update-stats`, {
+                    params: {
+                        tweetIds: tweetIds,
+                    }
+                });
+
+                const updatedStatsMap = response.data;
+
+                // Update counts for each tweet based on the response
+                tweets.forEach(tweet => {
+                    const updatedStats = updatedStatsMap[tweet.TweetID];
+                    if (updatedStats) {
+                        tweet.like_count = updatedStats.like_count;
+                        tweet.comment_count = updatedStats.comment_count;
+                        tweet.retweet_count = updatedStats.retweet_count;
+                        tweet.created_ago = updatedStats.created_ago;
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error updating counts:', error);
+            }
+        },
         switchToTweets() {
             this.postType = 'tweets';
             window.scrollTo(0, this.scrollPositions.tweets);
@@ -1102,13 +1148,23 @@ export default{
         this.loadTweets('replies')
         this.getAllUsersMention();
         window.addEventListener('scroll', this.handleScroll);
-    },
+        this.NewTweetInterval = setInterval(() => {
+            this.updateCounts(this.currentPosts);
+            this.updateFollowerCount(this.profileuser);
+        }, 10000);
+    },  
     beforeDestroy() {
         window.removeEventListener('scroll', this.handleScroll);
+        clearInterval(this.NewTweetInterval);
     },
-    unmounted() {
+    beforeUnmount() {
         window.removeEventListener('scroll', this.handleScroll);
-    }
+        clearInterval(this.NewTweetInterval);
+    },
+    beforeRouteLeave(to, from, next) {
+        window.removeEventListener('scroll', this.handleScroll);
+        clearInterval(this.NewTweetInterval);
+    },
 }
 </script>
 <style lang="scss" scoped>

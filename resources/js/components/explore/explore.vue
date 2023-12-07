@@ -1,8 +1,8 @@
 <template>
     <div class="explore">
-        <div class="navbar">
+<!--         <div class="navbar">
             <NavBar></NavBar>
-        </div>
+        </div> -->
         <div class="content">
             <Explore></Explore>
         </div>

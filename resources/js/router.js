@@ -13,6 +13,7 @@ const router = createRouter({
     {
       path: '/',
       component: () => import('./components/login.vue'),
+      name: 'login',
       meta: { requiresAuth: false },
       beforeEnter: (to, from, next) => {
         if (checkAuth()) {
