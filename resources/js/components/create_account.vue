@@ -212,9 +212,6 @@ export default {
     year: function () {
       this.$refs.selectYear.style.color = "white";
     },
-    selectedMonth() {
-      this.day = '';
-    },
   },
   methods: {
     validateForm(e) {
@@ -281,6 +278,14 @@ export default {
           this.resetLabelPosition();
         }
     },
+    monthNameToNumber(monthName) {
+      const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      const monthNumber = months.findIndex(month => month === monthName) + 1;
+      return monthNumber.toString().padStart(2, '0');
+    },
     async registerUser() {
       this.emailError = '';
       this.usernameError = '';
@@ -291,7 +296,7 @@ export default {
           UserTag: this.username,
           Email: this.email,
           Password: this.password,
-          DOB: `${this.year}-${this.month}-${this.day}`,
+          DOB: `${this.year}-${this.monthNameToNumber(this.month)}-${this.day}`,
         };
         const response = await this.$store.dispatch('register', registrationData);
 
