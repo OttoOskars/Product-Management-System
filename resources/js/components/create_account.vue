@@ -15,13 +15,15 @@
                 type="text"
                 maxlength="50"
                 class="account-input"
+                id="name"
                 style="padding-left: 10px;"
                 v-model="name"
+                autocomplete="off"
                 @input="updateLabel('name')"
                 @focus="moveLabelUp('name')"
                 @blur="resetLabelPosition('name')"
               />
-              <label class="input-label" :class="{ active: isLabelActive['name'], committed: isInputCommitted['name'] }">Name</label>
+              <label for="name" class="input-label" :class="{ active: isLabelActive['name'], committed: isInputCommitted['name'] }">Name</label>
             </div>
             <p v-if="nameHasSpaces" class="warning">Name should not contain spaces.</p>
           </div>
@@ -32,13 +34,15 @@
                 type="text"
                 maxlength="50"
                 class="account-input"
+                id="username"
                 style="padding-left: 10px;"
                 v-model="username"
+                autocomplete="off"
                 @input="updateLabel('username')"
                 @focus="moveLabelUp('username')"
                 @blur="resetLabelPosition('username')"
               />
-              <label class="input-label" :class="{ active: isLabelActive['username'], committed: isInputCommitted['username'] }">Username</label>
+              <label for="username" class="input-label" :class="{ active: isLabelActive['username'], committed: isInputCommitted['username'] }">Username</label>
             </div>
             <p v-if="usernameHasSpaces" class="warning">Username should not contain spaces.</p>
             <p v-if="usernameError" class="warning">{{ usernameError }}</p>
@@ -50,13 +54,15 @@
                   type="email"
                   maxlength="50"
                   class="account-input"
+                  id="email"
                   style="padding-left: 10px;"
                   v-model="email"
+                  autocomplete="off"
                   @input="updateLabel('email')"
                   @focus="moveLabelUp('email')"
                   @blur="resetLabelPosition('email')"
               />
-              <label class="input-label" :class="{ active: isLabelActive['email'], committed: isInputCommitted['email'] }">Email</label>
+              <label for="email" class="input-label" :class="{ active: isLabelActive['email'], committed: isInputCommitted['email'] }">Email</label>
             </div>
             <p v-if="invalidEmail" class="warning">Please enter a valid email address.</p>
             <p v-if="emailError" class="warning">{{ emailError }}</p>
@@ -68,13 +74,15 @@
                     type="password"
                     maxlength="50"
                     class="account-input"
+                    id="password"
                     style="padding-left: 10px;"
                     v-model="password"
+                    autocomplete="off"
                     @input="updateLabel('password')"
                     @focus="moveLabelUp('password')"
                     @blur="resetLabelPosition('password')"
                 />
-                <label class="input-label" :class="{ active: isLabelActive['password'], committed: isInputCommitted['password'] }">Password</label>
+                <label for="password" class="input-label" :class="{ active: isLabelActive['password'], committed: isInputCommitted['password'] }">Password</label>
             </div>
             <p v-if="passwordWarningVisible" class="warning">Password must be at least 8 characters long.</p>
           </div>
@@ -85,13 +93,15 @@
                     type="password"
                     maxlength="50"
                     class="account-input"
+                    id="confirmPassword"
                     style="padding-left: 10px;"
                     v-model="confirmPassword"
+                    autocomplete="off"
                     @input="updateLabel('confirmPassword')"
                     @focus="moveLabelUp('confirmPassword')"
                     @blur="resetLabelPosition('confirmPassword')"
                 />
-                <label class="input-label" :class="{ active: isLabelActive['confirmPassword'], committed: isInputCommitted['confirmPassword'] }">Confirm Password</label>
+                <label for="confirmPassword" class="input-label" :class="{ active: isLabelActive['confirmPassword'], committed: isInputCommitted['confirmPassword'] }">Confirm Password</label>
             </div>
             <p v-if="passwordsDoNotMatch" class="warning">Passwords do not match.</p>
           </div>
@@ -102,7 +112,7 @@
           </div>
           <div class="time">
             <div class="months">
-              <select class="select-1" v-model="month" ref="selectMonth">
+              <select class="select-1" v-model="month" ref="selectMonth" id="month">
                   <option value="" disabled selected>Month</option>
                   <option value="January">January</option>
                   <option value="February">February</option>
@@ -119,20 +129,20 @@
               </select>
             </div>
             <div class="days">
-              <select class="select-2" v-model="day" ref="selectDay">
+              <select class="select-2" v-model="day" ref="selectDay" id="day">
                   <option value="" disabled selected>Day</option>
                   <option v-for="day in daysInMonth" :key="day" :value="day">{{ day }}</option>
               </select>
             </div>
             <div class="years">
-              <select class="select-3" v-model="year" ref="selectYear">
+              <select class="select-3" v-model="year" ref="selectYear" id="year">
                   <option value="" disabled selected>Year</option>
-                  <option id="year" v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                  <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
               </select>
             </div>
           </div>
           <div class="submit-form">
-            <button type="submit" class="next" @click="validateForm" v-bind:disabled="!allFieldsFilled">Create account</button>
+            <button type="submit" class="next" @click="validateForm" v-bind:disabled="!allFieldsFilled" id="next">Create account</button>
           </div>
         </form>
       </div>
