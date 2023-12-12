@@ -124,4 +124,8 @@ export default{
 }
 </script>
 <style lang="scss" scoped>
+.who-to-follow {
+    position:sticky;
+    top:2px;
+}
 </style>
