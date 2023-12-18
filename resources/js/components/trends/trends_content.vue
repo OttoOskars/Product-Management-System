@@ -343,7 +343,7 @@ export default{
 .top-bar{
     height:60px;
     background-color:rgba($color: #000000, $alpha: 0.8);
-    // position:fixed;
+    position:sticky;
     top:0;
     width:100%;
     z-index:20;
@@ -477,11 +477,11 @@ export default{
 //     }
 // }
 
-@media (min-width: 500px) {
-    .user-img, .logo{
-        display:none !important;
-    }
-}
+// @media (min-width: 500px) {
+//     .user-img, .logo{
+//         display:none !important;
+//     }
+// }
 @media (max-width: 500px) {
     .top-bar{
         height:35px;
