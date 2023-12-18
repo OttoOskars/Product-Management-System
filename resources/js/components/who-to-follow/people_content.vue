@@ -65,6 +65,11 @@ export default {
         goBack() {
             this.$router.go(-1);
         },
+        openProfile(tag){
+            const NoSymbolTag = tag.replace(/^@/, '');
+            this.$router.push('/profile/' + NoSymbolTag);
+            console.log(tag);
+        },
         toggleFollowUnfollow(userID) {
             const user = this.users.find((t) => t.UserID === userID);
             if (user.isFollowedByMe) {
@@ -112,11 +117,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.tweets-container {
-    width: 100%;
-    height: auto;
-    color: white;
-}
+// .tweets-container {
+//     width: 100%;
+//     height: auto;
+//     color: white;
+// }
 .black-line{
     position:fixed;
     top:0;
@@ -156,7 +161,7 @@ export default {
 .people-container{
     box-sizing: border-box;
     width:100%;
-    height:100%;
+    height:auto;
     display:flex;
     flex-direction: column;
     .person{

@@ -39,20 +39,20 @@ export default {
     flex-direction: row;
     box-sizing: border-box;
 }
-.navbar{
-    width: 3/12*100%;
-    box-sizing: border-box;
-}
-.search{
-    min-height: 100%;
-    width:4/12*100%;
-    box-sizing: border-box;
-}
-.content{
-    min-height:100%;
-    width:5/12*100%;
-    box-sizing: border-box;
-}
+// .navbar{
+//     width: 3/12*100%;
+//     box-sizing: border-box;
+// }
+// .search{
+//     min-height: 100%;
+//     width:4/12*100%;
+//     box-sizing: border-box;
+// }
+// .content{
+//     min-height:100%;
+//     width:5/12*100%;
+//     box-sizing: border-box;
+// }
 
 @media (max-width: 1250px) {
     .navbar{
