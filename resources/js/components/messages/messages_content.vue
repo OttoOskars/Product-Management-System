@@ -1172,6 +1172,7 @@ export default{
                 // border-left: 0px;
                 width: 100%;
                 border-bottom:solid 1px #2F3336;
+                border-right: none;
                 .main-text{
                     margin-left:4%;
                 }
